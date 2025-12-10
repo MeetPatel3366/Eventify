@@ -1,0 +1,43 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #333;
+    color: white;
+}
+
+.navbar-logo h2 {
+    margin: 0;
+}
+
+.navbar-links {
+    list-style-type: none;
+    display: flex;
+    gap: 2rem; /* Adjust the gap for spacing between links */
+}
+
+.navbar-links li {
+    display: inline;
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+
+.navbar-auth a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    background-color: #555;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    margin-left: 2rem; /* Add left margin for spacing from other links */
+}
+
+.navbar-auth a:hover {
+    background-color: #777;
+}

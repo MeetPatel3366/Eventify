@@ -1,0 +1,99 @@
+/* Main Container */
+.work-status-update {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+/* Page Heading */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #222;
+    margin-bottom: 1.5rem;
+}
+
+/* Update Form */
+.update-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+}
+
+.update-form textarea,
+.update-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+/* Button */
+.update-form button {
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    transition: background 0.3s ease-in-out;
+}
+
+.update-form button:hover {
+    background-color: #0056b3;
+}
+
+/* Updates List */
+.updates-list {
+    margin-top: 2rem;
+    width: 90%;
+    max-width: 500px;
+}
+
+.updates-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.updates-list li {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .update-form {
+        padding: 1.5rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .update-form textarea,
+    .update-form select {
+        padding: 0.6rem;
+    }
+
+    .update-form button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+}

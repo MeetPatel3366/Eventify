@@ -1,0 +1,54 @@
+.manage-tasks-page {
+    font-family: 'Arial', sans-serif;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: black;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.tasks-table th,
+.tasks-table td {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.tasks-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.tasks-table button {
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.tasks-table button:hover {
+    background-color: #555;
+}
+
+input[type="text"] {
+    padding: 0.5rem;
+    width: 80%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
