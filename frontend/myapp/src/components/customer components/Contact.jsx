@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import "../../styles/Contact.css";
+import { useState } from "react";
+import styles from "../../styles/Contact.module.css"; 
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -20,26 +20,22 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // In a real app, this is where you'd handle sending the message
     console.log("Form Data Submitted:", formData);
-
-    // Simulate form submission
     setSubmitted(true);
   };
 
   return (
-    <div className="contact-page">
+    <div className={styles['contact-page']}>
       <h1>Contact Us</h1>
 
       {submitted ? (
-        <div className="contact-thankyou">
+        <div className={styles['contact-thankyou']}>
           <h2>Thank you for contacting us!</h2>
           <p>We have received your message and will get back to you shortly.</p>
         </div>
       ) : (
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form className={styles['contact-form']} onSubmit={handleSubmit}>
+          <div className={styles['contact-form-group']}>
             <label htmlFor="name">Name</label>
             <input
               type="text"
@@ -51,7 +47,7 @@ const Contact = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className={styles['contact-form-group']}>
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -63,7 +59,7 @@ const Contact = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className={styles['contact-form-group']}>
             <label htmlFor="message">Message</label>
             <textarea
               id="message"
@@ -74,13 +70,13 @@ const Contact = () => {
             ></textarea>
           </div>
 
-          <button type="submit" className="btn-primary">
+          <button type="submit" className={styles['btn-primary']}>
             Submit
           </button>
         </form>
       )}
 
-      <div className="contact-info">
+      <div className={styles['contact-info']}>
         <h2>Get in Touch</h2>
         <ul>
           <li>

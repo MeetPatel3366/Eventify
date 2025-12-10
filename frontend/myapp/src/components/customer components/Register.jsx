@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Register.css"; // Custom CSS for styling
+import styles from "../../styles/Register.module.css";
 import axios from "axios";
 
 const Register = () => {
@@ -28,12 +28,13 @@ const Register = () => {
   };
 
   return (
-    <div className="register-container">
-      <div className="register-form">
+    <div className={styles['register-container']}>
+      <div className={styles['register-form']}>
         <h2>Eventify Registration</h2>
         {msg && <p>{msg}</p>}
         <form onSubmit={onSubmit}>
-          <div className="form-group">
+
+          <div className={styles['form-group']}>
             <label>Email:</label>
             <input
               type="email"
@@ -42,7 +43,8 @@ const Register = () => {
               required
             />
           </div>
-          <div className="form-group">
+
+          <div className={styles['form-group']}>
             <label>Password:</label>
             <input
               type="password"
@@ -51,7 +53,8 @@ const Register = () => {
               required
             />
           </div>
-          <div className="form-group">
+
+          <div className={styles['form-group']}>
             <label>Role:</label>
             <select value={role} onChange={(e) => setRole(e.target.value)}>
               <option value="admin">Admin</option>
@@ -59,7 +62,8 @@ const Register = () => {
               <option value="customer">Customer</option>
             </select>
           </div>
-          <button type="submit" className="register-button">
+
+          <button type="submit" className={styles['register-button']}>
             Register
           </button>
         </form>

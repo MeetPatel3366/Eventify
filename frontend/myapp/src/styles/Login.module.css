@@ -1,16 +1,14 @@
-.register-container {
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 95vh;
-  width: 100vw;
+  height: 94vh;
   background: linear-gradient(135deg, #4c6ef5, #15aabf);
-  overflow: hidden;
   padding: 20px;
 }
 
-.register-form {
-  width: 360px;
+.login-form {
+  width: 350px;
   background: #ffffff;
   padding: 2.5rem 2rem;
   border-radius: 15px;
@@ -24,7 +22,7 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.register-form h2 {
+.login-form h2 {
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
   font-weight: 700;
@@ -36,7 +34,7 @@
   margin-bottom: 1rem;
 }
 
-label {
+.login-form label {
   font-size: 0.9rem;
   font-weight: 600;
   color: #555;
@@ -44,27 +42,28 @@ label {
   display: block;
 }
 
-input,
-select {
+.login-form input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.7rem;
   border: 1px solid #ced4da;
   border-radius: 8px;
   font-size: 1rem;
   transition: border 0.3s ease, box-shadow 0.3s ease;
   outline: none;
+  box-sizing: border-box; 
+  color: black; 
+  background-color: white; 
 }
 
-input:focus,
-select:focus {
+.login-form input:focus {
   border-color: #4c6ef5;
   box-shadow: 0 0 5px rgba(76, 110, 245, 0.5);
 }
 
-button.register-button {
+.login-button {
   width: 100%;
-  padding: 0.85rem;
-  background: #28a745;
+  padding: 0.75rem;
+  background: #4c6ef5;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -75,8 +74,7 @@ button.register-button {
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-button.register-button:hover {
-  background: #218838;
+.login-button:hover {
+  background: #3b5bdb;
   transform: translateY(-2px);
 }
-
