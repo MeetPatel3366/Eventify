@@ -1,38 +1,35 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../styles/Login.css"; // Custom CSS for styling
+import "../../styles/Login.css";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
   const navigate = useNavigate();
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setError("Please enter both email and password.");
-      return;
-    }
+    const res = await axios.post("http://localhost:4000/api/auth/login", {
+      email, password
+    })
 
-    // Fetch users from local storage
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    
-    // Find the user with matching credentials
-    const user = users.find(u => u.email === email && u.password === password);
+    setMsg(res.data.message)
 
-    if (user) {
-      // Redirect based on role
-      if (user.role === "admin") {
-        navigate("/admin");
-      } else if (user.role === "employee") {
-        navigate("/employee");
-      } else if (user.role === "customer") {
-        navigate("/customer");
+    if (res.data.success) {
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.role);
+      if (res.data.role == "admin") {
+        navigate("/admin")
       }
-    } else {
-      setError("Invalid email or password.");
+      else if (res.data.role == "eventorganizer") {
+        navigate("/eventorganizer")
+      }
+      else {
+        navigate("/customer")
+      }
     }
   };
 
@@ -40,7 +37,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-form">
         <h2>Eventify Login</h2>
-        {error && <p className="error-message">{error}</p>}
+        {msg && <p>{msg}</p>}
         <form onSubmit={onSubmit}>
           <div className="form-group">
             <label>Email:</label>
