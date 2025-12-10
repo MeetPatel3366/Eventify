@@ -1,7 +1,10 @@
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
+
 import Login from "./components/customer components/Login";
-import HomePage from "./pages/customer pages/HomePage";
+import Register from "./components/customer components/Register";
 import Logout from "./components/customer components/Logout";
+
+import HomePage from "./pages/customer pages/HomePage";
 import EventsPage from "./pages/customer pages/EventsPage";
 import PaymentsPage from "./pages/customer pages/PaymentsPage";
 import AboutPage from "./pages/customer pages/AboutPage";
@@ -19,59 +22,151 @@ import ManageEventsPage from "./pages/admin pages/ManageEventsPage";
 import EmployeeHomePage from "./pages/employee pages/HomePage";
 import ManageTasksPage1 from "./pages/employee pages/ManageTasksPage";
 import WorkStatusUpdatesPage from "./pages/employee pages/WorkStatusUpdatesPage";
-import Register from "./components/customer components/Register";
+
+import RoleBasedRoute from "./components/RoleBasedRoute";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route exact path="/" element={<Login />} />
-        <Route exact path="/customer" element={<HomePage />} />
-        <Route exact path="/logout" element={<Logout />} />
-        <Route exact path="/customer/events" element={<EventsPage />} />
-        <Route exact path="/customer/payments" element={<PaymentsPage />} />
-        <Route exact path="/customer/about" element={<AboutPage />} />
-        <Route exact path="/customer/contact" element={<ContactPage />} />
-        <Route exact path="/register" element={<Register />} />
-        <Route
-          exact
-          path="/customer/event-progress"
-          element={<EventProgressPage />}
-        />
-        <Route
-          exact
-          path="/customer/recent-bookings"
-          element={<RecentBookingsPage />}
-        />
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/logout" element={<Logout />} />
 
-        <Route exact path="/admin" element={<AdminHomePage />} />
-        <Route exact path="/admin/add-employee" element={<AddEmployeePage />} />
-        <Route exact path="/admin/assign-task" element={<AssignTaskPage />} />
-        <Route exact path="/admin/manage-tasks" element={<ManageTasksPage />} />
-        <Route
-          exact
-          path="/admin/manage-bookings"
-          element={<ManageBookingsPage />}
-        />
-        <Route
-          exact
-          path="/admin/manage-events"
-          element={<ManageEventsPage />}
-        />
+      {/* Customer routes */}
+      <Route
+        path="/customer"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <HomePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/customer/events"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <EventsPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/customer/payments"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <PaymentsPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/customer/about"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <AboutPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/customer/contact"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <ContactPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/customer/event-progress"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <EventProgressPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/customer/recent-bookings"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <RecentBookingsPage />
+          </RoleBasedRoute>
+        }
+      />
 
-        <Route exact path="/employee" element={<EmployeeHomePage />} />
-        <Route
-          exact
-          path="/employee/manage-tasks"
-          element={<ManageTasksPage1 />}
-        />
-        <Route
-          exact
-          path="/employee/work-status-updates"
-          element={<WorkStatusUpdatesPage />}
-        />
-      </Routes>
-    </Router>
+      {/* Admin routes */}
+      <Route
+        path="/admin"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AdminHomePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/add-employee"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AddEmployeePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/assign-task"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AssignTaskPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/manage-tasks"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <ManageTasksPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/manage-bookings"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <ManageBookingsPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/manage-events"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <ManageEventsPage />
+          </RoleBasedRoute>
+        }
+      />
+
+      {/* Event Organizer routes */}
+      <Route
+        path="/eventorganizer"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <EmployeeHomePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/eventorganizer/manage-tasks"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <ManageTasksPage1 />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/eventorganizer/work-status-updates"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <WorkStatusUpdatesPage />
+          </RoleBasedRoute>
+        }
+      />
+    </Routes>
   );
 }
 
