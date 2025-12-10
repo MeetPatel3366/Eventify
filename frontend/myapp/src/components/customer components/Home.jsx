@@ -5,10 +5,13 @@ const Home = () => {
   return (
     <div className="homepage">
       <section className="hero">
-        <div className="hero-content">
-          <h1>Welcome to the Event Management System</h1>
-          <p>Plan, manage, and track all your events in one place!</p>
-          <a href="/customer/events" className="btn-primary">
+        <div className="overlay"></div>
+
+        <div className="hero-card">
+          <h1>Welcome to Eventify</h1>
+          <p>Your all-in-one platform to plan, manage and celebrate your events effortlessly.</p>
+
+          <a href="/customer/events" className="btn-explore">
             Explore Events
           </a>
         </div>
