@@ -15,6 +15,7 @@ PORT = process.env.PORT || 5000;
 //middlewares
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 //routing middlewares
 app.use("/api/auth",UserRoutes)
