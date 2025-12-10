@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 
 const EventSchema = mongoose.Schema({
-  title: {
+  name: {
+    type: String,
+    required: true,
+  },
+  category: {
     type: String,
     required: true,
   },
@@ -18,7 +22,10 @@ const EventSchema = mongoose.Schema({
   },
   price: {
     type: Number,
-    required: Boolean,
+    required: true,
+  },
+  image: {
+    type: String,
   },
 });
 
