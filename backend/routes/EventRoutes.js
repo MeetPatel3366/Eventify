@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const {
-  addEvents,
+  addEvent,
   getEvents,
   getEvent,
   updateEvent,
   deleteEvent,
 } = require("../controllers/EventController");
+const upload = require("../utils/multer");
 
-router.route("/").get(getEvents).post(addEvents);
-router.route("/:id").get(getEvent).put(updateEvent).delete(deleteEvent);
+router.post("/", upload.single("image"), addEvent);
+router.get("/", getEvents);
+router.get("/:id", getEvent);
+router.put("/:id", upload.single("image"), updateEvent);
+router.delete("/:id", deleteEvent);
 
 module.exports = router;
