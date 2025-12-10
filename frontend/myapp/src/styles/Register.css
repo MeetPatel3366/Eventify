@@ -1,65 +1,82 @@
 .register-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-  }
-  
-  .register-form {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 350px;
-    text-align: center;
-  }
-  
-  h2 {
-    margin-bottom: 1rem;
-    color: #333;
-  }
-  
-  .form-group {
-    margin-bottom: 1rem;
-    text-align: left;
-  }
-  
-  label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 0.3rem;
-  }
-  
-  input, select {
-    width: 100%;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  button.register-button {
-    width: 100%;
-    padding: 0.7rem;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-  }
-  
-  button.register-button:hover {
-    background-color: #218838;
-  }
-  
-  .error-message {
-    color: red;
-    margin-bottom: 1rem;
-  }
-  
-  .success-message {
-    color: green;
-    margin-bottom: 1rem;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(135deg, #4c6ef5, #15aabf);
+  overflow: hidden;
+  padding: 20px;
+}
+
+.register-form {
+  width: 360px;
+  background: #ffffff;
+  padding: 2.5rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.6s ease-in-out;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.register-form h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.form-group {
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+input:focus,
+select:focus {
+  border-color: #4c6ef5;
+  box-shadow: 0 0 5px rgba(76, 110, 245, 0.5);
+}
+
+button.register-button {
+  width: 100%;
+  padding: 0.85rem;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button.register-button:hover {
+  background: #218838;
+  transform: translateY(-2px);
+}
+
