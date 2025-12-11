@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "../../styles/Login.module.css";
-import axios from "axios";
 import { setAuth } from "../../store/authSlice";
 import { useDispatch } from "react-redux";
+import authApi from "../../../api/authApi";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,9 +15,7 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await axios.post("http://localhost:4000/api/auth/login", {
-      email, password
-    })
+    const res = await authApi.login(email, password)
 
     setMsg(res.data.message)
 
@@ -70,6 +68,7 @@ const Login = () => {
             Login
           </button>
         </form>
+        <p>Don&apos;t Have an account? <NavLink to="/register">Register</NavLink></p>
       </div>
     </div>
   );

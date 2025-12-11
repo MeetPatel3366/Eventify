@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "../../styles/Register.module.css";
-import axios from "axios";
+import authApi from "../../../api/authApi";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +17,7 @@ const Register = () => {
       return;
     }
 
-    const res = await axios.post("http://localhost:4000/api/auth/register", { email, password, role })
+    const res = await authApi.register(email, password, role)
     setMsg(res.data.message);
 
     if (res.data.success) {
@@ -67,6 +67,7 @@ const Register = () => {
             Register
           </button>
         </form>
+        <p>Already have an account? <NavLink to="/">Login</NavLink></p>
       </div>
     </div>
   );

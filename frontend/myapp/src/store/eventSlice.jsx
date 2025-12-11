@@ -1,32 +1,28 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import eventApi from "../../api/eventApi";
 
 export const fetchEvents = createAsyncThunk("events/fetchAll", async () => {
-    const res = await axios.get("http://localhost:4000/api/events/");
+    const res = await eventApi.fetchAll();
     return res.data.events;
 })
 
 export const fetchEvent = createAsyncThunk("events/fetchOne", async (id) => {
-    const res = await axios.get(`http://localhost:4000/api/events/${id}`);
+    const res = await eventApi.fetchOne(id);
     return res.data.event;
 })
 
 export const addEvent = createAsyncThunk("events/add", async (formData) => {
-    const res = await axios.post("http://localhost:4000/api/events/", formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-    })
+    const res = await eventApi.add(formData)
     return res.data.event;
 })
 
 export const updateEvent = createAsyncThunk("events/update", async ({ id, formData }) => {
-    const res = await axios.put(`http://localhost:4000/api/events/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
-    });
+    const res = await eventApi.update(id,formData)
     return res.data.updatedEvent;
 })
 
 export const deleteEvent = createAsyncThunk("events/delete", async (id) => {
-    await axios.delete(`http://localhost:4000/api/events/${id}`)
+    await eventApi.delete(id)
     return id;
 })
 
