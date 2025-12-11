@@ -1,4 +1,5 @@
 const Event = require("../models/EventModel.js");
+const { deleteImage } = require("../utils/deleteFile.js");
 
 const addEvent = async (req, res) => {
   try {
@@ -86,6 +87,7 @@ const updateEvent = async (req, res) => {
     event.price = req.body.price || event.price;
 
     if (req.file) {
+      deleteImage(event.image);
       event.image = req.file.filename;
     }
 
@@ -152,6 +154,9 @@ const deleteEvent = async (req, res) => {
         message: `event not found with id: ${eventID}`,
       });
     }
+
+    deleteImage(event.image);
+
     console.log("delete event : ", event);
 
     return res.status(200).json({
