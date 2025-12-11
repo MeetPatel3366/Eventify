@@ -14,6 +14,15 @@ const addEvent = async (req, res) => {
       image: req.file ? req.file.filename : null,
     });
 
+    console.log("newEvent: ", newEvent);
+    console.log("newEvent._doc", newEvent._doc);
+    console.log(
+      "image: ",
+      req.file
+        ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+        : null
+    );
+
     return res.status(201).json({
       success: true,
       message: "event created successfully",
@@ -40,6 +49,9 @@ const getEvents = async (req, res) => {
       ...event._doc,
       image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
     }));
+
+    console.log("events: ", updatedEvents);
+
     return res.status(200).json({
       success: true,
       message: "events fetched successfully",
@@ -79,6 +91,8 @@ const updateEvent = async (req, res) => {
 
     const updatedEvent = await event.save();
 
+    console.log("updated Event : ", updatedEvent);
+
     return res.status(200).json({
       success: true,
       message: "event updated successfully",
@@ -107,6 +121,9 @@ const getEvent = async (req, res) => {
         message: `event not found with id: ${eventID}`,
       });
     }
+
+    console.log("event : ", event);
+
     return res.status(200).json({
       success: true,
       message: `event ${eventID} fetched successfully`,
@@ -135,9 +152,11 @@ const deleteEvent = async (req, res) => {
         message: `event not found with id: ${eventID}`,
       });
     }
+    console.log("delete event : ", event);
+
     return res.status(200).json({
       success: true,
-      message: `event deleted with id: ${eventID}`,
+      message: `event deleted with id: ${eventID} successfully`,
     });
   } catch (error) {
     return res.status(500).json({
