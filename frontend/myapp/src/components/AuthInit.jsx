@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { verifyToken } from '../store/authSlice';
+import { stopLoding, verifyToken } from '../store/authSlice';
 
 // eslint-disable-next-line react/prop-types
 export const AuthInit = ({ children }) => {
@@ -11,8 +11,7 @@ export const AuthInit = ({ children }) => {
         if (localStorage.getItem("token")) {
             dispatch(verifyToken());
         } else {
-            //no token -> stop loading
-            dispatch({ type: "auth/verifyToken/fulfilled" });
+            dispatch(stopLoding())
         }
     }, [])
 

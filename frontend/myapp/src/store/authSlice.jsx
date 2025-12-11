@@ -1,14 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import authApi from "../../api/authApi";
 
 export const verifyToken=createAsyncThunk(
     "auth/verifyToken",
     async(_,{getState,rejectWithValue})=>{
         try {
             const token=getState().auth.token
-            const res=await axios.get("http://localhost:4000/api/auth/verify", {
-                headers: { Authorization: `Bearer ${token}` }
-            })
+            const res=await authApi.verifyToken(token)
     
             if(!res.data.success)
             {
@@ -40,6 +38,9 @@ const authSlice=createSlice({
             state.token=null;
             state.role=null;
             localStorage.clear();
+        },
+        stopLoding:(state)=>{
+            state.loading=false;
         }
     },
     extraReducers:(builder)=>{
@@ -61,5 +62,5 @@ const authSlice=createSlice({
     }
 })
 
-export const {setAuth,logout}=authSlice.actions;
+export const {setAuth,logout,stopLoding}=authSlice.actions;
 export default authSlice.reducer;
