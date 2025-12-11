@@ -1,12 +1,11 @@
 import { Navigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
-import { useContext } from "react";
+import { useSelector } from "react-redux";
 
 // eslint-disable-next-line react/prop-types
 const RoleBasedRoute = ({ children, allowedRoles }) => {
-    const {token,role,loading}=useContext(AuthContext)
+    const {token,role,loading}=useSelector((state)=>state.auth)
 
-    if (loading) return null;
+    if (loading) return <div>Loading...</div>;
 
     if (!token) {
         return <Navigate to="/" replace />;
