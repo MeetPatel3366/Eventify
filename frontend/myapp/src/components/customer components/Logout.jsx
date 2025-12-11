@@ -1,11 +1,14 @@
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../store/authSlice";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const dispatch=useDispatch()
 
   useEffect(() => {
-    localStorage.removeItem("token"); // Example if using localStorage
+    dispatch(logout())
     navigate("/");
   }, [navigate]);
 

@@ -1,15 +1,16 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "../../styles/Login.module.css"; 
+import styles from "../../styles/Login.module.css";
 import axios from "axios";
-import { AuthContext } from "../AuthContext";
+import { setAuth } from "../../store/authSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
-  const { setRole, setToken } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+  const disptach = useDispatch()
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -21,11 +22,13 @@ const Login = () => {
     setMsg(res.data.message)
 
     if (res.data.success) {
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.role);
+      const token = res.data.token;
+      const role = res.data.role;
 
-      setToken(res.data.token);
-      setRole(res.data.role)
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
+      disptach(setAuth({ token, role }))
 
       if (res.data.role == "admin") {
         navigate("/admin")
