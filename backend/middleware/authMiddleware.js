@@ -57,4 +57,4 @@ const isAdminOrOrganizer = (req, res, next) => {
   });
 };
 
-module.exports = { isLoggedIn };
+module.exports = { isLoggedIn, isAdmin, isEventOrganizer, isAdminOrOrganizer };

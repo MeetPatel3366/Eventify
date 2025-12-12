@@ -12,6 +12,8 @@ const addEvent = async (req, res) => {
       location,
       description,
       price,
+      organizerId: req.user.id,
+      status: "pending",
       image: req.file ? req.file.filename : null,
     });
 
@@ -26,7 +28,7 @@ const addEvent = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "event created successfully",
+      message: "event submitted for approval",
       event: {
         ...newEvent._doc,
         image: req.file
