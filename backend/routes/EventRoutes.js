@@ -8,11 +8,12 @@ const {
   deleteEvent,
 } = require("../controllers/EventController");
 const upload = require("../utils/multer");
+const { isLoggedIn } = require("../middleware/authMiddleware");
 
-router.post("/", upload.single("image"), addEvent);
-router.get("/", getEvents);
-router.get("/:id", getEvent);
-router.put("/:id", upload.single("image"), updateEvent);
-router.delete("/:id", deleteEvent);
+router.post("/", isLoggedIn, upload.single("image"), addEvent);
+router.get("/", isLoggedIn, getEvents);
+router.get("/:id", isLoggedIn, getEvent);
+router.put("/:id", isLoggedIn, upload.single("image"), updateEvent);
+router.delete("/:id", isLoggedIn, deleteEvent);
 
 module.exports = router;
