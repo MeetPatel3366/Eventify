@@ -46,7 +46,7 @@ const addEvent = async (req, res) => {
 
 const getEvents = async (req, res) => {
   try {
-    const events = await Event.find({});
+    const events = await Event.find({ status: "approved" });
 
     const updatedEvents = events.map((event) => ({
       ...event._doc,
@@ -57,7 +57,7 @@ const getEvents = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "events fetched successfully",
+      message: "approved events fetched successfully",
       events: updatedEvents,
     });
   } catch (error) {
@@ -230,4 +230,12 @@ const rejectEvent = async (req, res) => {
   }
 };
 
-module.exports = { getEvent, getEvents, addEvent, updateEvent, deleteEvent,approveEvent,rejectEvent };
+module.exports = {
+  getEvent,
+  getEvents,
+  addEvent,
+  updateEvent,
+  deleteEvent,
+  approveEvent,
+  rejectEvent
+};
