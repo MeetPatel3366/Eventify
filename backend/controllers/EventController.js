@@ -230,6 +230,54 @@ const rejectEvent = async (req, res) => {
   }
 };
 
+const getMyEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ organizerId: req.user.id });
+
+    if (events.length == 0) {
+      return res.status(404).json({
+        success: false,
+        message: "events not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "events fetched successfully",
+      events,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getPendingEvents = async (req, res) => {
+  try {
+    const events = await Event.find({ status: "pending" });
+
+    if (events.length == 0) {
+      return res.status(404).json({
+        success: false,
+        message: "no pending events found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "pending events fetched successfully",
+      events,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getEvent,
   getEvents,
@@ -237,5 +285,7 @@ module.exports = {
   updateEvent,
   deleteEvent,
   approveEvent,
-  rejectEvent
+  rejectEvent,
+  getMyEvents,
+  getPendingEvents
 };
