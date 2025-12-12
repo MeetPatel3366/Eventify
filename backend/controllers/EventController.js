@@ -173,4 +173,61 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = { getEvent, getEvents, addEvent, updateEvent, deleteEvent };
+const approveEvent = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "event not found",
+      });
+    }
+
+    event.status = "approved";
+    event.feedback = "";
+    await event.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Event approved successfully",
+      event,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const rejectEvent = async (req, res) => {
+  try {
+    const { feedback } = req.body;
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "event not found",
+      });
+    }
+
+    event.status = "rejected";
+    event.feedback = feedback || "no feedback provided";
+
+    await event.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "event rejected",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { getEvent, getEvents, addEvent, updateEvent, deleteEvent,approveEvent,rejectEvent };
