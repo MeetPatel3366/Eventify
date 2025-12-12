@@ -8,6 +8,8 @@ const {
   deleteEvent,
   approveEvent,
   rejectEvent,
+  getMyEvents,
+  getPendingEvents,
 } = require("../controllers/EventController");
 const upload = require("../utils/multer");
 const {
@@ -23,10 +25,27 @@ router.post(
   isEventOrganizer,
   addEvent
 );
+
 router.get("/", isLoggedIn, getEvents);
+
 router.get("/:id", isLoggedIn, getEvent);
-router.put("/:id", isLoggedIn, upload.single("image"), updateEvent);
-router.delete("/:id", isLoggedIn, deleteEvent);
+
+router.put(
+  "/:id",
+  upload.single("image"),
+  isLoggedIn,
+  isEventOrganizer,
+  updateEvent
+);
+
+router.delete("/:id", isLoggedIn, isEventOrganizer, deleteEvent);
+
 router.patch("/approve/:id", isLoggedIn, isAdmin, approveEvent);
+
 router.patch("/reject/:id", isLoggedIn, isAdmin, rejectEvent);
+
+router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
+
+router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
+
 module.exports = router;
