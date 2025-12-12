@@ -27,6 +27,19 @@ const EventSchema = mongoose.Schema({
   image: {
     type: String,
   },
+  status: {
+    type: string,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+  organizerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  feedback: {
+    type: String,
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("Event", EventSchema);
