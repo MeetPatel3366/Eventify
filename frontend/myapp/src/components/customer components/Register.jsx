@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import authApi from "../../../api/authApi";
+import authApi from "../../api/authApi";
+
 
 export default function Register() {
   const [email, setEmail] = useState("");

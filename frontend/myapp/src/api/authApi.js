@@ -1,4 +1,4 @@
-import { api } from "./axiosInstance";
+import api from "./axiosInstance";
 
 const authApi = {
   register: (email, password, role) =>
@@ -9,7 +9,7 @@ const authApi = {
       email,
       password,
     }),
-    
+
   verifyToken: (token) =>
     api.get("/auth/verify", {
       headers: { Authorization: `Bearer ${token}` },

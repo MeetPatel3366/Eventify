@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import authApi from "../../api/authApi";
+import authApi from "../api/authApi";
 
 export const verifyToken=createAsyncThunk(
     "auth/verifyToken",

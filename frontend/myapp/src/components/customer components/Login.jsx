@@ -2,7 +2,8 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAuth } from "../../store/authSlice";
-import authApi from "../../../api/authApi";
+import authApi from "../../api/authApi";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");

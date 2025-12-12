@@ -1,4 +1,4 @@
-import { api } from "./axiosInstance";
+import api from "./axiosInstance";
 
 const eventApi = {
   fetchAll: () => api.get("/events"),
@@ -18,4 +18,4 @@ const eventApi = {
   delete: (id) => api.delete(`/events/${id}`),
 };
 
-export default eventApi
+export default eventApi;
