@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/employee styles/WorkStatusUpdates.css";
 
 const WorkStatusUpdate = () => {
   const [update, setUpdate] = useState("");

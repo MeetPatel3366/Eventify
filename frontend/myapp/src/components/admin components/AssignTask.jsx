@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import "../../styles/admin styles/AssignTask.css";
 
 const AssignTask = () => {
   const [taskData, setTaskData] = useState({

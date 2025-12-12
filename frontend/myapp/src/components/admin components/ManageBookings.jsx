@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/admin styles/ManageBookings.css";
 
 const ManageBookings = () => {
   // Sample data for bookings

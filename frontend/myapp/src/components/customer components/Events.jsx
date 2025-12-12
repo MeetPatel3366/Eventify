@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents } from "../../store/eventSlice";
-import "../../styles/Events.css";
 
 const Events = () => {
   const dispatch = useDispatch();

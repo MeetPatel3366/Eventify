@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/admin styles/AddEmployee.css";
 
 const AddEmployee = () => {
   const [employee, setEmployee] = useState({

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/admin styles/ManageCategories.css";
 
 const ManageCategories = () => {
   const [categories, setCategories] = useState([

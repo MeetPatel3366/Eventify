@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/employee styles/Home.css";
 
 const EmployeeHome = () => {
   // Assume you get this data for an individual employee from an API or context

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/admin styles/ManageTasks.css";
 
 const ManageTasks = () => {
   // Sample data for tasks

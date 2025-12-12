@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/RecentBookings.css";
 
 const RecentBookings = () => {
   const [bookings] = useState([

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../../styles/employee styles/EventManagement.css";
 
 const EventManagement = () => {
   // Predefined categories (Admin-defined)
