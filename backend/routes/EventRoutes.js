@@ -18,6 +18,10 @@ const {
   isAdmin,
 } = require("../middleware/authMiddleware");
 
+router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
+
+router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
+
 router.post(
   "/",
   upload.single("image"),
@@ -44,8 +48,5 @@ router.patch("/approve/:id", isLoggedIn, isAdmin, approveEvent);
 
 router.patch("/reject/:id", isLoggedIn, isAdmin, rejectEvent);
 
-router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
-
-router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
 
 module.exports = router;
