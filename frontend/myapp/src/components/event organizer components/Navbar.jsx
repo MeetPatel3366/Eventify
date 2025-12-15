@@ -20,7 +20,7 @@ const Navbar = () => {
         <NavLink to="/organizer/events/add" className="hover:text-indigo-400">
           Add Event
         </NavLink>
-        <NavLink to="/events" className="hover:text-indigo-400">
+        <NavLink to="/organizer/allevents" className="hover:text-indigo-400">
           All Events
         </NavLink>
 

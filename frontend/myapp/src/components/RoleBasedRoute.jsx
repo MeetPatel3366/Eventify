@@ -14,7 +14,7 @@ const RoleBasedRoute = ({ children, allowedRoles }) => {
     // eslint-disable-next-line react/prop-types
     if (!allowedRoles.includes(role)) {
         if (role === "admin") return <Navigate to="/admin" replace />;
-        if (role === "eventorganizer") return <Navigate to="/eventorganizer" replace />;
+        if (role === "eventorganizer") return <Navigate to="/organizer" replace />;
         return <Navigate to="/customer" replace />;
     }
 

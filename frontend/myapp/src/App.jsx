@@ -23,6 +23,7 @@ import RoleBasedRoute from "./components/RoleBasedRoute";
 import Homepage from "./pages/event organizer pages/HomePage";
 import OrganizerDashboardPage from "./pages/event organizer pages/OrganizerDashboardPage";
 import MyEventsPage from "./pages/event organizer pages/MyEventsPage";
+import AllEventsPage from "./pages/event organizer pages/AllEventsPage";
 
 
 function App() {
@@ -163,6 +164,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
             <MyEventsPage/>
+          </RoleBasedRoute>
+        }
+      />
+       <Route
+        path="/organizer/allevents"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <AllEventsPage/>
           </RoleBasedRoute>
         }
       />

@@ -25,7 +25,7 @@ export default function Login() {
       dispatch(setAuth({ token, role }));
 
       if (role === "admin") navigate("/admin");
-      else if (role === "eventorganizer") navigate("/eventorganizer");
+      else if (role === "eventorganizer") navigate("/organizer");
       else navigate("/customer");
     }
   };
