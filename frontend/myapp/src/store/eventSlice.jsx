@@ -11,13 +11,18 @@ export const fetchEvent = createAsyncThunk("events/fetchOne", async (id) => {
     return res.data.event;
 })
 
+export const fetchMyEvents = createAsyncThunk("events/fetchMy", async () => {
+    const res = await eventApi.fetchMy();
+    return res.data.events;
+})
+
 export const addEvent = createAsyncThunk("events/add", async (formData) => {
     const res = await eventApi.add(formData)
     return res.data.event;
 })
 
 export const updateEvent = createAsyncThunk("events/update", async ({ id, formData }) => {
-    const res = await eventApi.update(id,formData)
+    const res = await eventApi.update(id, formData)
     return res.data.updatedEvent;
 })
 
@@ -30,6 +35,7 @@ const eventSlice = createSlice({
     name: "event",
     initialState: {
         events: [],
+        myEvents: [],
         event: null,
         loading: false,
         error: null
@@ -51,6 +57,14 @@ const eventSlice = createSlice({
             .addCase(fetchEvent.fulfilled, (state, action) => {
                 state.loading = false;
                 state.event = action.payload;
+            })
+
+            .addCase(fetchMyEvents.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchMyEvents.fulfilled, (state, action) => {
+                state.loading = false;
+                state.myEvents = action.payload;
             })
 
             .addCase(addEvent.pending, (state) => {

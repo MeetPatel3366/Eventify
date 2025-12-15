@@ -5,6 +5,8 @@ const eventApi = {
 
   fetchOne: (id) => api.get(`/events/${id}`),
 
+  fetchMy: () => api.get(`/events/my`),
+
   add: (formData) =>
     api.post(`/events`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
