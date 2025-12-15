@@ -20,7 +20,7 @@ const About = () => {
           </NavLink>
         </div>
         <img
-          src="/images/about1.jpeg"
+          src="https://images.unsplash.com/photo-1511578314322-379afb476865"
           alt="Attend Events"
           className="rounded-3xl shadow-2xl border border-white/20"
         />
@@ -32,7 +32,7 @@ const About = () => {
 
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 text-center shadow-xl">
             <img
-              src="/images/about2.jpeg"
+              src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7"
               alt="Browse Events"
               className="h-40 w-full object-cover rounded-2xl mb-4"
             />
@@ -44,7 +44,7 @@ const About = () => {
 
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 text-center shadow-xl">
             <img
-              src="/images/about3.jpeg"
+              src="https://images.unsplash.com/photo-1521791136064-7986c2920216"
               alt="Register"
               className="h-40 w-full object-cover rounded-2xl mb-4"
             />
@@ -56,7 +56,7 @@ const About = () => {
 
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 text-center shadow-xl">
             <img
-              src="/images/about4.jpeg"
+              src="https://images.unsplash.com/photo-1503428593586-e225b39bddfe"
               alt="Attend"
               className="h-40 w-full object-cover rounded-2xl mb-4"
             />
@@ -79,7 +79,7 @@ const About = () => {
           </ul>
         </div>
         <img
-          src="/images/about5.jpeg"
+          src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30"
           alt="Happy Audience"
           className="rounded-3xl shadow-xl border border-white/20"
         />
