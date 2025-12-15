@@ -48,6 +48,14 @@ const getEvents = async (req, res) => {
   try {
     const events = await Event.find({ status: "approved" });
 
+    if (events.length == 0) {
+      return res.status(200).json({
+        success: true,
+        message: "no approved events found at this time.",
+        events: [],
+      });
+    }
+
     const updatedEvents = events.map((event) => ({
       ...event._doc,
       image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
@@ -287,5 +295,5 @@ module.exports = {
   approveEvent,
   rejectEvent,
   getMyEvents,
-  getPendingEvents
+  getPendingEvents,
 };
