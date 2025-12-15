@@ -19,11 +19,8 @@ import ManageTasksPage from "./pages/admin pages/ManageTasksPage";
 import ManageBookingsPage from "./pages/admin pages/ManageBookingsPage";
 import ManageEventsPage from "./pages/admin pages/ManageEventsPage";
 
-import EmployeeHomePage from "./pages/employee pages/HomePage";
-import ManageTasksPage1 from "./pages/employee pages/ManageTasksPage";
-import WorkStatusUpdatesPage from "./pages/employee pages/WorkStatusUpdatesPage";
-
 import RoleBasedRoute from "./components/RoleBasedRoute";
+import Homepage from "./pages/event organizer pages/HomePage";
 
 function App() {
   return (
@@ -143,29 +140,14 @@ function App() {
 
       {/* Event Organizer routes */}
       <Route
-        path="/eventorganizer"
+        path="/organizer"
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <EmployeeHomePage />
+            <Homepage />
           </RoleBasedRoute>
         }
       />
-      <Route
-        path="/eventorganizer/manage-tasks"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <ManageTasksPage1 />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/eventorganizer/work-status-updates"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <WorkStatusUpdatesPage />
-          </RoleBasedRoute>
-        }
-      />
+     
     </Routes>
   );
 }
