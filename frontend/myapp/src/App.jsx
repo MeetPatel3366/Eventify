@@ -25,7 +25,7 @@ import OrganizerDashboardPage from "./pages/event organizer pages/OrganizerDashb
 import MyEventsPage from "./pages/event organizer pages/MyEventsPage";
 import AllEventsPage from "./pages/event organizer pages/AllEventsPage";
 import AddEventPage from "./pages/event organizer pages/AddEventPage";
-
+import EditEventPage from "./pages/event organizer pages/EditEventPage";
 
 function App() {
   return (
@@ -181,6 +181,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
             <AddEventPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events/edit/:id"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <EditEventPage />
           </RoleBasedRoute>
         }
       />
