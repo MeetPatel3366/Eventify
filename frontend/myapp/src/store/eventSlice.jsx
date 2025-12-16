@@ -73,6 +73,7 @@ const eventSlice = createSlice({
             .addCase(addEvent.fulfilled, (state, action) => {
                 state.loading = false
                 state.events.push(action.payload)
+                state.myEvents.push(action.payload)
             })
 
             .addCase(updateEvent.pending, (state) => {
