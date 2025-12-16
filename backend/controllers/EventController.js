@@ -3,12 +3,12 @@ const { deleteImage } = require("../utils/deleteFile.js");
 
 const addEvent = async (req, res) => {
   try {
-    const { name, category, date, location, description, price } = req.body;
+    const { name, category, datetime, location, description, price } = req.body;
 
     const newEvent = await Event.create({
       name,
       category,
-      date,
+      datetime: new Date(datetime),
       location,
       description,
       price,
