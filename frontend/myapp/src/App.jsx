@@ -24,6 +24,7 @@ import Homepage from "./pages/event organizer pages/HomePage";
 import OrganizerDashboardPage from "./pages/event organizer pages/OrganizerDashboardPage";
 import MyEventsPage from "./pages/event organizer pages/MyEventsPage";
 import AllEventsPage from "./pages/event organizer pages/AllEventsPage";
+import AddEventPage from "./pages/event organizer pages/AddEventPage";
 
 
 function App() {
@@ -151,32 +152,40 @@ function App() {
           </RoleBasedRoute>
         }
       />
-       <Route
+      <Route
         path="/organizer/dashboard"
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <OrganizerDashboardPage/>
+            <OrganizerDashboardPage />
           </RoleBasedRoute>
         }
       />
-       <Route
+      <Route
         path="/organizer/events"
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <MyEventsPage/>
+            <MyEventsPage />
           </RoleBasedRoute>
         }
       />
-       <Route
+      <Route
         path="/organizer/allevents"
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <AllEventsPage/>
+            <AllEventsPage />
           </RoleBasedRoute>
         }
       />
- 
-     
+      <Route
+        path="/organizer/events/add"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <AddEventPage />
+          </RoleBasedRoute>
+        }
+      />
+
+
     </Routes>
   );
 }
