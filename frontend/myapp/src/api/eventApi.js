@@ -7,15 +7,9 @@ const eventApi = {
 
   fetchMy: () => api.get(`/events/my`),
 
-  add: (formData) =>
-    api.post(`/events`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  add: (formData) => api.post(`/events`, formData),
 
-  update: (id, formData) =>
-    api.put(`/events/${id}`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+  update: (id, formData) => api.put(`/events/${id}`, formData),
 
   delete: (id) => api.delete(`/events/${id}`),
 };
