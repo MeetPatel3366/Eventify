@@ -1,15 +1,24 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 
 const register = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { username, email, password, confirmpassword, role } = req.body;
 
-    if (!email || !password) {
+    if (!username || !email || !password || !confirmpassword) {
       return res.status(400).json({
         success: false,
         message: "all fields required",
+      });
+    }
+
+    if (role == "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "admin registeration is not allowed",
       });
     }
 
@@ -17,13 +26,65 @@ const register = async (req, res) => {
     if (exist) {
       return res.status(400).json({
         success: false,
-        message: "Email already exists",
+        message: "user already exists",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (password !== confirmpassword) {
+      return res.status(400).json({
+        success: false,
+        message: "passwords do not match",
+      });
+    }
 
-    await User.create({ email, password: hashedPassword, role });
+    const PASSWORD_REGEX =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!PASSWORD_REGEX.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "password must be at least 8 characters long and include an uppercase letter, lowercase letter, number, and a special character.",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const otp = crypto.randomInt(100000, 1000000).toString();
+    const otpExpiry = Date.now() + 10 * 60 * 1000;
+
+    await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      role,
+      otp,
+      otpExpiry,
+    });
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILHOST,
+      port: parseInt(process.env.MAILPORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USERNAME,
+      to: email,
+      subject: "Eventify - Email Verification OTP",
+      html: `
+      <h2>Email Verification</h2>
+      <p>Your OTP for Eventify registration is:</p>
+      <h1>${otp}</h1>
+      <p>This OTP will expire in 10 minutes.</p>
+    `,
+    };
+
+    await transporter.sendMail(mailOptions);
 
     res.status(201).json({
       success: true,
@@ -64,9 +125,13 @@ const login = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
     return res.status(200).json({
       success: true,
