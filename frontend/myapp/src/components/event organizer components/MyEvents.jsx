@@ -32,14 +32,14 @@ const MyEvents = () => {
     }
 
     if (a.status === "approved") {
-      const aUpcoming = new Date(a.date) >= now;
-      const bUpcoming = new Date(b.date) >= now;
+      const aUpcoming = new Date(a.datetime) >= now;
+      const bUpcoming = new Date(b.datetime) >= now;
 
       if (aUpcoming !== bUpcoming) {
         return bUpcoming - aUpcoming;
       }
 
-      return new Date(a.date) - new Date(b.date);
+      return new Date(a.datetime) - new Date(b.datetime);
     }
 
     return 0;
@@ -77,8 +77,18 @@ const MyEvents = () => {
                   {event.name}
                 </h3>
 
-                <p className="text-gray-300 text-sm mb-2">
-                  {new Date(event.date).toLocaleDateString()} • {event.location}
+                <p className="text-gray-300 text-sm mb-2 flex items-center gap-3">
+                  <span>
+                    {new Date(event.datetime).toLocaleString("en-IN", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "numeric",
+                    })}
+                  </span>
+                  <span>•</span>
+                  <span>{event.location}</span>
                 </p>
 
                 <p className="text-gray-400 text-sm mb-3 capitalize">

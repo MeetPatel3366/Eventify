@@ -6,7 +6,7 @@ const Events = () => {
   const dispatch = useDispatch();
   const { events, loading } = useSelector((state) => state.event);
 
-  const upcomingEvents = events.filter((event) => new Date(event.date) >= new Date)
+  const upcomingEvents = events.filter((event) => new Date(event.datetime) >= new Date())
 
   useEffect(() => {
     dispatch(fetchEvents());
@@ -44,10 +44,12 @@ const Events = () => {
             </div>
             <div className="flex items-center justify-between text-gray-300 text-sm mb-3">
               <span>
-                {new Date(event.date).toLocaleDateString("en-IN", {
+                {new Date(event.datetime).toLocaleString("en-IN", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
+                  hour: "2-digit",
+                  minute: "numeric"
                 })}
               </span>
               <span>{event.location}</span>
