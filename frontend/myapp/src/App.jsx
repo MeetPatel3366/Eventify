@@ -22,6 +22,7 @@ import AllEventsPage from "./pages/event organizer pages/AllEventsPage";
 import AddEventPage from "./pages/event organizer pages/AddEventPage";
 import EditEventPage from "./pages/event organizer pages/EditEventPage";
 import VerifyOtp from "./components/customer components/VerifyOtp";
+import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
+      <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
 
       {/* Customer routes */}
       <Route

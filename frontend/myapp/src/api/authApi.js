@@ -21,11 +21,17 @@ const authApi = {
       headers: { Authorization: `Bearer ${token}` },
     }),
 
-  verifyOtp: (email, otp) => 
+  verifyOtp: (email, otp) =>
     api.post("/auth/verify-otp", {
       email,
       otp,
-    })
+    }),
+
+  verifyLoginOtp: (email, otp) =>
+    api.post("/auth/verify-login-otp", {
+      email,
+      otp,
+    }),
 };
 
 export default authApi;
