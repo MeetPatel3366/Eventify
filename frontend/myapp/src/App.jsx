@@ -13,11 +13,6 @@ import EventProgressPage from "./pages/customer pages/EventProgressPage";
 import RecentBookingsPage from "./pages/customer pages/RecentBookingsPage";
 
 import AdminHomePage from "./pages/admin pages/HomePage";
-import AddEmployeePage from "./pages/admin pages/AddEmployeePage";
-import AssignTaskPage from "./pages/admin pages/AssignTaskPage";
-import ManageTasksPage from "./pages/admin pages/ManageTasksPage";
-import ManageBookingsPage from "./pages/admin pages/ManageBookingsPage";
-import ManageEventsPage from "./pages/admin pages/ManageEventsPage";
 
 import RoleBasedRoute from "./components/RoleBasedRoute";
 import Homepage from "./pages/event organizer pages/HomePage";
@@ -26,6 +21,7 @@ import MyEventsPage from "./pages/event organizer pages/MyEventsPage";
 import AllEventsPage from "./pages/event organizer pages/AllEventsPage";
 import AddEventPage from "./pages/event organizer pages/AddEventPage";
 import EditEventPage from "./pages/event organizer pages/EditEventPage";
+import VerifyOtp from "./components/customer components/VerifyOtp";
 
 function App() {
   return (
@@ -34,10 +30,11 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/logout" element={<Logout />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
 
       {/* Customer routes */}
       <Route
-        path="/customer"
+        path="/home"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <HomePage />
@@ -45,7 +42,7 @@ function App() {
         }
       />
       <Route
-        path="/customer/events"
+        path="/events"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <EventsPage />
@@ -53,7 +50,7 @@ function App() {
         }
       />
       <Route
-        path="/customer/payments"
+        path="/payments"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <PaymentsPage />
@@ -61,7 +58,7 @@ function App() {
         }
       />
       <Route
-        path="/customer/about"
+        path="/about"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <AboutPage />
@@ -69,7 +66,7 @@ function App() {
         }
       />
       <Route
-        path="/customer/contact"
+        path="/contact"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <ContactPage />
@@ -77,7 +74,7 @@ function App() {
         }
       />
       <Route
-        path="/customer/event-progress"
+        path="/event-progress"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <EventProgressPage />
@@ -85,7 +82,7 @@ function App() {
         }
       />
       <Route
-        path="/customer/recent-bookings"
+        path="/recent-bookings"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <RecentBookingsPage />
@@ -102,50 +99,20 @@ function App() {
           </RoleBasedRoute>
         }
       />
-      <Route
-        path="/admin/add-employee"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <AddEmployeePage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/assign-task"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <AssignTaskPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/manage-tasks"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <ManageTasksPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/manage-bookings"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <ManageBookingsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/manage-events"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <ManageEventsPage />
-          </RoleBasedRoute>
-        }
-      />
+
 
       {/* Event Organizer routes */}
+
       <Route
-        path="/organizer"
+        path="/organizer/register"
+        element={
+          <Register />
+        }
+      />
+      <Route path="/organizer/verify-otp" element={<VerifyOtp />} />
+      <Route path="/organizer" element={<Login />} />
+      <Route
+        path="/organizer/home"
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
             <Homepage />

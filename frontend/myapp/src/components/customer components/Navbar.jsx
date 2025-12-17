@@ -12,22 +12,22 @@ const Navbar = () => {
 
         <ul className="flex items-center gap-6 text-white font-medium">
           <li>
-            <Link className="hover:text-indigo-300 transition" to="/customer">Home</Link>
+            <Link className="hover:text-indigo-300 transition" to="/home">Home</Link>
           </li>
           <li>
-            <Link className="hover:text-indigo-300 transition" to="/customer/events">Events</Link>
+            <Link className="hover:text-indigo-300 transition" to="/events">Events</Link>
           </li>
           <li>
-            <Link className="hover:text-indigo-300 transition" to="/customer/event-progress">Events Progress</Link>
+            <Link className="hover:text-indigo-300 transition" to="/event-progress">Events Progress</Link>
           </li>
           <li>
-            <Link className="hover:text-indigo-300 transition" to="/customer/recent-bookings">Recent Bookings</Link>
+            <Link className="hover:text-indigo-300 transition" to="/recent-bookings">Recent Bookings</Link>
           </li>
           <li>
-            <Link className="hover:text-indigo-300 transition" to="/customer/about">About</Link>
+            <Link className="hover:text-indigo-300 transition" to="/about">About</Link>
           </li>
           <li>
-            <Link className="hover:text-indigo-300 transition" to="/customer/contact">Contact</Link>
+            <Link className="hover:text-indigo-300 transition" to="/contact">Contact</Link>
           </li>
 
           <li>

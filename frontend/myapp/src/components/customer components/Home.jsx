@@ -15,13 +15,13 @@ const Home = () => {
           </p>
           <div className="flex gap-6">
             <NavLink
-              to="/customer/events"
+              to="/events"
               className="px-10 py-4 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-semibold shadow-xl shadow-indigo-500/30 transition"
             >
               Browse New Events
             </NavLink>
             <NavLink
-              to="/customer/my-events"
+              to="/my-events"
               className="px-10 py-4 border border-white/30 hover:bg-white/10 rounded-2xl font-semibold transition"
             >
               My Registrations
@@ -141,7 +141,7 @@ const Home = () => {
           amazing events tailored just for you.
         </p>
         <NavLink
-          to="/customer/events"
+          to="/events"
           className="inline-block px-14 py-5 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-bold text-lg shadow-2xl shadow-indigo-500/40 transition"
         >
           View Events

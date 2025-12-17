@@ -13,7 +13,7 @@ const About = () => {
             Our Event Management System lets customers easily explore, register,
             and participate in events created by trusted organizers.
           </p>
-          <NavLink to="/customer/events">
+          <NavLink to="/events">
             <button className="px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 transition shadow-lg">
               Browse Events
             </button>
