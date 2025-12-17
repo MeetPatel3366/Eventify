@@ -105,7 +105,7 @@ const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "invalid email and password",
+        message: "Email and Password is required",
       });
     }
 
@@ -113,31 +113,87 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "invalid email and password",
+        message: "invalid credentials",
       });
     }
 
-    const isMatchPassword = await bcrypt.compare(password, user.password);
-    if (!isMatchPassword) {
+    if (!user.isVerified) {
+      const newOtp = crypto.randomInt(100000, 1000000);
+      user.otp = newOtp;
+      user.otpExpiry = Date.now() + 10 * 60 * 1000;
+      await user.save();
+
+      const transporter = nodemailer.createTransport({
+        host: process.env.MAILHOST,
+        port: parseInt(process.env.MAILPORT, 10),
+        secure: false,
+        auth: {
+          user: process.env.MAIL_USERNAME,
+          pass: process.env.MAIL_PASSWORD,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.MAIL_USERNAME,
+        to: email,
+        subject: "Eventify - Email Verification OTP",
+        html: `
+        <h2>Email Verification</h2>
+        <p>Your OTP for Eventify registration is:</p>
+        <h1>${otp}</h1>
+        <p>This OTP will expire in 10 minutes.</p>
+      `,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return res.status(403).json({
+        success: false,
+        message: "Email not verified. A new OTP has been sent to your email.",
+        needsVerification: true,
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(400).json({
         success: false,
-        message: "invalid email and password",
+        message: "Invalid credentials",
       });
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
+    const otp = crypto.randomInt(100000, 1000000);
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 10 * 60 * 1000;
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILHOST,
+      port: parseInt(process.env.MAILPORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USERNAME,
+      to: email,
+      subject: "Eventify Login OTP",
+      html: `
+        <h2>Email Verification</h2>
+        <p>Your login OTP is:</p>
+        <h1>${otp}</h1>
+        <p>This OTP will expire in 10 minutes.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
 
     return res.status(200).json({
       success: true,
-      message: "login successful",
-      role: user.role,
-      token,
+      message: "OTP sent to email. please verify to complete login.",
     });
   } catch (error) {
     return res.status(500).json({
@@ -198,7 +254,6 @@ const verifyOtp = async (req, res) => {
       success: true,
       message: "OTP verified successfully",
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -230,4 +285,4 @@ const verify = async (req, res) => {
     });
   }
 };
-module.exports = { register, login, verify ,verifyOtp};
+module.exports = { register, login, verify, verifyOtp };
