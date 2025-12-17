@@ -285,4 +285,86 @@ const verify = async (req, res) => {
     });
   }
 };
-module.exports = { register, login, verify, verifyOtp };
+
+const verifyLoginOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and OTP are required",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (user.otp !== otp || user.otpExpiry < Date.now()) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP",
+      });
+    }
+
+    if (user.role == "eventorganizer") {
+      if (user.organizerStatus == "pending") {
+        user.otp = undefined;
+        user.otpExpiry = undefined;
+        await user.save();
+
+        return res.status(403).json({
+          success: false,
+          message: "Waiting for admin approval",
+        });
+      }
+
+      if (user.organizerStatus == "rejected") {
+        user.otp = undefined;
+        user.otpExpiry = undefined;
+        await user.save();
+
+        return res.status(403).json({
+          success: false,
+          message: "Organizer request rejected by admin",
+        });
+      }
+    }
+
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+
+    await user.save();
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      role: user.role,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { register, login, verify, verifyOtp, verifyLoginOtp };

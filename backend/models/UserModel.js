@@ -31,11 +31,10 @@ const userSchema = new mongoose.Schema(
     otpExpiry: {
       type: Date,
     },
-    isApprovedByAdmin: {
-      type: Boolean,
-      default: function () {
-        return this.role != "eventorganizer";
-      },
+    organizerStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
   },
   { timestamps: true }
