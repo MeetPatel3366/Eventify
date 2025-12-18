@@ -23,6 +23,7 @@ import AddEventPage from "./pages/event organizer pages/AddEventPage";
 import EditEventPage from "./pages/event organizer pages/EditEventPage";
 import VerifyOtp from "./components/customer components/VerifyOtp";
 import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
+import OrganizerApproval from "./components/admin components/OrganizerApproval";
 
 function App() {
   return (
@@ -94,10 +95,10 @@ function App() {
 
       {/* Admin routes */}
       <Route
-        path="/admin"
+        path="/admin/home"
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
-            <AdminHomePage />
+            <OrganizerApproval/>
           </RoleBasedRoute>
         }
       />
