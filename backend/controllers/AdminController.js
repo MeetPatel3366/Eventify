@@ -54,4 +54,32 @@ const approveOrganizer = async (req, res) => {
   }
 };
 
-module.exports = { getPendingOrganizers, approveOrganizer };
+const rejectOrganizer = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const organizer = await User.findById(id);
+
+    if (!organizer) {
+      return res.status(404).json({
+        success: false,
+        message: "organizer not found",
+      });
+    }
+
+    organizer.organizerStatus = "rejected";
+    await organizer.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "organizer rejected permanently",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { getPendingOrganizers, approveOrganizer, rejectOrganizer };
