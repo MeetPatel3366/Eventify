@@ -9,8 +9,8 @@ const router = express.Router();
 
 router.get("/pending-organizers", isLoggedIn, isAdmin, getPendingOrganizers);
 
-router.put("/approve-organizer", isLoggedIn, isAdmin, approveOrganizer);
+router.put("/approve-organizer/:id", isLoggedIn, isAdmin, approveOrganizer);
 
-router.put("/reject-organizer", isLoggedIn, isAdmin, rejectOrganizer);
+router.put("/reject-organizer/:id", isLoggedIn, isAdmin, rejectOrganizer);
 
 module.exports = router;
