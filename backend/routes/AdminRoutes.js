@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.get("/pending-organizers", isLoggedIn, isAdmin, getPendingOrganizers);
 
-router.get("/approve-organizer", isLoggedIn, isAdmin, approveOrganizer);
+router.put("/approve-organizer", isLoggedIn, isAdmin, approveOrganizer);
 
 module.exports = router;
