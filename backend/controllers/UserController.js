@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const { generateState, generateCodeVerifier } = require("arctic");
+const google = require("../utils/google");
 
 const register = async (req, res) => {
   try {
@@ -367,4 +369,34 @@ const verifyLoginOtp = async (req, res) => {
   }
 };
 
-module.exports = { register, login, verify, verifyOtp, verifyLoginOtp };
+const getGoogleLoginPage = async (req, res) => {
+  const state = generateState(); // CSRF Protection
+  const codeVerifier = generateCodeVerifier(); // PKCE verifier
+
+  const url = google.createAuthorizationURL(state, codeVerifier, [
+    "openid", // for ID token
+    "profile", // basic profile info
+    "email", // user email
+  ]);
+
+  const cookieConfig = {
+    httpOnly: true,
+    secure: false,
+    maxAge: 10 * 60 * 1000,
+    sameSite: "lax", // keep cookies on Google redirect
+  };
+
+  res.cookie("google_oauth_state", state, cookieConfig);
+  res.cookie("google_code_verifier", codeVerifier, cookieConfig);
+
+  res.redirect(url.toString());
+};
+
+module.exports = {
+  register,
+  login,
+  verify,
+  verifyOtp,
+  verifyLoginOtp,
+  getGoogleLoginPage,
+};

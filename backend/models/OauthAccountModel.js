@@ -21,4 +21,4 @@ const oauthAccountSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const OauthAccount = mongoose.model("OauthAccount", oauthAccountSchema);
+module.exports = mongoose.model("OauthAccount", oauthAccountSchema);
