@@ -34,7 +34,9 @@ const userSchema = new mongoose.Schema(
     organizerStatus: {
       type: String,
       enum: ["pending", "approved", "rejected"],
-      default: "pending",
+      default: function () {
+        return this.role == "eventorganizer" ? "pending" : "approved";
+      },
     },
   },
   { timestamps: true }
