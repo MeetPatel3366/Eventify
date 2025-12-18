@@ -2,6 +2,7 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import authApi from "../../api/authApi";
 import { Eye, EyeOff } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,30 +13,33 @@ export default function Login() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const res = await authApi.login(email, password);
-    setMsg(res.data.message);
+      setMsg(res.data.message);
 
-    if (res.data.success) {
-      setTimeout(() => {
-        navigate("/login-otp-verify", { state: { email } })
-      }, 1500)
-    }
+      if (res.data.success) {
+        setTimeout(() => {
+          navigate("/login-otp-verify", { state: { email } })
+        }, 1500)
+      }
     } catch (error) {
-      if(error.response?.data?.needsVerification)
-      {
+      if (error.response?.data?.needsVerification) {
         setMsg(error.response.data.message)
 
         setTimeout(() => {
           navigate("/verify-otp", { state: { email } });
-        }, 1500) 
+        }, 1500)
       }
-      else{
+      else {
         console.log("login error", error.response.data.message);
       }
     }
   };
+
+  const handleGoogleLogin = () => {
+    window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_URL;
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-black px-4">
@@ -94,6 +98,23 @@ export default function Login() {
           </button>
         </form>
 
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-white/10"></span>
+          </div>
+          <div className="relative flex justify-center text-sm uppercase">
+            <span className="bg-slate-900 px-2 text-gray-400">Or continue with</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-white hover:bg-gray-100 transition font-semibold text-gray-900 shadow-lg"
+        >
+          <FcGoogle size={22} />
+          <span>Login with Google</span>
+        </button>
 
         <p className="text-center text-gray-300 mt-6">
           Don’t have an account?{' '}
