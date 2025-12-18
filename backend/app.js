@@ -24,6 +24,11 @@ app.use("/api/events", EventRoutes);
 app.use("/api/event-progress", EventProgressRoutes);
 app.use("/api/admin", AdminRoutes);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: err.message || "Something went wrong" });
+});
+
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
