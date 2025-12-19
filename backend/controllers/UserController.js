@@ -272,7 +272,7 @@ const verifyOtp = async (req, res) => {
 
 const verify = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const token = req.cookies.token;
 
     if (!token) {
       return res.status(400).json({
@@ -360,10 +360,16 @@ const verifyLoginOtp = async (req, res) => {
       }
     );
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      token,
       role: user.role,
     });
   } catch (error) {
