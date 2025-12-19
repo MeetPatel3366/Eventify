@@ -4,7 +4,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
-const { generateState, generateCodeVerifier } = require("arctic");
+const {
+  generateState,
+  generateCodeVerifier,
+  decodeIdToken,
+} = require("arctic");
 const google = require("../utils/google");
 
 const register = async (req, res) => {
@@ -374,7 +378,14 @@ const getGoogleLoginPage = async (req, res, next) => {
   const state = generateState(); // CSRF Protection
   const codeVerifier = generateCodeVerifier(); // PKCE verifier
 
-  const role = req.query.role || "customer";
+  const allowedRoles = ["customer", "eventorganizer"];
+  const requestedRole = req.query.role || "customer";
+
+  const role = allowedRoles.includes(requestedRole)
+    ? requestedRole
+    : "customer";
+
+  console.log("role : ", role);
 
   const url = google.createAuthorizationURL(state, codeVerifier, [
     "openid", // for ID token
@@ -506,10 +517,9 @@ const getGoogleLoginCallback = async (req, res, next) => {
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
-
   res.clearCookie("google_oauth_state");
   res.clearCookie("google_code_verifier");
-  res.clearCookie("oauth_role");
+  // res.clearCookie("oauth_role");
 
   const roleRedirectMap = {
     admin: "/admin/home",
