@@ -3,11 +3,12 @@ import { useSelector } from "react-redux";
 
 // eslint-disable-next-line react/prop-types
 const RoleBasedRoute = ({ children, allowedRoles }) => {
-    const {token,role,loading}=useSelector((state)=>state.auth)
+    const {isAuthenticated,role,loading}=useSelector((state)=>state.auth)
 
     if (loading) return <div>Loading...</div>;
 
-    if (!token) {
+    if (!isAuthenticated) {
+        console.log("no token, redirecting to login")
         return <Navigate to="/" replace />;
     }
 

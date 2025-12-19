@@ -94,6 +94,7 @@ function App() {
       />
 
       {/* Admin routes */}
+      <Route path="/admin" element={<Login />} />
       <Route
         path="/admin/home"
         element={

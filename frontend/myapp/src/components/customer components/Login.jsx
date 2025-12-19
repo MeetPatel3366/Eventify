@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import authApi from "../../api/authApi";
 import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
@@ -10,6 +10,13 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState("");
   const navigate = useNavigate();
+  const location = useLocation()
+
+  const getRoleFromPath = (pathname) => {
+    if (pathname.includes("/organizer")) return "eventorganizer";
+    return "customer";
+  };
+  const role = getRoleFromPath(location.pathname);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +45,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = import.meta.env.VITE_BACKEND_GOOGLE_URL;
+    window.location.href = `${import.meta.env.VITE_BACKEND_GOOGLE_URL}?role=${role}`;
   }
 
   return (

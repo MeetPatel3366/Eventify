@@ -16,10 +16,7 @@ const authApi = {
       password,
     }),
 
-  verifyToken: (token) =>
-    api.get("/auth/verify", {
-      headers: { Authorization: `Bearer ${token}` },
-    }),
+  verifyToken: () => api.get("/auth/verify"),
 
   verifyOtp: (email, otp) =>
     api.post("/auth/verify-otp", {
