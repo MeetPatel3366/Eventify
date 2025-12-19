@@ -506,6 +506,44 @@ const getGoogleLoginCallback = async (req, res, next) => {
     }
   }
 
+  if (user.role == "eventorganizer") {
+    const otp = crypto.randomInt(100000, 1000000);
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 10 * 60 * 1000;
+    await user.save();
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILHOST,
+      port: parseInt(process.env.MAILPORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USERNAME,
+      to: email,
+      subject: "Eventify Login OTP",
+      html: `
+        <h2>Email Verification</h2>
+        <p>Your login OTP is:</p>
+        <h1>${otp}</h1>
+        <p>This OTP will expire in 10 minutes.</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.clearCookie("google_oauth_state");
+    res.clearCookie("google_code_verifier");
+
+    return res.redirect(
+      `${process.env.FRONTEND_URL}/login-otp-verify?email=${user.email}`
+    );
+  }
+
   const token = jwt.sign(
     {
       id: user._id,
@@ -525,16 +563,9 @@ const getGoogleLoginCallback = async (req, res, next) => {
   });
   res.clearCookie("google_oauth_state");
   res.clearCookie("google_code_verifier");
-  // res.clearCookie("oauth_role");
-
-  const roleRedirectMap = {
-    admin: "/admin/home",
-    eventorganizer: "/organizer/home",
-    customer: "/home",
-  };
 
   return res.redirect(
-    `${process.env.FRONTEND_URL}${roleRedirectMap[user.role]}`
+    `${process.env.FRONTEND_URL}/home}`
   );
 };
 

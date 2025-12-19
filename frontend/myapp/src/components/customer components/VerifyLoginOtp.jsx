@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux"
 import { setAuth } from "../../store/authSlice";
@@ -8,12 +8,13 @@ const VerifyLoginOtp = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch()
+    const [serachParams] = useSearchParams()
 
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const email = location.state?.email;
+    const email = serachParams.get("email") || location.state?.email;
 
     const handleVerify = async (e) => {
         e.preventDefault();
@@ -36,7 +37,7 @@ const VerifyLoginOtp = () => {
                 const role = res.data.role;
                 // localStorage.setItem("token", token);
                 localStorage.setItem("role", role);
-                dispatch(setAuth({  role }));
+                dispatch(setAuth({ role }));
 
                 setTimeout(() => {
                     if (res.data.role === "admin") {
