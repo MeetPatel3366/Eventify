@@ -5,14 +5,16 @@ import { Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("")
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
   const isOrganizer = location.pathname.includes("organizer");
 
   const onSubmit = async (e) => {
@@ -24,128 +26,167 @@ const Register = () => {
     }
 
     if (password !== confirmpassword) {
-      setMsg("Password & Confirmpassword does not match")
+      setMsg("Password and confirm password do not match.");
       return;
     }
 
-    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const PASSWORD_REGEX =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
     if (!PASSWORD_REGEX.test(password)) {
-      setMsg("Password must be at least 8 characters and include uppercase, lowercase, number, and special character");
+      setMsg(
+        "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol."
+      );
       return;
     }
 
     const role = isOrganizer ? "eventorganizer" : "customer";
 
     try {
-      const res = await authApi.register(username, email, password, confirmpassword, role);
+      setLoading(true);
+      const res = await authApi.register(
+        username,
+        email,
+        password,
+        confirmpassword,
+        role
+      );
+
       setMsg(res.data.message);
 
       if (res.data.success) {
-        const path = isOrganizer ? "/organizer/verify-otp" : "/verify-otp"
-
-        setTimeout(() => {
-          navigate(path, { state: { email: email } })
-        }, 1500)
+        const path = isOrganizer ? "/organizer/verify-otp" : "/verify-otp";
+        setTimeout(() => navigate(path, { state: { email } }), 1200);
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "something went wrong. please try again later.";
-      setMsg(errorMsg)
+      setMsg(
+        error.response?.data?.message ||
+        "Something went wrong. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-black px-4">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white px-8 py-10 shadow-xl border border-gray-200">
+        <div className="mb-6 text-center">
+          <h1 className="text-3xl font-bold text-indigo-600">
+            Eventify
+          </h1>
+          <p className="mt-1 text-center text-sm text-gray-500">
+            {isOrganizer
+              ? "Start managing your events professionally"
+              : "Join Eventify to discover amazing events"}
+          </p>
+        </div>
 
-        <h2 className="text-3xl font-bold text-white text-center mb-6 tracking-wide">
-          Eventify Registration
+        <h2 className="text-center text-2xl font-semibold text-gray-900">
+          Create Your Account
         </h2>
 
+
         {msg && (
-          <p className="text-center mb-4 text-sm text-yellow-200 bg-yellow-800/20 p-2 rounded-xl">
+          <div className="mt-5 rounded-lg bg-indigo-50 px-4 py-2 text-sm text-indigo-700">
             {msg}
-          </p>
+          </div>
         )}
 
-        <form onSubmit={onSubmit} className="space-y-5">
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-1 font-medium">Username</label>
+        <form onSubmit={onSubmit} className="mt-6 space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-1 font-medium">Email</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email address
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-1 font-medium">Password</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            <p className="mt-1 text-xs text-gray-500">
+              At least 8 characters with uppercase, lowercase, number & symbol
+            </p>
           </div>
-          <p className="mt-1 text-xs text-gray-400">
-            Password must be at least 8 characters and include uppercase, lowercase, number, and special character.
-          </p>
 
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-1 font-medium">Confirm Password</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm password
+            </label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 value={confirmpassword}
                 onChange={(e) => setConfirmpassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
               <button
                 type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showConfirmPassword ? (
+                  <EyeOff size={18} />
+                ) : (
+                  <Eye size={18} />
+                )}
               </button>
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition font-semibold text-white shadow-lg shadow-indigo-500/30"
+            disabled={loading}
+            className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/30 disabled:opacity-70"
           >
-            Register
+            {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
-        <p className="text-center text-gray-300 mt-6">
+        <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{" "}
           <NavLink
             to={isOrganizer ? "/organizer" : "/"}
-            className="text-indigo-400 hover:text-indigo-300 font-medium"
+            className="font-medium text-indigo-600 hover:underline"
           >
             Login
           </NavLink>
@@ -153,6 +194,6 @@ const Register = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Register;
