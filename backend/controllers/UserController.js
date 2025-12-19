@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const OauthAccount = require("../models/OauthAccountModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
@@ -369,9 +370,11 @@ const verifyLoginOtp = async (req, res) => {
   }
 };
 
-const getGoogleLoginPage = async (req, res) => {
+const getGoogleLoginPage = async (req, res, next) => {
   const state = generateState(); // CSRF Protection
   const codeVerifier = generateCodeVerifier(); // PKCE verifier
+
+  const role = req.query.role || "customer";
 
   const url = google.createAuthorizationURL(state, codeVerifier, [
     "openid", // for ID token
@@ -389,7 +392,134 @@ const getGoogleLoginPage = async (req, res) => {
   res.cookie("google_oauth_state", state, cookieConfig);
   res.cookie("google_code_verifier", codeVerifier, cookieConfig);
 
+  res.cookie("oauth_role", role, cookieConfig);
+
   res.redirect(url.toString());
+};
+
+const getGoogleLoginCallback = async (req, res, next) => {
+  const intendedRole = req.cookies.oauth_role;
+  //google redirect with code, and state in query params
+  //we will use code to find out the user
+  const { code, state } = req.query;
+  console.log(code, state);
+
+  const {
+    google_oauth_state: storedState,
+    google_code_verifier: codeVerifier,
+  } = req.cookies;
+
+  if (
+    !code ||
+    !state ||
+    !storedState ||
+    !codeVerifier ||
+    state !== storedState
+  ) {
+    res.redirect(`${process.env.FRONTEND_URL}`);
+    return next(
+      new Error(
+        "Couldn't login with Google because of invalid login attempt. Please try again!"
+      )
+    );
+  }
+
+  let tokens;
+  try {
+    // artic will verify the code given by google with code verifier internally
+    tokens = await google.validateAuthorizationCode(code, codeVerifier);
+  } catch {
+    res.redirect(`${process.env.FRONTEND_URL}/login`);
+    return next(
+      new Error(
+        "Couldn't login with Google because of invalid login attempt. Please try again!"
+      )
+    );
+  }
+
+  const claims = decodeIdToken(tokens.idToken());
+  const { sub: googleUserId, name, email } = claims;
+
+  // Find user with this email
+  let user = await User.findOne({ email });
+  let linkedAccount = null;
+
+  // 1. If user exists, check if OAuth account is linked
+  if (user) {
+    linkedAccount = await OauthAccount.findOne({
+      userId: user._id,
+      provider: "google",
+    }).lean();
+
+    // 2. User already exists with the same email but google's oauth isn't linked , create a new OAuth account entry
+    if (!linkedAccount) {
+      await OauthAccount.create({
+        userId: user._id,
+        provider: "google",
+        providerAccountId: googleUserId,
+      });
+    }
+  }
+
+  //3. If user does not exist, create user + oauth account without transaction
+  if (!user) {
+    let newUser;
+
+    try {
+      newUser = await User.create({
+        username: `${name.replace(/\s+/g, "").toLowerCase()}_${Date.now()}`,
+        email,
+        role: intendedRole,
+        isOAuthUser: true,
+        isVerified: true,
+      });
+
+      await OauthAccount.create({
+        userId: newUser._id,
+        provider: "google",
+        providerAccountId: googleUserId,
+      });
+
+      user = newUser;
+    } catch (err) {
+      if (newUser) {
+        await User.findByIdAndDelete(newUser._id);
+      }
+      return next(new Error("Couldn't login with Google. Please try again!"));
+    }
+  }
+
+  const token = jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "7d",
+    }
+  );
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.clearCookie("google_oauth_state");
+  res.clearCookie("google_code_verifier");
+  res.clearCookie("oauth_role");
+
+  const roleRedirectMap = {
+    admin: "/admin/home",
+    eventorganizer: "/organizer/home",
+    customer: "/home",
+  };
+
+  return res.redirect(
+    `${process.env.FRONTEND_URL}${roleRedirectMap[user.role]}`
+  );
 };
 
 module.exports = {
@@ -399,4 +529,5 @@ module.exports = {
   verifyOtp,
   verifyLoginOtp,
   getGoogleLoginPage,
+  getGoogleLoginCallback,
 };
