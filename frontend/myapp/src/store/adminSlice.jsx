@@ -12,8 +12,8 @@ export const approveEvent = createAsyncThunk("admin/approveEvent", async (id) =>
     return res.data.event;
 })
 
-export const rejectEvent = createAsyncThunk("admin/rejectEvent", async (id) => {
-    const res = await adminApi.rejectEvent(id)
+export const rejectEvent = createAsyncThunk("admin/rejectEvent", async ({ id, feedback }) => {
+    const res = await adminApi.rejectEvent(id, feedback)
     return res.data.event;
 })
 

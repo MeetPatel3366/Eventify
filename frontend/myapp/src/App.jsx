@@ -23,9 +23,9 @@ import AddEventPage from "./pages/event organizer pages/AddEventPage";
 import EditEventPage from "./pages/event organizer pages/EditEventPage";
 import VerifyOtp from "./components/customer components/VerifyOtp";
 import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
-import OrganizerApproval from "./components/admin components/OrganizerApproval";
 import PendingEventsPage from "./pages/admin pages/PendingEventsPage";
 import ApprovedEventsPage from "./pages/admin pages/ApprovedEventsPage";
+import RejectedEventsPage from "./pages/admin pages/rejectedEventsPage";
 
 function App() {
   return (
@@ -119,6 +119,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <ApprovedEventsPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/rejected-events"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <RejectedEventsPage />
           </RoleBasedRoute>
         }
       />

@@ -218,6 +218,7 @@ const approveEvent = async (req, res) => {
 const rejectEvent = async (req, res) => {
   try {
     const { feedback } = req.body;
+    console.log("feedback: ", feedback);
     const event = await Event.findById(req.params.id).populate(
       "organizerId",
       "username email"

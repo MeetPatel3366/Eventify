@@ -8,17 +8,17 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
-const ApprovedEvents = () => {
-    const { approvedEvents } = useSelector((state) => state.admin);
+const RejectedEvents = () => {
+    const { rejectedEvents } = useSelector((state) => state.admin);
 
     return (
-        <div className="min-h-screen  bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
             <h1 className="text-4xl font-extrabold text-white mb-10 text-center tracking-wide">
-                Approved Events
+                Rejected Events
             </h1>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {approvedEvents.map((event) => (
+                {rejectedEvents.map((event) => (
                     <div
                         key={event._id}
                         className="bg-white rounded-3xl border border-gray-200 shadow-md 
@@ -35,7 +35,7 @@ const ApprovedEvents = () => {
                                 className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold rounded-full 
                             bg-yellow-100 text-yellow-700"
                             >
-                                Approved
+                                Rejected
                             </span>
                         </div>
 
@@ -63,6 +63,18 @@ const ApprovedEvents = () => {
                             <p className="mt-4 text-sm text-gray-600 line-clamp-2">
                                 {event.description}
                             </p>
+
+                            {event.feedback && (
+                                <div className="mt-4 bg-rose-50 border border-rose-200 rounded-xl p-3">
+                                    <p className="text-xs font-semibold text-rose-600 mb-1">
+                                        Rejection Feedback
+                                    </p>
+                                    <p className="text-sm text-rose-700">
+                                        {event.feedback}
+                                    </p>
+                                </div>
+                            )}
+
 
                             <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-600">
                                 <div className="flex items-center gap-2">
@@ -106,4 +118,4 @@ const ApprovedEvents = () => {
     );
 };
 
-export default ApprovedEvents;
+export default RejectedEvents;

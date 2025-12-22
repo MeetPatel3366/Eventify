@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -14,6 +14,8 @@ import { approveEvent, fetchPendingEvents, rejectEvent } from "../../store/admin
 const PendingEvents = () => {
     const dispatch = useDispatch();
     const { pendingEvents } = useSelector((state) => state.admin);
+    const [rejectingId, setRejectingId] = useState(null);
+    const [feedback, setFeedback] = useState("");
 
     useEffect(() => {
         dispatch(fetchPendingEvents());
@@ -119,15 +121,56 @@ const PendingEvents = () => {
                                 </button>
 
                                 <button
-                                    onClick={() =>
-                                        dispatch(rejectEvent(event._id))
-                                    }
+                                    onClick={() => setRejectingId(event._id)}
                                     className="flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 
-                             text-white text-sm font-semibold transition"
+             text-white text-sm font-semibold transition"
                                 >
                                     Reject
                                 </button>
                             </div>
+                            {rejectingId === event._id && (
+                                <div className="mt-4">
+                                    <textarea
+                                        rows="3"
+                                        placeholder="Write rejection feedback..."
+                                        value={feedback}
+                                        onChange={(e) => setFeedback(e.target.value)}
+                                        className="w-full p-3 text-sm rounded-xl border 
+                 focus:ring-2 focus:ring-rose-400 
+                 text-gray-900"
+                                    />
+
+                                    <div className="flex gap-3 mt-3">
+                                        <button
+                                            onClick={() => {
+                                                dispatch(
+                                                    rejectEvent({
+                                                        id: event._id,
+                                                        feedback,
+                                                    })
+                                                );
+                                                setRejectingId(null);
+                                                setFeedback("");
+                                            }}
+                                            className="flex-1 py-2 rounded-xl bg-rose-600 
+                   text-white text-sm font-semibold"
+                                        >
+                                            Submit
+                                        </button>
+
+                                        <button
+                                            onClick={() => {
+                                                setRejectingId(null);
+                                                setFeedback("");
+                                            }}
+                                            className="flex-1 py-2 rounded-xl bg-gray-300 
+                   text-gray-800 text-sm font-semibold"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ))}

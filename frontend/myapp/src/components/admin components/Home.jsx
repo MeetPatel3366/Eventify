@@ -83,6 +83,18 @@ const AdminHome = () => {
             View →
           </span>
         </div>
+        <div
+          onClick={() => navigate("/admin/rejected-events")}
+          className="group cursor-pointer bg-gradient-to-br from-rose-600 to-rose-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
+        >
+          <h2 className="text-2xl font-bold mb-2">Rejected Events</h2>
+          <p className="text-rose-100 text-sm mb-6">
+            Review rejected events
+          </p>
+          <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
+            View →
+          </span>
+        </div>
 
       </div>
     </div>

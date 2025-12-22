@@ -4,7 +4,7 @@ const adminApi = {
 
   approveEvent: (id) => api.patch(`/events/approve/${id}`),
 
-  rejectEvent: (id) => api.patch(`/events/reject/${id}`),
+  rejectEvent: (id,feedback) => api.patch(`/events/reject/${id}`,{feedback}),
 
   // fetchOrganizers: () => api.get("/admin/pending-organizers"),
 
