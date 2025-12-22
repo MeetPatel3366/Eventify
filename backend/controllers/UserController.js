@@ -574,10 +574,15 @@ const logout = async (req, res) => {
       secure: false,
       sameSite: "lax",
     });
+    console.log(req.cookies)
+    return res.status(200).json({
+      success:true,
+      message: "logged out successfully",
+    })
   } catch (err) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: err.message,
     });
   }
 };

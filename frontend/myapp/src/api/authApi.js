@@ -29,6 +29,8 @@ const authApi = {
       email,
       otp,
     }),
+
+  logout: () => api.get("/auth/logout"),
 };
 
 export default authApi;

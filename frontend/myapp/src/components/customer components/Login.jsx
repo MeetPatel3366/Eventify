@@ -4,13 +4,15 @@ import authApi from "../../api/authApi";
 import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
 
   const getRoleFromPath = (pathname) => {
     if (pathname.includes("/organizer")) return "eventorganizer";
@@ -22,118 +24,135 @@ export default function Login() {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const res = await authApi.login(email, password);
       setMsg(res.data.message);
 
       if (res.data.success) {
         setTimeout(() => {
-          navigate("/login-otp-verify", { state: { email } })
-        }, 1500)
+          navigate("/login-otp-verify", { state: { email } });
+        }, 1200);
       }
     } catch (error) {
       if (error.response?.data?.needsVerification) {
-        setMsg(error.response.data.message)
-
+        setMsg(error.response.data.message);
         setTimeout(() => {
           navigate("/verify-otp", { state: { email } });
-        }, 1500)
+        }, 1200);
+      } else {
+        setMsg(
+          error.response?.data?.message ||
+            "Invalid email or password."
+        );
       }
-      else {
-        console.log("login error", error.response.data.message);
-      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleLogin = () => {
     window.location.href = `${import.meta.env.VITE_BACKEND_GOOGLE_URL}?role=${role}`;
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-900 to-black px-4">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl p-8">
-        <h2 className="text-3xl font-bold text-white text-center mb-6 tracking-wide">
-          Eventify Login
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white px-8 py-10 shadow-xl border border-gray-200">
+        <div className="mb-6 text-center">
+          <h1 className="text-3xl font-bold text-indigo-600">
+            Eventify
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Welcome back, manage your events seamlessly
+          </p>
+        </div>
+
+        <h2 className="text-center text-2xl font-semibold text-gray-900">
+          Sign in to your account
         </h2>
 
-
         {msg && (
-          <p className="text-center mb-4 text-sm text-yellow-200 bg-yellow-800/20 p-2 rounded-xl">
+          <div className="mt-5 rounded-lg bg-indigo-50 px-4 py-2 text-sm text-indigo-700">
             {msg}
-          </p>
+          </div>
         )}
 
-
-        <form onSubmit={onSubmit} className="space-y-5">
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-1 font-medium">Email</label>
+        <form onSubmit={onSubmit} className="mt-6 space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email address
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
             />
           </div>
 
-
-          <div className="flex flex-col">
-            <label className="text-gray-200 mb-1 font-medium">Password</label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/20 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
 
-
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition font-semibold text-white shadow-lg shadow-indigo-500/30"
+            disabled={loading}
+            className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/30 disabled:opacity-70"
           >
-            Login
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-white/10"></span>
+            <span className="w-full border-t border-gray-200"></span>
           </div>
-          <div className="relative flex justify-center text-sm uppercase">
-            <span className="bg-slate-900 px-2 text-gray-400">Or continue with</span>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-white px-3 text-gray-400">
+              Or continue with
+            </span>
           </div>
         </div>
 
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 py-3 rounded-xl bg-white hover:bg-gray-100 transition font-semibold text-gray-900 shadow-lg"
+          className="w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
         >
-          <FcGoogle size={22} />
-          <span>Login with Google</span>
+          <FcGoogle size={20} />
+          Sign in with Google
         </button>
 
-        <p className="text-center text-gray-300 mt-6">
-          Don’t have an account?{' '}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don’t have an account?{" "}
           <NavLink
             to="/register"
-            className="text-indigo-400 hover:text-indigo-300 font-medium"
+            className="font-medium text-indigo-600 hover:underline"
           >
-            Register
+            Create one
           </NavLink>
         </p>
       </div>
     </div>
-
   );
-}
+};
+
+export default Login;

@@ -1,9 +1,7 @@
-import { NavLink } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../../store/authSlice";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const dispatch = useDispatch();
+  const navigate=useNavigate()
 
   return (
     <nav className="bg-slate-900 border-b border-white/10 px-6 py-4 flex justify-between items-center text-white">
@@ -25,7 +23,7 @@ const Navbar = () => {
         </NavLink>
 
         <button
-          onClick={() => dispatch(logout())}
+          onClick={()=>navigate("/logout")}
           className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700"
         >
           Logout

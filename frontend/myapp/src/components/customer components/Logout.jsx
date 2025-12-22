@@ -2,15 +2,24 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../store/authSlice";
+import authApi from "../../api/authApi";
 
 const Logout = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(logout())
-    navigate("/");
-  }, [navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(async () => {
+    try {
+      await authApi.logout()
+    } catch (err) {
+      console.log(err);
+    }
+    finally {
+      dispatch(logout());
+      navigate("/");
+    }
+  }, [dispatch, navigate]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
