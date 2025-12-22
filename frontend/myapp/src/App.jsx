@@ -12,7 +12,7 @@ import ContactPage from "./pages/customer pages/ContactPage";
 import EventProgressPage from "./pages/customer pages/EventProgressPage";
 import RecentBookingsPage from "./pages/customer pages/RecentBookingsPage";
 
-import AdminHomePage from "./pages/admin pages/HomePage";
+import AdminHomePage from "./pages/admin pages/AdminHomePage";
 
 import RoleBasedRoute from "./components/RoleBasedRoute";
 import Homepage from "./pages/event organizer pages/HomePage";
@@ -24,6 +24,7 @@ import EditEventPage from "./pages/event organizer pages/EditEventPage";
 import VerifyOtp from "./components/customer components/VerifyOtp";
 import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
 import OrganizerApproval from "./components/admin components/OrganizerApproval";
+import PendingEventsPage from "./pages/admin pages/PendingEventsPage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
+      
 
       {/* Customer routes */}
       <Route
@@ -99,11 +101,18 @@ function App() {
         path="/admin/home"
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
-            <OrganizerApproval/>
+            <AdminHomePage />
           </RoleBasedRoute>
         }
       />
-
+      <Route
+        path="/admin/pending-events"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <PendingEventsPage />
+          </RoleBasedRoute>
+        }
+      />
 
       {/* Event Organizer routes */}
 
