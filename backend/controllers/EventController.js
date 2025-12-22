@@ -264,7 +264,10 @@ const getMyEvents = async (req, res) => {
 
 const getPendingEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "pending" });
+    const events = await Event.find({ status: "pending" }).populate(
+      "organizerId",
+      "username email"
+    );
 
     if (events.length == 0) {
       return res.status(404).json({
@@ -273,10 +276,15 @@ const getPendingEvents = async (req, res) => {
       });
     }
 
+    const updatedEvents = events.map((event) => ({
+      ...event._doc,
+      image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+    }));
+
     return res.status(200).json({
       success: true,
       message: "pending events fetched successfully",
-      events,
+      events: updatedEvents,
     });
   } catch (error) {
     return res.status(500).json({
