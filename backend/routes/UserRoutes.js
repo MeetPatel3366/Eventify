@@ -7,6 +7,7 @@ const {
   verifyLoginOtp,
   getGoogleLoginPage,
   getGoogleLoginCallback,
+  logout,
 } = require("../controllers/UserController");
 const router = express.Router();
 
@@ -23,5 +24,7 @@ router.post("/verify-otp", verifyOtp);
 router.post("/verify-login-otp", verifyLoginOtp);
 
 router.get("/verify", verify);
+
+router.get("/logout", logout);
 
 module.exports = router;
