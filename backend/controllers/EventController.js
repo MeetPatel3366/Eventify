@@ -183,7 +183,10 @@ const deleteEvent = async (req, res) => {
 
 const approveEvent = async (req, res) => {
   try {
-    const event = await Event.findById(req.params.id);
+    const event = await Event.findById(req.params.id).populate(
+      "organizerId",
+      "username email"
+    );
 
     if (!event) {
       return res.status(404).json({
@@ -199,7 +202,10 @@ const approveEvent = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Event approved successfully",
-      event,
+      event: {
+        ...event._doc,
+        image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -212,7 +218,10 @@ const approveEvent = async (req, res) => {
 const rejectEvent = async (req, res) => {
   try {
     const { feedback } = req.body;
-    const event = await Event.findById(req.params.id);
+    const event = await Event.findById(req.params.id).populate(
+      "organizerId",
+      "username email"
+    );
 
     if (!event) {
       return res.status(404).json({
@@ -229,6 +238,10 @@ const rejectEvent = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "event rejected",
+      event: {
+        ...event._doc,
+        image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+      },
     });
   } catch (error) {
     return res.status(500).json({

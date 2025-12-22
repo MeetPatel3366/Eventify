@@ -9,7 +9,7 @@ import {
     FaEnvelope,
     FaRupeeSign,
 } from "react-icons/fa";
-import { fetchPendingEvents } from "../../store/adminSlice";
+import { approveEvent, fetchPendingEvents, rejectEvent } from "../../store/adminSlice";
 
 const PendingEvents = () => {
     const dispatch = useDispatch();

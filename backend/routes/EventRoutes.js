@@ -48,5 +48,4 @@ router.patch("/approve/:id", isLoggedIn, isAdmin, approveEvent);
 
 router.patch("/reject/:id", isLoggedIn, isAdmin, rejectEvent);
 
-
 module.exports = router;
