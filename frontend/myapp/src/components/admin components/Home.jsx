@@ -1,7 +1,18 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchApprovedEvents, fetchPendingEvents, fetchRejectedEvents } from "../../store/adminSlice";
+import { useDispatch } from "react-redux";
 
 const AdminHome = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(fetchPendingEvents());
+    dispatch(fetchApprovedEvents());
+    dispatch(fetchRejectedEvents());
+  }, [dispatch]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">

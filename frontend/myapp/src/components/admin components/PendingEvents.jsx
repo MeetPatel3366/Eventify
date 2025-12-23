@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -9,17 +9,13 @@ import {
     FaEnvelope,
     FaRupeeSign,
 } from "react-icons/fa";
-import { approveEvent, fetchPendingEvents, rejectEvent } from "../../store/adminSlice";
+import { approveEvent, rejectEvent } from "../../store/adminSlice";
 
 const PendingEvents = () => {
     const dispatch = useDispatch();
     const { pendingEvents } = useSelector((state) => state.admin);
     const [rejectingId, setRejectingId] = useState(null);
     const [feedback, setFeedback] = useState("");
-
-    useEffect(() => {
-        dispatch(fetchPendingEvents());
-    }, [dispatch]);
 
     return (
         <div className="min-h-[calc(100vh-120px)]  bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">

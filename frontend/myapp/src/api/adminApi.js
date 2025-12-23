@@ -2,9 +2,14 @@ import api from "./axiosInstance";
 const adminApi = {
   pendingEvents: () => api.get("/events/pending"),
 
+  approvedEvents: () => api.get("/events/approved"),
+
+  rejectedEvents: () => api.get("/events/rejected"),
+
   approveEvent: (id) => api.patch(`/events/approve/${id}`),
 
-  rejectEvent: (id,feedback) => api.patch(`/events/reject/${id}`,{feedback}),
+  rejectEvent: (id, feedback) =>
+    api.patch(`/events/reject/${id}`, { feedback }),
 
   // fetchOrganizers: () => api.get("/admin/pending-organizers"),
 

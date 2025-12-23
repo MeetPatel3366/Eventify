@@ -7,6 +7,16 @@ export const fetchPendingEvents = createAsyncThunk("admin/fetchPendingEvents", a
     return res.data.events;
 })
 
+export const fetchApprovedEvents = createAsyncThunk("admin/fetchApprovedEvents", async () => {
+    const res = await adminApi.approvedEvents();
+    return res.data.events;
+})
+
+export const fetchRejectedEvents = createAsyncThunk("admin/fetchRejectedEvents", async () => {
+    const res = await adminApi.rejectedEvents();
+    return res.data.events;
+})
+
 export const approveEvent = createAsyncThunk("admin/approveEvent", async (id) => {
     const res = await adminApi.approveEvent(id)
     return res.data.event;
@@ -35,6 +45,22 @@ const adminSlice = createSlice({
             .addCase(fetchPendingEvents.fulfilled, (state, action) => {
                 state.loading = false;
                 state.pendingEvents = action.payload;
+            })
+
+            .addCase(fetchApprovedEvents.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchApprovedEvents.fulfilled, (state, action) => {
+                state.loading = false;
+                state.approvedEvents = action.payload;
+            })
+
+            .addCase(fetchRejectedEvents.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchRejectedEvents.fulfilled, (state, action) => {
+                state.loading = false;
+                state.rejectedEvents = action.payload;
             })
 
             .addCase(approveEvent.pending, (state) => {
