@@ -4,7 +4,7 @@ const RejectedOrganizers = () => {
     const { rejectedOrganizers } = useSelector((state) => state.admin);
 
     return (
-        <div className="min-h-screen bg-black text-white px-6 py-10">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
             <h1 className="text-3xl font-bold mb-8 text-center">
                 Rejected Organizers
             </h1>

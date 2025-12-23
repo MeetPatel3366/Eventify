@@ -18,18 +18,20 @@ const PendingEvents = () => {
     const [feedback, setFeedback] = useState("");
 
     return (
-        <div className="min-h-[calc(100vh-120px)]  bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
             <h1 className="text-4xl font-extrabold text-white mb-10 text-center tracking-wide">
                 Pending Events
             </h1>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {pendingEvents.length === 0 ? (
+                <p className="text-gray-400 text-center">No pending events</p>
+            ) : (<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {pendingEvents.map((event) => (
                     <div
                         key={event._id}
                         className="bg-white rounded-3xl border border-gray-200 shadow-md 
-                    hover:shadow-xl transition overflow-hidden 
-                 flex flex-col"
+            hover:shadow-xl transition overflow-hidden 
+         flex flex-col"
                     >
                         <div className="relative h-44 shrink-0">
                             <img
@@ -39,7 +41,7 @@ const PendingEvents = () => {
                             />
                             <span
                                 className="absolute top-4 right-4 px-3 py-1 text-xs font-semibold rounded-full 
-                            bg-yellow-100 text-yellow-700"
+                    bg-yellow-100 text-yellow-700"
                             >
                                 Pending
                             </span>
@@ -111,7 +113,7 @@ const PendingEvents = () => {
                                         dispatch(approveEvent(event._id))
                                     }
                                     className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 
-                             text-white text-sm font-semibold transition"
+                     text-white text-sm font-semibold transition"
                                 >
                                     Approve
                                 </button>
@@ -119,7 +121,7 @@ const PendingEvents = () => {
                                 <button
                                     onClick={() => setRejectingId(event._id)}
                                     className="flex-1 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 
-             text-white text-sm font-semibold transition"
+     text-white text-sm font-semibold transition"
                                 >
                                     Reject
                                 </button>
@@ -132,8 +134,8 @@ const PendingEvents = () => {
                                         value={feedback}
                                         onChange={(e) => setFeedback(e.target.value)}
                                         className="w-full p-3 text-sm rounded-xl border 
-                 focus:ring-2 focus:ring-rose-400 
-                 text-gray-900"
+         focus:ring-2 focus:ring-rose-400 
+         text-gray-900"
                                     />
 
                                     <div className="flex gap-3 mt-3">
@@ -149,7 +151,7 @@ const PendingEvents = () => {
                                                 setFeedback("");
                                             }}
                                             className="flex-1 py-2 rounded-xl bg-rose-600 
-                   text-white text-sm font-semibold"
+           text-white text-sm font-semibold"
                                         >
                                             Submit
                                         </button>
@@ -160,7 +162,7 @@ const PendingEvents = () => {
                                                 setFeedback("");
                                             }}
                                             className="flex-1 py-2 rounded-xl bg-gray-300 
-                   text-gray-800 text-sm font-semibold"
+           text-gray-800 text-sm font-semibold"
                                         >
                                             Cancel
                                         </button>
@@ -170,7 +172,9 @@ const PendingEvents = () => {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div>)}
+
+
         </div>
     );
 };

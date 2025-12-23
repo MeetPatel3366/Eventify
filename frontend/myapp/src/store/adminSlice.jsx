@@ -52,9 +52,15 @@ export const rejectOrganizer = createAsyncThunk("admin/rejectOrganizer", async (
     return res.data.organizer;
 })
 
+export const fetchAdminStats = createAsyncThunk("admin/fetchAdminStats", async () => {
+    const res = await adminApi.fetchAdminStats();
+    return res.data.stats;
+})
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {
+        stats: {},
         pendingEvents: [],
         approvedEvents: [],
         rejectedEvents: [],
@@ -67,6 +73,14 @@ const adminSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            .addCase(fetchAdminStats.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchAdminStats.fulfilled, (state, action) => {
+                state.loading = false;
+                state.stats = action.payload;
+            })
+
             .addCase(fetchPendingEvents.pending, (state) => {
                 state.loading = true;
             })

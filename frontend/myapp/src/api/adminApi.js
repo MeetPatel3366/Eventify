@@ -1,5 +1,6 @@
 import api from "./axiosInstance";
 const adminApi = {
+  fetchAdminStats: () => api.get("/admin/stats"),
   pendingEvents: () => api.get("/events/pending"),
 
   approvedEvents: () => api.get("/events/approved"),
