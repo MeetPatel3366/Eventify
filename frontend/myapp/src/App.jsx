@@ -27,6 +27,8 @@ import PendingEventsPage from "./pages/admin pages/PendingEventsPage";
 import ApprovedEventsPage from "./pages/admin pages/ApprovedEventsPage";
 import RejectedEventsPage from "./pages/admin pages/rejectedEventsPage";
 import OrganizerApprovalPage from "./pages/admin pages/OrganizerApprovalPage";
+import ApprovedOrganizerPage from "./pages/admin pages/ApprovedOrganizerPage";
+import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
 
 function App() {
   return (
@@ -37,7 +39,7 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
-      
+
 
       {/* Customer routes */}
       <Route
@@ -136,6 +138,22 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <OrganizerApprovalPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/approved-organizers"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <ApprovedOrganizerPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/rejected-organizers"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <RejectedOrganizersPage />
           </RoleBasedRoute>
         }
       />
