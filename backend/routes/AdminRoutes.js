@@ -5,9 +5,12 @@ const {
   rejectOrganizer,
   getApprovedOrganizers,
   getRejectedOrganizers,
+  getAdminStats,
 } = require("../controllers/AdminController");
 const { isLoggedIn, isAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
+
+router.get("/stats", isLoggedIn, isAdmin, getAdminStats);
 
 router.get("/pending-organizers", isLoggedIn, isAdmin, getPendingOrganizers);
 

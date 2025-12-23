@@ -1,4 +1,68 @@
 const User = require("../models/UserModel");
+const Event = require("../models/EventModel");
+
+const getAdminStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments({ role: "customer" });
+
+    const approvedOrganizers = await User.countDocuments({
+      role: "eventorganizer",
+      organizerStatus: "approved",
+    });
+
+    const pendingOrganizers = await User.countDocuments({
+      role: "eventorganizer",
+      organizerStatus: "pending",
+    });
+
+    const rejectedOrganizers = await User.countDocuments({
+      role: "eventorganizer",
+      organizerStatus: "rejected",
+    });
+
+    const totalEvents = await Event.countDocuments();
+
+    const approvedEvents = await Event.countDocuments({ status: "approved" });
+
+    const pendingEvents = await Event.countDocuments({ status: "pending" });
+
+    const rejectedEvents = await Event.countDocuments({ status: "rejected" });
+
+    const now = new Date();
+
+    const upcomingEvents = await Event.countDocuments({
+      status: "approved",
+      date: { $gte: now },
+    });
+
+    const pastEvents = await Event.countDocuments({
+      status: "approved",
+      date: { $lt: now },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "stats fetched successfully",
+      stats: {
+        totalUsers,
+        approvedOrganizers,
+        pendingOrganizers,
+        rejectedOrganizers,
+        totalEvents,
+        approvedEvents,
+        pendingEvents,
+        rejectedEvents,
+        upcomingEvents,
+        pastEvents,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 const getPendingOrganizers = async (req, res) => {
   try {
@@ -123,6 +187,7 @@ const rejectOrganizer = async (req, res) => {
 };
 
 module.exports = {
+  getAdminStats,
   getPendingOrganizers,
   getApprovedOrganizers,
   getRejectedOrganizers,
