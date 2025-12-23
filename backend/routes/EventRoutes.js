@@ -10,6 +10,7 @@ const {
   rejectEvent,
   getMyEvents,
   getPendingEvents,
+  getRejectedEvents,
 } = require("../controllers/EventController");
 const upload = require("../utils/multer");
 const {
@@ -21,6 +22,10 @@ const {
 router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
 
 router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
+
+router.get("/approved", isLoggedIn, isAdmin, getEvents);
+
+router.get("/rejected", isLoggedIn, isAdmin, getRejectedEvents);
 
 router.post(
   "/",
