@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchApprovedEvents, fetchPendingEvents, fetchRejectedEvents } from "../../store/adminSlice";
+import { fetchApprovedEvents, fetchApprovedOrganizers, fetchPendingEvents, fetchPendingOrganizers, fetchRejectedEvents } from "../../store/adminSlice";
 import { useDispatch } from "react-redux";
 
 const AdminHome = () => {
@@ -11,6 +11,9 @@ const AdminHome = () => {
     dispatch(fetchPendingEvents());
     dispatch(fetchApprovedEvents());
     dispatch(fetchRejectedEvents());
+    dispatch(fetchPendingOrganizers())
+    dispatch(fetchApprovedOrganizers())
+    dispatch(fetchRejectedEvents())
   }, [dispatch]);
 
 
@@ -42,7 +45,7 @@ const AdminHome = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         <div
           onClick={() => navigate("/admin/pending-events")}
           className="group cursor-pointer bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
@@ -50,19 +53,6 @@ const AdminHome = () => {
           <h2 className="text-2xl font-bold mb-2">Pending Events</h2>
           <p className="text-blue-100 text-sm mb-6">
             Review and approve new event requests
-          </p>
-          <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
-            Manage →
-          </span>
-        </div>
-
-        <div
-          onClick={() => navigate("/admin/pending-organizers")}
-          className="group cursor-pointer bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
-        >
-          <h2 className="text-2xl font-bold mb-2">Pending Organizers</h2>
-          <p className="text-emerald-100 text-sm mb-6">
-            Approve or reject organizer accounts
           </p>
           <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
             Manage →
@@ -83,18 +73,6 @@ const AdminHome = () => {
         </div>
 
         <div
-          onClick={() => navigate("/admin/rejected")}
-          className="group cursor-pointer bg-gradient-to-br from-rose-600 to-rose-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
-        >
-          <h2 className="text-2xl font-bold mb-2">Rejected Requests</h2>
-          <p className="text-rose-100 text-sm mb-6">
-            Review rejected events & organizers
-          </p>
-          <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
-            View →
-          </span>
-        </div>
-        <div
           onClick={() => navigate("/admin/rejected-events")}
           className="group cursor-pointer bg-gradient-to-br from-rose-600 to-rose-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
         >
@@ -107,6 +85,44 @@ const AdminHome = () => {
           </span>
         </div>
 
+        <div
+          onClick={() => navigate("/admin/pending-organizers")}
+          className="group cursor-pointer bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
+        >
+          <h2 className="text-2xl font-bold mb-2">Pending Organizers</h2>
+          <p className="text-emerald-100 text-sm mb-6">
+            Approve or reject organizer accounts
+          </p>
+          <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
+            Manage →
+          </span>
+        </div>
+
+        <div
+          onClick={() => navigate("/admin/organizers")}
+          className="group cursor-pointer bg-gradient-to-br from-purple-600 to-purple-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
+        >
+          <h2 className="text-2xl font-bold mb-2">Approved Organizers</h2>
+          <p className="text-purple-100 text-sm mb-6">
+            View approved organizers
+          </p>
+          <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
+            View →
+          </span>
+        </div>
+
+        <div
+          onClick={() => navigate("/admin/rejected")}
+          className="group cursor-pointer bg-gradient-to-br from-rose-600 to-rose-800 rounded-3xl p-6 shadow-2xl hover:scale-[1.03] transition"
+        >
+          <h2 className="text-2xl font-bold mb-2">Rejected Requests</h2>
+          <p className="text-rose-100 text-sm mb-6">
+            View rejected organizers
+          </p>
+          <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-sm group-hover:bg-white/30">
+            View →
+          </span>
+        </div>
       </div>
     </div>
   );

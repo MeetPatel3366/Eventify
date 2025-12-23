@@ -11,11 +11,15 @@ const adminApi = {
   rejectEvent: (id, feedback) =>
     api.patch(`/events/reject/${id}`, { feedback }),
 
-  // fetchOrganizers: () => api.get("/admin/pending-organizers"),
+  fetchPendingOrganizers: () => api.get("/admin/pending-organizers"),
 
-  // approveOrganizer: (id) => api.put(`/admin/approve-organizer/${id}`),
+  fetchApprovedOrganizers: () => api.get("/admin/approved-organizers"),
 
-  // rejectOrganizer: (id) => api.put(`/admin/reject-organizer/${id}`),
+  fetchRejectedOrganizers: () => api.get("/admin/rejected-organizers"),
+
+  approveOrganizer: (id) => api.put(`/admin/approve-organizer/${id}`),
+
+  rejectOrganizer: (id) => api.put(`/admin/reject-organizer/${id}`),
 };
 
 export default adminApi;

@@ -27,12 +27,40 @@ export const rejectEvent = createAsyncThunk("admin/rejectEvent", async ({ id, fe
     return res.data.event;
 })
 
+export const fetchPendingOrganizers = createAsyncThunk("admin/fetchPendingOrganizers", async () => {
+    const res = await adminApi.fetchPendingOrganizers();
+    return res.data.organizers;
+})
+
+export const fetchApprovedOrganizers = createAsyncThunk("admin/fetchApprovedOrganizers", async () => {
+    const res = await adminApi.fetchApprovedOrganizers();
+    return res.data.organizers;
+})
+
+export const fetchRejectedOrganizers = createAsyncThunk("admin/fetchRejectedOrganizers", async () => {
+    const res = await adminApi.fetchRejectedOrganizers();
+    return res.data.organizers;
+})
+
+export const approveOrganizer = createAsyncThunk("admin/approveOrganizer", async (id) => {
+    const res = await adminApi.approveOrganizer(id)
+    return res.data.organizer;
+})
+
+export const rejectOrganizer = createAsyncThunk("admin/rejectOrganizer", async (id) => {
+    const res = await adminApi.rejectOrganizer(id)
+    return res.data.organizer;
+})
+
 const adminSlice = createSlice({
     name: "admin",
     initialState: {
         pendingEvents: [],
         approvedEvents: [],
         rejectedEvents: [],
+        pendingOrganizers: [],
+        approvedOrganizers: [],
+        rejectedOrganizers: [],
         loading: false,
         error: null
     },
@@ -82,6 +110,52 @@ const adminSlice = createSlice({
                 state.rejectedEvents.push(action.payload)
                 state.pendingEvents = state.pendingEvents.filter(
                     (event) => event._id !== action.payload._id
+                );
+            })
+
+            .addCase(fetchPendingOrganizers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchPendingOrganizers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.pendingOrganizers = action.payload;
+            })
+
+            .addCase(fetchApprovedOrganizers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchApprovedOrganizers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.approvedOrganizers = action.payload;
+            })
+
+            .addCase(fetchRejectedOrganizers.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchRejectedOrganizers.fulfilled, (state, action) => {
+                state.loading = false;
+                state.rejectedOrganizers = action.payload;
+            })
+
+            .addCase(approveOrganizer.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(approveOrganizer.fulfilled, (state, action) => {
+                state.loading = false;
+                state.approvedOrganizers.push(action.payload)
+                state.pendingOrganizers = state.pendingOrganizers.filter(
+                    (organizer) => organizer._id !== action.payload._id
+                );
+            })
+
+            .addCase(rejectOrganizer.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(rejectOrganizer.fulfilled, (state, action) => {
+                state.loading = false;
+                state.rejectedOrganizers.push(action.payload)
+                state.pendingOrganizers = state.pendingOrganizers.filter(
+                    (organizer) => organizer._id !== action.payload._id
                 );
             })
 

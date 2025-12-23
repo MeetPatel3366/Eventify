@@ -26,6 +26,7 @@ import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
 import PendingEventsPage from "./pages/admin pages/PendingEventsPage";
 import ApprovedEventsPage from "./pages/admin pages/ApprovedEventsPage";
 import RejectedEventsPage from "./pages/admin pages/rejectedEventsPage";
+import OrganizerApprovalPage from "./pages/admin pages/OrganizerApprovalPage";
 
 function App() {
   return (
@@ -127,6 +128,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <RejectedEventsPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/pending-organizers"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <OrganizerApprovalPage />
           </RoleBasedRoute>
         }
       />
