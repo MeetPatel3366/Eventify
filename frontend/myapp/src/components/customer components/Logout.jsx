@@ -8,17 +8,18 @@ const Logout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(async () => {
-    try {
-      await authApi.logout()
-    } catch (err) {
-      console.log(err);
-    }
-    finally {
-      dispatch(logout());
-      navigate("/");
-    }
+  useEffect(() => {
+    const doLogout = async () => {
+      try {
+        await authApi.logout();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        dispatch(logout());
+        navigate("/", { replace: true });
+      }
+    };
+    doLogout();
   }, [dispatch, navigate]);
 
   return (

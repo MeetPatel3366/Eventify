@@ -564,7 +564,7 @@ const getGoogleLoginCallback = async (req, res, next) => {
   res.clearCookie("google_oauth_state");
   res.clearCookie("google_code_verifier");
 
-  return res.redirect(`${process.env.FRONTEND_URL}/home}`);
+  return res.redirect(`${process.env.FRONTEND_URL}/home`);
 };
 
 const logout = async (req, res) => {
