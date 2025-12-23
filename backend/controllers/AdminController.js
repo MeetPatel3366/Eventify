@@ -7,7 +7,45 @@ const getPendingOrganizers = async (req, res) => {
       organizerStatus: "pending",
     }).select("username email createdAt");
 
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
+      organizers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getApprovedOrganizers = async (req, res) => {
+  try {
+    const organizers = await User.find({
+      role: "eventorganizer",
+      organizerStatus: "approved",
+    }).select("username email createdAt");
+
+    return res.status(200).json({
+      success: true,
+      organizers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getRejectedOrganizers = async (req, res) => {
+  try {
+    const organizers = await User.find({
+      role: "eventorganizer",
+      organizerStatus: "rejected",
+    }).select("username email createdAt");
+
+    return res.status(200).json({
       success: true,
       organizers,
     });
@@ -45,6 +83,7 @@ const approveOrganizer = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "organizer approved successfully",
+      organizer,
     });
   } catch (error) {
     return res.status(500).json({
@@ -73,6 +112,7 @@ const rejectOrganizer = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "organizer rejected permanently",
+      organizer,
     });
   } catch (error) {
     return res.status(500).json({
@@ -82,4 +122,10 @@ const rejectOrganizer = async (req, res) => {
   }
 };
 
-module.exports = { getPendingOrganizers, approveOrganizer, rejectOrganizer };
+module.exports = {
+  getPendingOrganizers,
+  getApprovedOrganizers,
+  getRejectedOrganizers,
+  approveOrganizer,
+  rejectOrganizer,
+};
