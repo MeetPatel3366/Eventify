@@ -22,6 +22,7 @@ const Register = () => {
   const isOrganizer = location.pathname.includes("organizer");
 
   const handleUsernameChange = (e) => {
+    setMsg("")
     const value = e.target.value;
     setUsername(value);
 
@@ -42,6 +43,7 @@ const Register = () => {
 
 
   const handlePasswordChange = (e) => {
+    setMsg("")
     const value = e.target.value;
     setPassword(value);
 
@@ -58,6 +60,7 @@ const Register = () => {
   };
 
   const handleConfirmPasswordChange = (e) => {
+    setMsg("")
     const value = e.target.value;
     setConfirmpassword(value);
   };
@@ -72,6 +75,7 @@ const Register = () => {
   }, [password, confirmpassword]);
 
   const handleEmailChange = (e) => {
+    setMsg("")
     const value = e.target.value.trim();
     setEmail(value);
 
