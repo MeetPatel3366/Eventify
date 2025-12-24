@@ -27,7 +27,7 @@ const Navbar = () => {
             onClick={() => navigate("/admin")}
             className="text-2xl font-extrabold cursor-pointer text-white tracking-wide"
           >
-            Evintify<span className="text-indigo-500">Admin</span>
+            Eventify<span className="text-indigo-500">Admin</span>
           </div>
 
           <div className="hidden md:flex items-center gap-2">

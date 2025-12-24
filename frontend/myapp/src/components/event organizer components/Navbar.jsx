@@ -1,14 +1,19 @@
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   return (
-    <nav className="bg-slate-900 border-b border-white/10 px-6 py-4 flex justify-between items-center text-white">
-      <h1 className="text-xl font-bold text-indigo-400">Eventify</h1>
+    <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900 border-b border-white/10 px-6 py-4 flex justify-between items-center text-white shadow-md">
+      <div
+        onClick={() => navigate("/organizer/home")}
+        className="text-2xl font-extrabold cursor-pointer text-white tracking-wide"
+      >
+        Eventify<span className="text-indigo-500">Organizer</span>
+      </div>
 
       <div className="flex gap-6 items-center">
-        <NavLink to="/organizer" className="hover:text-indigo-400">Home</NavLink>
+        <NavLink to="/organizer/home" className="hover:text-indigo-400">Home</NavLink>
         <NavLink to="/organizer/dashboard" className="hover:text-indigo-400">
           Dashboard
         </NavLink>
@@ -23,7 +28,7 @@ const Navbar = () => {
         </NavLink>
 
         <button
-          onClick={()=>navigate("/logout")}
+          onClick={() => navigate("/logout")}
           className="px-4 py-2 bg-red-600 rounded-lg hover:bg-red-700"
         >
           Logout
