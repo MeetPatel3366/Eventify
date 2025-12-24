@@ -9,6 +9,7 @@ const connectDB = require("./db/connect");
 const EventRoutes = require("./routes/EventRoutes");
 const EventProgressRoutes = require("./routes/EventProgressRoutes");
 const UserRoutes = require("./routes/UserRoutes");
+const ContactMessageRoutes = require("./routes/ContactRoutes");
 const AdminRoutes = require("./routes/AdminRoutes");
 
 //PORT
@@ -29,6 +30,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", UserRoutes);
 app.use("/api/events", EventRoutes);
 app.use("/api/event-progress", EventProgressRoutes);
+app.use("/api/contact", ContactMessageRoutes);
 app.use("/api/admin", AdminRoutes);
 
 app.use((err, req, res, next) => {
