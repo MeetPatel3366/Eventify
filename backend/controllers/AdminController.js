@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const Event = require("../models/EventModel");
+const ContactMessage = require("../models/ContactMessageModel");
 
 const getAdminStats = async (req, res) => {
   try {
@@ -186,6 +187,22 @@ const rejectOrganizer = async (req, res) => {
   }
 };
 
+const getAllContactMessages = async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({ createdAt: -1 });
+    console.log(messages);
+    return res.status(200).json({
+      success: true,
+      messages,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getPendingOrganizers,
@@ -193,4 +210,5 @@ module.exports = {
   getRejectedOrganizers,
   approveOrganizer,
   rejectOrganizer,
+  getAllContactMessages,
 };
