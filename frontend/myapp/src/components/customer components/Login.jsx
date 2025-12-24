@@ -5,14 +5,19 @@ import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const isAdmin = location.pathname.includes("/admin") ? "true" : "false";
+  const isFormValid = email && password && !emailError && !passwordError;
 
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const getRoleFromPath = (pathname) => {
     if (pathname.includes("/organizer")) return "eventorganizer";
@@ -20,8 +25,43 @@ const Login = () => {
   };
   const role = getRoleFromPath(location.pathname);
 
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  const handleEmailChange = (e) => {
+    setMsg("");
+    const value = e.target.value.trim();
+    setEmail(value);
+
+    if (!value) {
+      setEmailError("Email is required.");
+    } else if (!EMAIL_REGEX.test(value)) {
+      setEmailError("Please enter a valid email address.");
+    } else {
+      setEmailError("");
+    }
+  };
+  const handlePasswordChange = (e) => {
+    setMsg("");
+    const value = e.target.value;
+    setPassword(value);
+
+    if (!value) {
+      setPasswordError("Password is required.");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+
   const onSubmit = async (e) => {
     e.preventDefault();
+
+
+    if (emailError || passwordError) {
+      setMsg("Please fix the errors before submitting.");
+      return;
+    }
+
 
     try {
       setLoading(true);
@@ -42,7 +82,7 @@ const Login = () => {
       } else {
         setMsg(
           error.response?.data?.message ||
-            "Invalid email or password."
+          "Invalid email or password."
         );
       }
     } finally {
@@ -84,10 +124,12 @@ const Login = () => {
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              onChange={handleEmailChange}
               className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
             />
+            {emailError && (
+              <p className="mt-1 text-xs text-red-600">{emailError}</p>
+            )}
           </div>
 
           <div>
@@ -95,13 +137,17 @@ const Login = () => {
               Password
             </label>
             <div className="relative">
+
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+                onChange={handlePasswordChange}
                 className="w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
               />
+              {passwordError && (
+                <p className="mt-1 text-xs text-red-600">{passwordError}</p>
+              )}
+
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -114,42 +160,42 @@ const Login = () => {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isFormValid}
             className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/30 disabled:opacity-70"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-200"></span>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-white px-3 text-gray-400">
-              Or continue with
-            </span>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
-        >
-          <FcGoogle size={20} />
-          Sign in with Google
-        </button>
-
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <NavLink
-            to="/register"
-            className="font-medium text-indigo-600 hover:underline"
-          >
-            Create one
-          </NavLink>
-        </p>
+        {isAdmin == "false" && (
+          <>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-200"></span>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-3 text-gray-400">
+                  Or continue with
+                </span>
+              </div>
+            </div><button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              <FcGoogle size={20} />
+              Sign in with Google
+            </button><p className="mt-6 text-center text-sm text-gray-600">
+              Don’t have an account?{" "}
+              <NavLink
+                to="/register"
+                className="font-medium text-indigo-600 hover:underline"
+              >
+                Create one
+              </NavLink>
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
