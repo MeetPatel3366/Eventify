@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios"
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -6,16 +7,34 @@ const Contact = () => {
     email: "",
     message: "",
   });
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+
+    try {
+      console.log(import.meta.env.VITE_BACKEND_URL);
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/contact/`, formData, { withCredentials: true });
+      setSubmitted(true)
+      setFormData({
+        name: "",
+        email: "",
+        message: "",
+      })
+
+      // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      setError("failed to send message. please try again.")
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -81,12 +100,15 @@ const Contact = () => {
                 className="w-full p-3 rounded-xl bg-white/20 text-white border border-white/20 focus:outline-none focus:border-white/40"
               />
             </div>
-
+            {error && (
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            )}
             <button
               type="submit"
-              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition shadow-lg font-semibold"
+              disabled={loading}
+              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition shadow-lg font-semibold disabled:opacity-50"
             >
-              Send Message
+              {loading ? "Sending..." : "Send Message"}
             </button>
           </form>
         )}
