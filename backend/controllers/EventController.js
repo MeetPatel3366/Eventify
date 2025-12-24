@@ -95,6 +95,7 @@ const updateEvent = async (req, res) => {
     event.location = req.body.location || event.location;
     event.description = req.body.description || event.description;
     event.price = req.body.price || event.price;
+    event.status = "pending";
 
     if (req.file) {
       deleteImage(event.image);
