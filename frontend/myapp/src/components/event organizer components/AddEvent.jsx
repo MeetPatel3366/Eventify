@@ -5,11 +5,12 @@ import {
   FaImage,
   FaAlignLeft,
   FaPlusCircle,
+  FaUsers,
 } from "react-icons/fa";
 import { TbCurrencyRupee } from "react-icons/tb";
 import { useDispatch } from "react-redux";
 import { addEvent } from "../../store/eventSlice";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 export default function AddEvent() {
   const [formData, setFormData] = useState({
@@ -19,10 +20,11 @@ export default function AddEvent() {
     location: "",
     description: "",
     price: "",
+    totalSeats: "",
     image: null,
   });
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -41,8 +43,8 @@ export default function AddEvent() {
     console.log("submitted event:", Object.fromEntries(data));
 
     try {
-      await dispatch(addEvent(data)).unwrap()
-      navigate("/organizer/events")
+      await dispatch(addEvent(data)).unwrap();
+      navigate("/organizer/events");
     } catch (error) {
       console.log("add event failed : ", error.message);
     }
@@ -56,12 +58,15 @@ export default function AddEvent() {
           Create New Event
         </h1>
         <p className="text-gray-300 mb-10">
-          Fill in the details below. Your event will be submitted for admin approval.
+          Fill in the details below. Your event will be submitted for admin
+          approval.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2" id="name">Event Name</label>
+            <label className="block mb-2" id="name">
+              Event Name
+            </label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <input
                 type="text"
@@ -75,7 +80,9 @@ export default function AddEvent() {
           </div>
 
           <div>
-            <label className="block mb-2" id="category">Category</label>
+            <label className="block mb-2" id="category">
+              Category
+            </label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <input
                 type="text"
@@ -89,7 +96,9 @@ export default function AddEvent() {
           </div>
 
           <div>
-            <label className="block mb-2" id="datetime">Event Date & Time</label>
+            <label className="block mb-2" id="datetime">
+              Event Date & Time
+            </label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <FaCalendarAlt className="text-gray-300" />
               <input
@@ -103,9 +112,10 @@ export default function AddEvent() {
             </div>
           </div>
 
-
           <div>
-            <label className="block mb-2" id="location">Location</label>
+            <label className="block mb-2" id="location">
+              Location
+            </label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <FaMapMarkerAlt className="text-gray-300" />
               <input
@@ -119,9 +129,10 @@ export default function AddEvent() {
             </div>
           </div>
 
-
           <div>
-            <label className="block mb-2" id="description">Description</label>
+            <label className="block mb-2" id="description">
+              Description
+            </label>
             <div className="flex gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <FaAlignLeft className="text-gray-300 mt-1" />
               <textarea
@@ -135,9 +146,11 @@ export default function AddEvent() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <div>
-              <label className="block mb-2" id="price">Price</label>
+              <label className="block mb-2" id="price">
+                Price
+              </label>
               <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
                 <TbCurrencyRupee className="text-gray-300 text-2xl" />
                 <input
@@ -152,7 +165,26 @@ export default function AddEvent() {
             </div>
 
             <div>
-              <label className="block mb-2" id="image">Event Image</label>
+              <label className="block mb-2" htmlFor="totalSeats">
+                Total Capacity
+              </label>
+              <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
+                <FaUsers className="text-gray-300 text-xl" />
+                <input
+                  type="number"
+                  name="totalSeats"
+                  id="totalSeats"
+                  required
+                  onChange={handleChange}
+                  className="w-full bg-transparent focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-2" id="image">
+                Event Image
+              </label>
               <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
                 <FaImage className="text-gray-300" />
                 <input
