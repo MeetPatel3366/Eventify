@@ -8,6 +8,7 @@ const {
   getAdminStats,
   getAllContactMessages,
   getContactMessage,
+  replyContactMessage,
 } = require("../controllers/AdminController");
 const { isLoggedIn, isAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -27,5 +28,7 @@ router.put("/reject-organizer/:id", isLoggedIn, isAdmin, rejectOrganizer);
 router.get("/contact-messages", isLoggedIn, isAdmin, getAllContactMessages);
 
 router.get("/contact-message/:id", isLoggedIn, isAdmin, getContactMessage);
+
+router.post("/contact-message/reply/:id", isLoggedIn, isAdmin, replyContactMessage);
 
 module.exports = router;

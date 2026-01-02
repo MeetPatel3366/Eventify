@@ -231,6 +231,48 @@ const getContactMessage = async (req, res) => {
   }
 };
 
+const replyContactMessage = async (req, res) => {
+  try {
+    const { reply } = req.body;
+
+    const message = await ContactMessage.findById(req.params.id);
+
+    message.adminReply = reply;
+    message.status = "replied";
+
+    await message.save();
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILHOST,
+      port: parseInt(process.env.MAILPORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USERNAME,
+      to: message.email,
+      subject: "Reply from Eventify Support",
+      html: `<p>${reply}</p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(200).json({
+      success: true,
+      message: "replied to contact message successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getPendingOrganizers,
@@ -240,4 +282,5 @@ module.exports = {
   rejectOrganizer,
   getAllContactMessages,
   getContactMessage,
+  replyContactMessage
 };
