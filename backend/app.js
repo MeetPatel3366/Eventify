@@ -15,6 +15,9 @@ const AdminRoutes = require("./routes/AdminRoutes");
 //PORT
 PORT = process.env.PORT || 5000;
 
+//Disable ETag generation
+app.set('etag', false);
+
 //middlewares
 app.use(
   cors({

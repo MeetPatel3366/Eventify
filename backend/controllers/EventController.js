@@ -270,6 +270,8 @@ const rejectEvent = async (req, res) => {
 
 const getMyEvents = async (req, res) => {
   try {
+    // This tells the browser/Postman: "Do not store this, always ask for a fresh copy"
+    res.set('Cache-Control', 'no-store');
     const events = await Event.find({ organizerId: req.user.id });
 
     if (events.length == 0) {
