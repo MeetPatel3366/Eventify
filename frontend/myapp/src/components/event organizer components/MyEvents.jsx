@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { FaEdit, FaTrash, FaClock, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTrash,
+  FaClock,
+  FaCheckCircle,
+  FaTimesCircle,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteEvent, fetchMyEvents } from "../../store/eventSlice";
 
@@ -45,7 +51,6 @@ const MyEvents = () => {
     return 0;
   });
 
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white px-6 py-16 mt-2">
       <section className="max-w-7xl mx-auto mb-12">
@@ -61,7 +66,9 @@ const MyEvents = () => {
 
       {!loading && myEvents.length > 0 && (
         <section className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {sortedEvents.map((event) => (
+          {sortedEvents.map((event) => {
+            const bookedSeats = event.totalSeats - event.availableSeats;
+            const occupancyRate = (bookedSeats / event.totalSeats) * 100;
             <div
               key={event._id}
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-xl"
@@ -73,9 +80,7 @@ const MyEvents = () => {
               />
 
               <div className="p-6">
-                <h3 className="text-2xl font-semibold mb-1">
-                  {event.name}
-                </h3>
+                <h3 className="text-2xl font-semibold mb-1">{event.name}</h3>
 
                 <p className="text-gray-300 text-sm mb-2 flex items-center gap-3">
                   <span>
@@ -94,6 +99,38 @@ const MyEvents = () => {
                 <p className="text-gray-400 text-sm mb-3 capitalize">
                   Category: {event.category}
                 </p>
+
+                <div className="mb-6">
+                  <div className="flex justify-between items-end mb-2">
+                    <span className="text-sm text-gray-300 flex items-center gap-2">
+                      <FaUsers className="text-indigo-400" /> Capacity
+                    </span>
+                    <span className="text-sm font-medium">
+                      <span
+                        className={
+                          event.availableSeats === 0
+                            ? "text-red-400"
+                            : "text-white"
+                        }
+                      >
+                        {event.availableSeats}
+                      </span>
+                      <span className="text-gray-500">
+                        {" "}
+                        / {event.totalSeats} left
+                      </span>
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-500 ${
+                        occupancyRate >= 90 ? "bg-red-500" : "bg-indigo-500"
+                      }`}
+                      style={{ width: `${occupancyRate}%` }}
+                    ></div>
+                  </div>
+                </div>
 
                 <div className="mb-4">
                   {event.status === "approved" && (
@@ -122,29 +159,28 @@ const MyEvents = () => {
                 )}
 
                 <div className="flex gap-3">
-                  {(event.status == "pending" || event.status == "rejected") &&
-                    (<NavLink
+                  {(event.status == "pending" ||
+                    event.status == "rejected") && (
+                    <NavLink
                       to={`/organizer/events/edit/${event._id}`}
                       className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 transition"
                     >
                       <FaEdit /> Edit
-                    </NavLink>)
-                  }
+                    </NavLink>
+                  )}
 
-                  {
-                    event.status == "pending" && (
-                      <button
-                        onClick={() => handleDelete(event._id)}
-                        className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl bg-red-600 hover:bg-red-700 transition"
-                      >
-                        <FaTrash /> Delete
-                      </button>
-                    )
-                  }
+                  {event.status == "pending" && (
+                    <button
+                      onClick={() => handleDelete(event._id)}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-2 rounded-xl bg-red-600 hover:bg-red-700 transition"
+                    >
+                      <FaTrash /> Delete
+                    </button>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            </div>;
+          })}
         </section>
       )}
 
@@ -161,6 +197,6 @@ const MyEvents = () => {
       )}
     </div>
   );
-}
+};
 
 export default MyEvents;
