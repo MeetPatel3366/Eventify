@@ -203,6 +203,34 @@ const getAllContactMessages = async (req, res) => {
   }
 };
 
+const getContactMessage = async (req, res) => {
+  try {
+    const message = await ContactMessage.findById(req.params.id);
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: "Message not found",
+      });
+    }
+
+    if (message.status == "new") {
+      message.status = "read";
+      await message.save();
+    }
+    return res.status(200).json({
+      success: true,
+      message: "contact message fetched successfully",
+      data: message,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getPendingOrganizers,
@@ -211,4 +239,5 @@ module.exports = {
   approveOrganizer,
   rejectOrganizer,
   getAllContactMessages,
+  getContactMessage,
 };

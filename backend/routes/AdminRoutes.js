@@ -26,4 +26,6 @@ router.put("/reject-organizer/:id", isLoggedIn, isAdmin, rejectOrganizer);
 
 router.get("/contact-messages", isLoggedIn, isAdmin, getAllContactMessages);
 
+router.get("/contact-message/:id", isLoggedIn, isAdmin, getContactMessage);
+
 module.exports = router;
