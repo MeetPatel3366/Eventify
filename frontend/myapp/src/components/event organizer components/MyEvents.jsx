@@ -6,6 +6,7 @@ import {
   FaClock,
   FaCheckCircle,
   FaTimesCircle,
+  FaUsers,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteEvent, fetchMyEvents } from "../../store/eventSlice";
@@ -13,6 +14,8 @@ import { deleteEvent, fetchMyEvents } from "../../store/eventSlice";
 const MyEvents = () => {
   const dispatch = useDispatch();
   const { myEvents, loading } = useSelector((state) => state.event);
+  console.log(myEvents);
+  
 
   useEffect(() => {
     dispatch(fetchMyEvents());
@@ -69,6 +72,7 @@ const MyEvents = () => {
           {sortedEvents.map((event) => {
             const bookedSeats = event.totalSeats - event.availableSeats;
             const occupancyRate = (bookedSeats / event.totalSeats) * 100;
+            return(
             <div
               key={event._id}
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-xl"
@@ -179,8 +183,8 @@ const MyEvents = () => {
                   )}
                 </div>
               </div>
-            </div>;
-          })}
+            </div>
+          )})}
         </section>
       )}
 

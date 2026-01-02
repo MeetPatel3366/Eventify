@@ -6,17 +6,22 @@ const Events = () => {
   const dispatch = useDispatch();
   const { events, loading } = useSelector((state) => state.event);
 
-  const upcomingEvents = events.filter((event) => new Date(event.datetime) >= new Date())
+  const upcomingEvents = events.filter(
+    (event) => new Date(event.datetime) >= new Date()
+  );
 
   useEffect(() => {
     dispatch(fetchEvents());
   }, [dispatch]);
 
-  if (loading) return <p className="text-center text-white py-10">Loading events...</p>;
+  if (loading)
+    return <p className="text-center text-white py-10">Loading events...</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950 px-6 py-16 text-white">
-      <h1 className="text-4xl font-bold text-center mb-12 mt-2">Upcoming Events</h1>
+      <h1 className="text-4xl font-bold text-center mb-12 mt-2">
+        Upcoming Events
+      </h1>
       <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
         {upcomingEvents.map((event) => (
           <div
@@ -49,17 +54,36 @@ const Events = () => {
                   month: "short",
                   year: "numeric",
                   hour: "2-digit",
-                  minute: "numeric"
+                  minute: "numeric",
                 })}
               </span>
               <span>{event.location}</span>
             </div>
+
+            <div className="flex items-center justify-between text-sm mb-3 font-medium">
+              <span className="text-gray-400">Availability:</span>
+              <span
+                className={
+                  event.availableSeats <= 5 ? "text-red-400" : "text-green-400"
+                }
+              >
+                {event.availableSeats} / {event.totalSeats} seats left
+              </span>
+            </div>
+
             <p className="text-gray-300 text-sm mb-5 line-clamp-3">
               {event.description}
             </p>
 
-            <button className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 transition shadow-md font-semibold">
-              Book Now
+            <button
+              disabled={event.availableSeats === 0}
+              className={`w-full py-3 rounded-xl transition shadow-md font-semibold ${
+                event.availableSeats === 0
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}
+            >
+              {event.availableSeats === 0 ? "Sold Out" : "Book Now"}
             </button>
           </div>
         ))}
