@@ -3,7 +3,15 @@ const { deleteImage } = require("../utils/deleteFile.js");
 
 const addEvent = async (req, res) => {
   try {
-    const { name, category, datetime, location, description, price } = req.body;
+    const {
+      name,
+      category,
+      datetime,
+      location,
+      description,
+      totalSeats,
+      price,
+    } = req.body;
 
     const newEvent = await Event.create({
       name,
@@ -14,6 +22,8 @@ const addEvent = async (req, res) => {
       price,
       organizerId: req.user.id,
       status: "pending",
+      totalSeats,
+      availableSeats: totalSeats,
       image: req.file ? req.file.filename : null,
     });
 
@@ -96,6 +106,11 @@ const updateEvent = async (req, res) => {
     event.description = req.body.description || event.description;
     event.price = req.body.price || event.price;
     event.status = "pending";
+    event.totalSeats = req.body.totalSeats || event.totalSeats;
+    event.availableSeats =
+      req.body.totalSeats !== undefined
+        ? req.body.totalSeats - (event.totalSeats - event.availableSeats)
+        : event.availableSeats;
 
     if (req.file) {
       deleteImage(event.image);
