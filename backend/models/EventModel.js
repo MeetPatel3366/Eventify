@@ -36,6 +36,15 @@ const EventSchema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  totalSeats: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
+  availableSeats: {
+    type: Number,
+    required: true,
+  },
   feedback: {
     type: String,
     default: "",
