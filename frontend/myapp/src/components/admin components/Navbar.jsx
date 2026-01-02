@@ -40,6 +40,9 @@ const Navbar = () => {
             <NavLink to="/admin/pending-organizers" className={linkClass}>
               Organizers
             </NavLink>
+            <NavLink to="/admin/contact-messages" className={linkClass}>
+              Contact Messages
+            </NavLink>
           </div>
 
           <div className="flex items-center gap-4">

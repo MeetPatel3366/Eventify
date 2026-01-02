@@ -21,6 +21,12 @@ const adminApi = {
   approveOrganizer: (id) => api.put(`/admin/approve-organizer/${id}`),
 
   rejectOrganizer: (id) => api.put(`/admin/reject-organizer/${id}`),
+
+  fetchAllContactMessages: () => api.get("/admin/contact-messages"),
+
+  fetchSingleContactMessage: (id) => api.get(`/admin/contact-message/${id}`),
+
+  replyToContactMessage:(id)=>api.post(`admin/contact-message/reply/${id}`),
 };
 
 export default adminApi;

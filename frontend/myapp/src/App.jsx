@@ -29,6 +29,8 @@ import RejectedEventsPage from "./pages/admin pages/rejectedEventsPage";
 import OrganizerApprovalPage from "./pages/admin pages/OrganizerApprovalPage";
 import ApprovedOrganizerPage from "./pages/admin pages/ApprovedOrganizerPage";
 import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
+import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
+import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
 
 function App() {
   return (
@@ -150,10 +152,26 @@ function App() {
         }
       />
       <Route
+        path="/admin/contact-messages"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <ContactMessagesPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
         path="/admin/rejected-organizers"
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <RejectedOrganizersPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/contact/:id"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AdminContactReplyPage />
           </RoleBasedRoute>
         }
       />
