@@ -1,0 +1,52 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import bookingsApi from "../api/bookingsApi";
+
+export const createBooking = createAsyncThunk(
+  "booking/create",
+  async (bookingData) => {
+    const res = await bookingsApi.booking(bookingData);
+    return res.data.booking;
+  }
+);
+
+const bookingSlice = createSlice({
+  name: "booking",
+  initialState: {
+    bookings: [],
+    loading: false,
+    error: null,
+    success: false,
+  },
+  reducers: {
+    resetBookingState: (state) => {
+      state.loading = false;
+      state.error = null;
+      state.success = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(createBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(createBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        state.bookings.push(action.payload);
+        state.success = true;
+      })
+
+      .addMatcher(
+        (action) => action.type.endsWith("rejected"),
+        (state, action) => {
+          console.error("booking api error:", action.error);
+          state.loading = false;
+          state.error = action.error?.message || "something went wrong";
+        }
+      );
+  },
+});
+
+export const { resetBookingState } = bookingSlice.actions;
+export default bookingSlice.reducer;
