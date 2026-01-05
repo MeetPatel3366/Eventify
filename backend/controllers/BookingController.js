@@ -40,15 +40,54 @@ const createBooking = async (req, res) => {
       booking,
     });
   } catch (error) {
-    console.log(error);
-
     return res.status(500).json({
       success: false,
-      message: "Server Error",
+      message: error.message,
+    });
+  }
+};
+
+const myBookings = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const bookings = await Booking.find({ userId })
+      .populate("eventId")
+      .sort({ createdAt: -1 });
+
+    const formattedBookings = bookings.map((booking) => ({
+      ...booking.toObject(),
+      eventId: {
+        ...booking.eventId.toObject(),
+        image: booking.eventId.image
+          ? `${req.protocol}://${req.get("host")}/uploads/${
+              booking.eventId.image
+            }`
+          : null,
+      },
+    }));
+
+    if (!bookings) {
+      return res.status(404).json({
+        success: false,
+        message: "No bookings found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Bookings fetched successfully",
+      bookings: formattedBookings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
 
 module.exports = {
   createBooking,
+  myBookings,
 };
