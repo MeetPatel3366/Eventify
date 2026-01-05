@@ -31,6 +31,7 @@ import ApprovedOrganizerPage from "./pages/admin pages/ApprovedOrganizerPage";
 import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
 import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
 import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
+import EventBookingPage from "./pages/customer pages/EventBookingPage";
 
 function App() {
   return (
@@ -60,15 +61,7 @@ function App() {
           </RoleBasedRoute>
         }
       />
-      <Route
-        path="/payments"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <PaymentsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
+       <Route
         path="/about"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
@@ -81,6 +74,19 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
             <ContactPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route path="/events/:id/book" element={
+        <RoleBasedRoute allowedRoles={["customer"]}>
+            <EventBookingPage/>
+          </RoleBasedRoute>
+      } />
+      <Route
+        path="/payments"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <PaymentsPage />
           </RoleBasedRoute>
         }
       />

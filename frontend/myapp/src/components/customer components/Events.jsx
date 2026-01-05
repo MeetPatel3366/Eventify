@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents } from "../../store/eventSlice";
+import { useNavigate } from "react-router-dom";
 
 const Events = () => {
   const dispatch = useDispatch();
+  const navigate=useNavigate()
   const { events, loading } = useSelector((state) => state.event);
 
   const upcomingEvents = events.filter(
@@ -13,6 +15,13 @@ const Events = () => {
   useEffect(() => {
     dispatch(fetchEvents());
   }, [dispatch]);
+
+  const handleBooking=(selectedEvent)=>{
+    if(selectedEvent.availableSeats > 0)
+    {
+      navigate(`/events/${selectedEvent._id}/book`);
+    }
+  }
 
   if (loading)
     return <p className="text-center text-white py-10">Loading events...</p>;
@@ -74,6 +83,7 @@ const Events = () => {
             <p className="text-gray-300 text-sm mb-5 line-clamp-3">
               {event.description}
             </p>
+            
 
             <button
               disabled={event.availableSeats === 0}
@@ -82,6 +92,7 @@ const Events = () => {
                   ? "bg-gray-600 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
               }`}
+              onClick={()=>handleBooking(event)}
             >
               {event.availableSeats === 0 ? "Sold Out" : "Book Now"}
             </button>
