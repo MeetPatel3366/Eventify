@@ -32,6 +32,7 @@ import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
 import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
 import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
 import EventBookingPage from "./pages/customer pages/EventBookingPage";
+import MyBookingsPage from "./pages/customer pages/MyBookingsPage";
 
 function App() {
   return (
@@ -80,6 +81,11 @@ function App() {
       <Route path="/events/:id/book" element={
         <RoleBasedRoute allowedRoles={["customer"]}>
             <EventBookingPage/>
+          </RoleBasedRoute>
+      } />
+      <Route path="/my-bookings" element={
+        <RoleBasedRoute allowedRoles={["customer"]}>
+            <MyBookingsPage/>
           </RoleBasedRoute>
       } />
       <Route
