@@ -33,6 +33,7 @@ import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
 import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
 import EventBookingPage from "./pages/customer pages/EventBookingPage";
 import MyBookingsPage from "./pages/customer pages/MyBookingsPage";
+import EventInsightsPage from "./pages/event organizer pages/EventInsightsPage";
 
 function App() {
   return (
@@ -43,7 +44,6 @@ function App() {
       <Route path="/logout" element={<Logout />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
-
 
       {/* Customer routes */}
       <Route
@@ -62,7 +62,7 @@ function App() {
           </RoleBasedRoute>
         }
       />
-       <Route
+      <Route
         path="/about"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
@@ -78,16 +78,22 @@ function App() {
           </RoleBasedRoute>
         }
       />
-      <Route path="/events/:id/book" element={
-        <RoleBasedRoute allowedRoles={["customer"]}>
-            <EventBookingPage/>
+      <Route
+        path="/events/:id/book"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <EventBookingPage />
           </RoleBasedRoute>
-      } />
-      <Route path="/my-bookings" element={
-        <RoleBasedRoute allowedRoles={["customer"]}>
-            <MyBookingsPage/>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <RoleBasedRoute allowedRoles={["customer"]}>
+            <MyBookingsPage />
           </RoleBasedRoute>
-      } />
+        }
+      />
       <Route
         path="/payments"
         element={
@@ -190,12 +196,7 @@ function App() {
 
       {/* Event Organizer routes */}
 
-      <Route
-        path="/organizer/register"
-        element={
-          <Register />
-        }
-      />
+      <Route path="/organizer/register" element={<Register />} />
       <Route path="/organizer/verify-otp" element={<VerifyOtp />} />
       <Route path="/organizer" element={<Login />} />
       <Route
@@ -223,6 +224,14 @@ function App() {
         }
       />
       <Route
+        path="/organizer/events-stats"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <EventInsightsPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
         path="/organizer/allevents"
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
@@ -246,8 +255,6 @@ function App() {
           </RoleBasedRoute>
         }
       />
-
-
     </Routes>
   );
 }

@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-slate-900 border-b border-white/10 px-6 py-4 flex justify-between items-center text-white shadow-md">
@@ -13,12 +13,17 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-6 items-center">
-        <NavLink to="/organizer/home" className="hover:text-indigo-400">Home</NavLink>
+        <NavLink to="/organizer/home" className="hover:text-indigo-400">
+          Home
+        </NavLink>
         <NavLink to="/organizer/dashboard" className="hover:text-indigo-400">
           Dashboard
         </NavLink>
         <NavLink to="/organizer/events" className="hover:text-indigo-400">
           My Events
+        </NavLink>
+        <NavLink to="/organizer/events-stats" className="hover:text-indigo-400">
+          Event Insights
         </NavLink>
         <NavLink to="/organizer/events/add" className="hover:text-indigo-400">
           Add Event
@@ -36,6 +41,6 @@ const Navbar = () => {
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

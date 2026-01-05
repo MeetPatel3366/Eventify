@@ -7,6 +7,8 @@ const eventApi = {
 
   fetchMy: () => api.get(`/events/my`),
 
+  fetchMyWithStats: () => api.get(`/events/my-with-stats`),
+
   add: (formData) => api.post(`/events`, formData),
 
   update: (id, formData) => api.put(`/events/${id}`, formData),
