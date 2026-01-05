@@ -3,10 +3,15 @@ const Event = require("../models/EventModel");
 
 const createBooking = async (req, res) => {
   try {
-    const { eventId, quntity } = req.body;
+    const { eventId, quantity } = req.body;
     const userId = req.user.id;
+    console.log(eventId, quantity, userId);
 
-    const event = await Event.findById(eventId);
+    const event = await Event.findOneAndUpdate(
+      { _id: eventId, status: "approved", availableSeats: { $gte: quantity } },
+      { $inc: { availableSeats: -quantity } },
+      { new: true }
+    );
 
     if (!event) {
       return res.status(404).json({
@@ -15,7 +20,7 @@ const createBooking = async (req, res) => {
       });
     }
 
-    if (event.availableSeats < quntity) {
+    if (event.availableSeats < quantity) {
       return res.status(400).json({
         success: false,
         message: "Not enough seats available",
@@ -25,12 +30,9 @@ const createBooking = async (req, res) => {
     const booking = await Booking.create({
       userId,
       eventId,
-      quntity,
-      totalAmount: event.price * quntity,
+      quantity,
+      totalAmount: event.price * quantity,
     });
-
-    event.availableSeats = event.availableSeats - quntity;
-    await event.save();
 
     return res.status(201).json({
       success: true,
@@ -38,6 +40,8 @@ const createBooking = async (req, res) => {
       booking,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
       message: "Server Error",

@@ -12,7 +12,7 @@ const BookingSchema = new mongoose.Schema(
       ref: "Event",
       required: true,
     },
-    quntity: {
+    quantity: {
       type: Number,
       required: true,
       min: 1,
