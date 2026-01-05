@@ -11,6 +11,7 @@ const EventProgressRoutes = require("./routes/EventProgressRoutes");
 const UserRoutes = require("./routes/UserRoutes");
 const ContactMessageRoutes = require("./routes/ContactRoutes");
 const AdminRoutes = require("./routes/AdminRoutes");
+const BookingRoutes=require("./routes/BookingRoutes")
 
 //PORT
 PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.use("/api/events", EventRoutes);
 app.use("/api/event-progress", EventProgressRoutes);
 app.use("/api/contact", ContactMessageRoutes);
 app.use("/api/admin", AdminRoutes);
+app.use("/api/bookings", BookingRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
