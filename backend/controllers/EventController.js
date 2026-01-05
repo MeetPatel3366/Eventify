@@ -1,4 +1,5 @@
 const Event = require("../models/EventModel.js");
+const Booking = require("../models/BookingModel.js");
 const { deleteImage } = require("../utils/deleteFile.js");
 
 const addEvent = async (req, res) => {
@@ -271,7 +272,7 @@ const rejectEvent = async (req, res) => {
 const getMyEvents = async (req, res) => {
   try {
     // This tells the browser/Postman: "Do not store this, always ask for a fresh copy"
-    res.set('Cache-Control', 'no-store');
+    res.set("Cache-Control", "no-store");
     const events = await Event.find({ organizerId: req.user.id });
 
     if (events.length == 0) {
@@ -285,6 +286,53 @@ const getMyEvents = async (req, res) => {
       success: true,
       message: "events fetched successfully",
       events,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getMyEventsWithStats = async (req, res) => {
+  try {
+    const events = await Event.find({
+      organizerId: req.user.id,
+      status: "approved",
+    });
+
+    if (events.length == 0) {
+      return res.status(404).json({
+        success: false,
+        message: "no approved events found",
+      });
+    }
+
+    const eventsWithStats = await Promise.all(
+      events.map(async (event) => {
+        const bookings = await Booking.find({
+          eventId: event._id,
+          status: "confirmed",
+        });
+
+        const totalRevenue = bookings.reduce(
+          (total, booking) => total + booking.totalAmount,
+          0
+        );
+
+        return {
+          ...event.toObject(),
+          bookedSeats: event.totalSeats - event.availableSeats,
+          totalRevenue,
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "events with stats fetched successfully",
+      events: eventsWithStats,
     });
   } catch (error) {
     return res.status(500).json({
@@ -369,4 +417,5 @@ module.exports = {
   getMyEvents,
   getPendingEvents,
   getRejectedEvents,
+  getMyEventsWithStats,
 };

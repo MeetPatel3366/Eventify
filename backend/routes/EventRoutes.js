@@ -11,6 +11,7 @@ const {
   getMyEvents,
   getPendingEvents,
   getRejectedEvents,
+  getMyEventsWithStats,
 } = require("../controllers/EventController");
 const upload = require("../utils/multer");
 const {
@@ -20,6 +21,8 @@ const {
 } = require("../middleware/authMiddleware");
 
 router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
+
+router.get("/my-with-stats", isLoggedIn, isEventOrganizer, getMyEventsWithStats);
 
 router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
 
