@@ -303,9 +303,10 @@ const getMyEventsWithStats = async (req, res) => {
     });
 
     if (events.length == 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
         message: "no approved events found",
+        events: [],
       });
     }
 
@@ -335,6 +336,8 @@ const getMyEventsWithStats = async (req, res) => {
       events: eventsWithStats,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       success: false,
       message: error.message,

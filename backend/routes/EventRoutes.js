@@ -22,13 +22,18 @@ const {
 
 router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
 
-router.get("/my-with-stats", isLoggedIn, isEventOrganizer, getMyEventsWithStats);
+router.get(
+  "/my-with-stats",
+  isLoggedIn,
+  isEventOrganizer,
+  getMyEventsWithStats
+);
 
 router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
 
-router.get("/approved", isLoggedIn, isAdmin, getEvents);
-
 router.get("/rejected", isLoggedIn, isAdmin, getRejectedEvents);
+
+router.get("/approved", isLoggedIn, isAdmin, getEvents);
 
 router.post(
   "/",
