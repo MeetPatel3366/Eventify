@@ -1,11 +1,20 @@
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { FaClock, FaChevronLeft, FaMapMarkerAlt, FaTag } from "react-icons/fa";
 import {
+  FaClock,
+  FaChevronLeft,
+  FaMapMarkerAlt,
+  FaTag,
+  FaUserCheck,
+  FaCheckCircle,
+} from "react-icons/fa";
+import {
+  checkInBooking,
   fetchMyEventBookings,
   resetBookingState,
 } from "../../store/bookingSlice";
+import { useState } from "react";
 
 const MyEventBookings = () => {
   const { eventId } = useParams();
@@ -14,6 +23,21 @@ const MyEventBookings = () => {
   const { myEventBookings, event, loading, error } = useSelector(
     (state) => state.booking
   );
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    bookingId: null,
+    username: "",
+  });
+
+  const eventDate = new Date(event?.datetime);
+  const today = new Date();
+
+  const isEventToday =
+    eventDate.getDate() == today.getDate() &&
+    eventDate.getMonth() == today.getMonth() &&
+    eventDate.getFullYear() == today.getFullYear();
+
+  const isPastEvent = eventDate < today && !isEventToday;
 
   useEffect(() => {
     dispatch(fetchMyEventBookings(eventId));
@@ -102,6 +126,7 @@ const MyEventBookings = () => {
                 <th className="px-6 py-4">Amount Paid</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Transaction Date</th>
+                <th className="px-6 py-4">Check-In</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-700/50">
@@ -178,6 +203,31 @@ const MyEventBookings = () => {
                         </span>
                       </div>
                     </td>
+
+                    <td className="px-6 py-4">
+                      {b.checkedIn ? (
+                        <span className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-[10px] font-bold uppercase border border-emerald-500/20">
+                          <FaCheckCircle /> Arrived
+                        </span>
+                      ) : isEventToday ? (
+                        <button
+                          onClick={() =>
+                            setConfirmModal({
+                              isOpen: true,
+                              bookingId: b._id,
+                              username: b.userId?.username || "Guest",
+                            })
+                          }
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-[10px] font-bold transition-all hover:scale-105"
+                        >
+                          <FaUserCheck /> MARK CHECK-IN
+                        </button>
+                      ) : (
+                        <span className="text-slate-500 text-[10px] font-medium">
+                          {isPastEvent ? "Event Ended" : "Check-in Unavailable"}
+                        </span>
+                      )}
+                    </td>
                   </tr>
                 ))
               )}
@@ -191,6 +241,56 @@ const MyEventBookings = () => {
           <p className="text-slate-500 text-xs font-medium">
             Showing {myEventBookings.length} records
           </p>
+        </div>
+      )}
+
+      {confirmModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl max-w-sm w-full shadow-2xl scale-in-center">
+            <div className="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-full flex items-center justify-center mb-4 mx-auto">
+              <FaUserCheck size={24} />
+            </div>
+
+            <h3 className="text-xl font-bold text-center mb-2">
+              Confirm Check-In
+            </h3>
+
+            <p className="text-slate-400 text-center text-sm mb-6">
+              Are you sure you want to mark{" "}
+              <span className="text-indigo-400 font-bold underline decoration-indigo-500/30 underline-offset-4">
+                {confirmModal.username}
+              </span>{" "}
+              as checked in?
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() =>
+                  setConfirmModal({
+                    isOpen: false,
+                    bookingId: null,
+                    username: "",
+                  })
+                }
+                className="flex-1 px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 transition-colors font-semibold text-sm text-slate-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  dispatch(checkInBooking(confirmModal.bookingId));
+                  setConfirmModal({
+                    isOpen: false,
+                    bookingId: null,
+                    username: "",
+                  });
+                }}
+                className="flex-1 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition-colors font-semibold text-sm shadow-lg shadow-indigo-500/20 text-white"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

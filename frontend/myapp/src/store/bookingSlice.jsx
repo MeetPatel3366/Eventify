@@ -25,6 +25,14 @@ export const fetchMyEventBookings = createAsyncThunk(
   }
 );
 
+export const checkInBooking = createAsyncThunk(
+  "booking/checkInBooking",
+  async (bookingId) => {
+    const res = await bookingsApi.checkInBooking(bookingId);
+    return res.data.booking;
+  }
+);
+
 const bookingSlice = createSlice({
   name: "booking",
   initialState: {
@@ -73,6 +81,20 @@ const bookingSlice = createSlice({
         state.loading = false;
         state.myEventBookings = action.payload.bookings;
         state.event = action.payload.event;
+      })
+
+      .addCase(checkInBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(checkInBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.myEventBookings.findIndex(
+          (b) => b._id == action.payload._id
+        );
+        if (index !== -1) {
+          state.myEventBookings[index] = action.payload;
+        }
       })
 
       .addMatcher(
