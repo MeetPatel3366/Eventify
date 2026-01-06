@@ -1,20 +1,41 @@
-import React, { useEffect } from "react";
-import { FaCalendarAlt, FaClock, FaCheckCircle, FaUsers } from "react-icons/fa";
+import React, { useEffect, useMemo } from "react";
+import {
+  FaCalendarAlt,
+  FaClock,
+  FaCheckCircle,
+  FaUsers,
+  FaChartLine,
+  FaListUl,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyEvents } from "../../store/eventSlice";
 
 export default function OrganizerDashboard() {
-  const { myEvents, loading } = useSelector((state) => state.event)
-  const dispatch = useDispatch()
+  const { myEvents, myEventStats, loading } = useSelector(
+    (state) => state.event
+  );
+  const dispatch = useDispatch();
   const today = new Date();
-  const upcomingEvents = myEvents.filter((event) => new Date(event.date) >= today)
+  const upcomingEvents = myEvents.filter(
+    (event) => new Date(event.datetime) >= today
+  );
 
   const approvedEvents = myEvents.filter((e) => e.status == "approved").length;
   const pendingEvents = myEvents.filter((e) => e.status == "pending").length;
 
+  const stats = useMemo(() => {
+    return myEventStats.reduce(
+      (accum, curr) => ({
+        totalRevenue: accum.totalRevenue + curr.totalRevenue,
+        totalBooked: accum.totalBooked + curr.bookedSeats,
+      }),
+      { totalRevenue: 0, totalBooked: 0 }
+    );
+  }, [myEventStats]);
+
   useEffect(() => {
-    dispatch(fetchMyEvents())
-  }, [dispatch])
+    dispatch(fetchMyEvents());
+  }, [dispatch]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white px-6 py-16 mt-2">
@@ -46,8 +67,20 @@ export default function OrganizerDashboard() {
 
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl">
           <FaUsers className="text-indigo-400 mb-4" size={32} />
-          <h3 className="text-xl font-semibold">Total Attendees</h3>
-          <p className="text-4xl font-bold mt-2">--</p>
+          <h3 className="text-xl font-semibold">Total Bookings</h3>
+          <p className="text-4xl font-bold mt-2">{stats.totalBooked}</p>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl">
+          <FaChartLine className="text-green-400 mb-4" size={32} />
+          <h3 className="text-xl font-semibold">Total Revenue</h3>
+          <p className="text-4xl font-bold mt-2">₹ {stats.totalRevenue}</p>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-xl">
+          <FaListUl className="text-indigo-400 mb-4" size={32} />
+          <h3 className="text-xl font-semibold">Upcoming Events</h3>
+          <p className="text-4xl font-bold mt-2">{upcomingEvents.length}</p>
         </div>
       </section>
 
@@ -71,12 +104,11 @@ export default function OrganizerDashboard() {
                   className="h-44 w-full object-cover"
                 />
                 <div className="p-6">
-                  <h3 className="text-2xl font-semibold mb-1">
-                    {event.name}
-                  </h3>
+                  <h3 className="text-2xl font-semibold mb-1">{event.name}</h3>
 
                   <p className="text-gray-300 text-sm mb-2">
-                    {new Date(event.date).toLocaleDateString()} • {event.location}
+                    {new Date(event.date).toLocaleDateString()} •{" "}
+                    {event.location}
                   </p>
 
                   <p className="text-gray-400 text-sm mb-4 capitalize">
@@ -84,12 +116,13 @@ export default function OrganizerDashboard() {
                   </p>
 
                   <span
-                    className={`inline-block px-4 py-1 text-sm rounded-full font-medium ${event.status === "approved"
-                      ? "bg-green-600"
-                      : event.status === "pending"
+                    className={`inline-block px-4 py-1 text-sm rounded-full font-medium ${
+                      event.status === "approved"
+                        ? "bg-green-600"
+                        : event.status === "pending"
                         ? "bg-yellow-600"
                         : "bg-red-600"
-                      }`}
+                    }`}
                   >
                     {event.status}
                   </span>
