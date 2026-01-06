@@ -109,7 +109,7 @@ const getMyEventBookings = async (req, res) => {
       eventId: eventID,
       status: "confirmed",
     })
-      .populate("userId", "name email")
+      .populate("userId", "username email")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -118,6 +118,7 @@ const getMyEventBookings = async (req, res) => {
         name: event.name,
         datetime: event.datetime,
         location: event.location,
+        price: event.price,
       },
       bookings,
     });

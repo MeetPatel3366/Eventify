@@ -14,11 +14,6 @@ router.post("/", isLoggedIn, createBooking);
 
 router.get("/my", isLoggedIn, myBookings);
 
-router.get(
-  "/bookings/:eventID",
-  isLoggedIn,
-  isEventOrganizer,
-  getMyEventBookings
-);
+router.get("/:eventID", isLoggedIn, isEventOrganizer, getMyEventBookings);
 
 module.exports = router;
