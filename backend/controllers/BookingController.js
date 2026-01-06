@@ -87,7 +87,50 @@ const myBookings = async (req, res) => {
   }
 };
 
+const getMyEventBookings = async (req, res) => {
+  try {
+    const { eventID } = req.params;
+    const organizerId = req.user.id;
+
+    const event = await Event.findOne({
+      _id: eventID,
+      organizerId,
+      status: "approved",
+    });
+
+    if (!event) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized access to event bookings",
+      });
+    }
+
+    const bookings = await Booking.find({
+      eventId: eventID,
+      status: "confirmed",
+    })
+      .populate("userId", "name email")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      event: {
+        name: event.name,
+        datetime: event.datetime,
+        location: event.location,
+      },
+      bookings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
   myBookings,
+  getMyEventBookings,
 };
