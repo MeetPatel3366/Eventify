@@ -130,8 +130,46 @@ const getMyEventBookings = async (req, res) => {
   }
 };
 
+const markBookingCheckedIn = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const organizerId = req.user.id;
+
+    const booking = await Booking.findById(bookingId).populate("eventId");
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    if (booking.eventId.organizerId.toString() !== organizerId) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized to mark booking",
+      });
+    }
+
+    booking.checkedIn = true;
+    booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "booking checked in successfully",
+      booking,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
   myBookings,
   getMyEventBookings,
+  markBookingCheckedIn,
 };
