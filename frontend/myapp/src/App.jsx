@@ -10,7 +10,6 @@ import PaymentsPage from "./pages/customer pages/PaymentsPage";
 import AboutPage from "./pages/customer pages/AboutPage";
 import ContactPage from "./pages/customer pages/ContactPage";
 import EventProgressPage from "./pages/customer pages/EventProgressPage";
-import RecentBookingsPage from "./pages/customer pages/RecentBookingsPage";
 
 import AdminHomePage from "./pages/admin pages/AdminHomePage";
 
@@ -18,7 +17,6 @@ import RoleBasedRoute from "./components/RoleBasedRoute";
 import Homepage from "./pages/event organizer pages/HomePage";
 import OrganizerDashboardPage from "./pages/event organizer pages/OrganizerDashboardPage";
 import MyEventsPage from "./pages/event organizer pages/MyEventsPage";
-import AllEventsPage from "./pages/event organizer pages/AllEventsPage";
 import AddEventPage from "./pages/event organizer pages/AddEventPage";
 import EditEventPage from "./pages/event organizer pages/EditEventPage";
 import VerifyOtp from "./components/customer components/VerifyOtp";
@@ -208,14 +206,6 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
             <EventInsightsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/allevents"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <AllEventsPage />
           </RoleBasedRoute>
         }
       />
