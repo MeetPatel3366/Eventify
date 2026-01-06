@@ -3,10 +3,13 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import authApi from "../../api/authApi";
 import { Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from "react-redux";
+import { setAuth } from "../../store/authSlice";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,11 +69,21 @@ const Login = () => {
       setMsg(res.data.message);
 
       if (res.data.success) {
-        setTimeout(() => {
-          navigate("/login-otp-verify", { state: { email } });
-        }, 1200);
+        if (res.data.isAdmin) {
+          localStorage.setItem("role", res.data.role);
+          dispatch(setAuth({ role: res.data.role }));
+
+          setTimeout(() => {
+            navigate("/admin/home");
+          }, 1200);
+        } else {
+          setTimeout(() => {
+            navigate("/login-otp-verify", { state: { email } });
+          }, 1200);
+        }
       }
     } catch (error) {
+      console.log("error : ", error);
       if (error.response?.data?.needsVerification) {
         setMsg(error.response.data.message);
         setTimeout(() => {

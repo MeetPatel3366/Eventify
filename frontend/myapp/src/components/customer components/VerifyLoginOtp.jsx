@@ -40,9 +40,7 @@ const VerifyLoginOtp = () => {
                 dispatch(setAuth({ role }));
 
                 setTimeout(() => {
-                    if (res.data.role === "admin") {
-                        navigate("/admin/home");
-                    } else if (res.data.role === "eventorganizer") {
+                    if (res.data.role === "eventorganizer") {
                         navigate("/organizer/home");
                     } else {
                         navigate("/home");

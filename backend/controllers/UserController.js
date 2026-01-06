@@ -169,6 +169,28 @@ const login = async (req, res) => {
       });
     }
 
+    if (user.role === "admin") {
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Admin Login successful",
+        role: user.role,
+        isAdmin: true,
+      });
+    }
+
     const otp = crypto.randomInt(100000, 1000000);
     user.otp = otp;
     user.otpExpiry = Date.now() + 10 * 60 * 1000;
@@ -574,11 +596,11 @@ const logout = async (req, res) => {
       secure: false,
       sameSite: "lax",
     });
-    console.log(req.cookies)
+    console.log(req.cookies);
     return res.status(200).json({
-      success:true,
+      success: true,
       message: "logged out successfully",
-    })
+    });
   } catch (err) {
     return res.status(500).json({
       success: false,
