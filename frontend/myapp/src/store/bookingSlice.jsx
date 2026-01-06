@@ -70,7 +70,7 @@ const bookingSlice = createSlice({
       })
       .addCase(fetchMyBookings.fulfilled, (state, action) => {
         state.loading = false;
-        state.bookings = action.payload.bookings;
+        state.bookings = action.payload;
       })
 
       .addCase(fetchMyEventBookings.pending, (state) => {
