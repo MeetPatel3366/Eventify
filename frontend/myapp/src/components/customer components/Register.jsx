@@ -16,14 +16,22 @@ const Register = () => {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const isFormValid = username && email && password && confirmpassword && !usernameError && !emailError && !passwordError && !confirmPasswordError;
+  const isFormValid =
+    username &&
+    email &&
+    password &&
+    confirmpassword &&
+    !usernameError &&
+    !emailError &&
+    !passwordError &&
+    !confirmPasswordError;
 
   const navigate = useNavigate();
   const location = useLocation();
   const isOrganizer = location.pathname.includes("organizer");
 
   const handleUsernameChange = (e) => {
-    setMsg("")
+    setMsg("");
     const value = e.target.value;
     setUsername(value);
 
@@ -42,13 +50,13 @@ const Register = () => {
     }
   };
 
-
   const handlePasswordChange = (e) => {
-    setMsg("")
+    setMsg("");
     const value = e.target.value;
     setPassword(value);
 
-    const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    const PASSWORD_REGEX =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
     if (!value) {
       setPasswordError("");
     } else if (!PASSWORD_REGEX.test(value)) {
@@ -61,7 +69,7 @@ const Register = () => {
   };
 
   const handleConfirmPasswordChange = (e) => {
-    setMsg("")
+    setMsg("");
     const value = e.target.value;
     setConfirmpassword(value);
   };
@@ -76,7 +84,7 @@ const Register = () => {
   }, [password, confirmpassword]);
 
   const handleEmailChange = (e) => {
-    setMsg("")
+    setMsg("");
     const value = e.target.value.trim();
     setEmail(value);
 
@@ -89,7 +97,6 @@ const Register = () => {
       setEmailError("");
     }
   };
-
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -125,7 +132,7 @@ const Register = () => {
     } catch (error) {
       setMsg(
         error.response?.data?.message ||
-        "Something went wrong. Please try again."
+          "Something went wrong. Please try again."
       );
     } finally {
       setLoading(false);
@@ -144,9 +151,7 @@ const Register = () => {
       <div className="flex items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl bg-white px-8 py-10 shadow-xl border border-gray-200">
           <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold text-indigo-600">
-              Eventify
-            </h1>
+            <h1 className="text-3xl font-bold text-indigo-600">Eventify</h1>
             <p className="mt-1 text-center text-sm text-gray-500">
               {isOrganizer
                 ? "Start managing your events professionally"
@@ -155,9 +160,8 @@ const Register = () => {
           </div>
 
           <h2 className="text-center text-2xl font-semibold text-gray-900">
-            Create Your Account
+            {isOrganizer ? "Organizer Registration" : "Create Your Account"}
           </h2>
-
 
           {msg && (
             <div className="mt-2 rounded-lg bg-indigo-50 px-4 py-2 text-sm text-red-700 text-center">
@@ -195,11 +199,8 @@ const Register = () => {
               />
 
               {emailError && (
-                <p className="mt-1 text-xs text-red-600">
-                  {emailError}
-                </p>
+                <p className="mt-1 text-xs text-red-600">{emailError}</p>
               )}
-
             </div>
 
             <div>
@@ -239,12 +240,9 @@ const Register = () => {
                   className="w-full rounded-lg border border-gray-300 px-3 py-2.5 pr-10 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
                 />
 
-
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showConfirmPassword ? (

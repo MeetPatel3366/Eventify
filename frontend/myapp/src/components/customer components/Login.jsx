@@ -15,7 +15,8 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
-  const isAdmin = location.pathname.includes("/admin") ? "true" : "false";
+  const isAdmin = location.pathname.includes("/admin");
+  const isOrganizer = location.pathname.includes("organizer");
   const isFormValid = email && password && !emailError && !passwordError;
 
   const getRoleFromPath = (pathname) => {
@@ -51,16 +52,13 @@ const Login = () => {
     }
   };
 
-
   const onSubmit = async (e) => {
     e.preventDefault();
-
 
     if (emailError || passwordError) {
       setMsg("Please fix the errors before submitting.");
       return;
     }
-
 
     try {
       setLoading(true);
@@ -79,10 +77,7 @@ const Login = () => {
           navigate("/verify-otp", { state: { email } });
         }, 1200);
       } else {
-        setMsg(
-          error.response?.data?.message ||
-          "Invalid email or password."
-        );
+        setMsg(error.response?.data?.message || "Invalid email or password.");
       }
     } finally {
       setLoading(false);
@@ -90,8 +85,31 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BACKEND_GOOGLE_URL}?role=${role}`;
+    window.location.href = `${
+      import.meta.env.VITE_BACKEND_GOOGLE_URL
+    }?role=${role}`;
   };
+
+  const getTitle = () => {
+    if (isAdmin) {
+      return {
+        title: "Admin Portal",
+        subtitle: "Access the control center to manage Eventify",
+      };
+    }
+    if (isOrganizer) {
+      return {
+        title: "Organizer Sign In",
+        subtitle: "Welcome back, manage your events seamlessly",
+      };
+    }
+    return {
+      title: "Sign in to Eventify",
+      subtitle: "Join the community and discover amazing events",
+    };
+  };
+
+  const content = getTitle();
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-gradient-to-br from-slate-50 via-gray-100 to-slate-200">
@@ -103,20 +121,15 @@ const Login = () => {
         />
       </div>
 
-
       <div className="flex items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl bg-white px-8 py-10 shadow-xl border border-gray-200">
           <div className="mb-6 text-center">
-            <h1 className="text-3xl font-bold text-indigo-600">
-              Eventify
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">
-              Welcome back, manage your events seamlessly
-            </p>
+            <h1 className="text-3xl font-bold text-indigo-600">Eventify</h1>
+            <p className="mt-1 text-sm text-gray-500">{content.subtitle}</p>
           </div>
 
           <h2 className="text-center text-2xl font-semibold text-gray-900">
-            Sign in to your account
+            {content.title}
           </h2>
 
           {msg && (
@@ -146,7 +159,6 @@ const Login = () => {
                 Password
               </label>
               <div className="relative">
-
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -176,7 +188,7 @@ const Login = () => {
             </button>
           </form>
 
-          {isAdmin == "false" && (
+          {!isAdmin && (
             <>
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">
@@ -187,17 +199,19 @@ const Login = () => {
                     Or continue with
                   </span>
                 </div>
-              </div><button
+              </div>
+              <button
                 type="button"
                 onClick={handleGoogleLogin}
                 className="w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
               >
                 <FcGoogle size={20} />
                 Sign in with Google
-              </button><p className="mt-6 text-center text-sm text-gray-600">
+              </button>
+              <p className="mt-6 text-center text-sm text-gray-600">
                 Don’t have an account?{" "}
                 <NavLink
-                  to="/register"
+                  to={isOrganizer ? "/organizer/register" : "/register"}
                   className="font-medium text-indigo-600 hover:underline"
                 >
                   Create one

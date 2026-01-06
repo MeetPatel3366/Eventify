@@ -39,14 +39,12 @@ import MyEventBookingsPage from "./pages/event organizer pages/MyEventBookingsPa
 function App() {
   return (
     <Routes>
-      {/* Public routes */}
       <Route path="/" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/logout" element={<Logout />} />
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
 
-      {/* Customer routes */}
       <Route
         path="/home"
         element={
@@ -96,14 +94,6 @@ function App() {
         }
       />
       <Route
-        path="/payments"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <PaymentsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
         path="/event-progress"
         element={
           <RoleBasedRoute allowedRoles={["customer"]}>
@@ -111,16 +101,7 @@ function App() {
           </RoleBasedRoute>
         }
       />
-      <Route
-        path="/recent-bookings"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <RecentBookingsPage />
-          </RoleBasedRoute>
-        }
-      />
 
-      {/* Admin routes */}
       <Route path="/admin" element={<Login />} />
       <Route
         path="/admin/home"
@@ -194,8 +175,6 @@ function App() {
           </RoleBasedRoute>
         }
       />
-
-      {/* Event Organizer routes */}
 
       <Route path="/organizer/register" element={<Register />} />
       <Route path="/organizer/verify-otp" element={<VerifyOtp />} />
