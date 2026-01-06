@@ -8,6 +8,7 @@ import {
   FaTicketAlt,
 } from "react-icons/fa";
 import { fetchMyEventsWithStats } from "../../store/eventSlice";
+import { NavLink } from "react-router-dom";
 
 const EventInsights = () => {
   const dispatch = useDispatch();
@@ -44,7 +45,8 @@ const EventInsights = () => {
       ) : (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {myEventStats.map((event) => (
-            <div
+            <NavLink to={`/organizer/events/${event._id}/bookings`}>
+              <div
               key={event._id}
               className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden flex flex-col hover:border-slate-500 transition-colors shadow-sm"
             >
@@ -132,6 +134,7 @@ const EventInsights = () => {
                 </div>
               </div>
             </div>
+            </NavLink>
           ))}
         </div>
       )}

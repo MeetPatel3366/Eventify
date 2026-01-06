@@ -34,6 +34,7 @@ import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
 import EventBookingPage from "./pages/customer pages/EventBookingPage";
 import MyBookingsPage from "./pages/customer pages/MyBookingsPage";
 import EventInsightsPage from "./pages/event organizer pages/EventInsightsPage";
+import MyEventBookingsPage from "./pages/event organizer pages/MyEventBookingsPage";
 
 function App() {
   return (
@@ -252,6 +253,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["eventorganizer"]}>
             <EditEventPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/organizer/events/:eventId/bookings"
+        element={
+          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+            <MyEventBookingsPage />
           </RoleBasedRoute>
         }
       />
