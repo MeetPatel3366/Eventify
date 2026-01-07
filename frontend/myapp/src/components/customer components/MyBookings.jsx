@@ -38,7 +38,7 @@ const MyBookings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 pb-20 pt-16">
       <h1 className="text-3xl font-bold mb-8 text-center">My Bookings</h1>
       <div
         className="
@@ -59,7 +59,7 @@ const MyBookings = () => {
               className="bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-xl overflow-hidden hover:scale-[1.02] transition"
             >
               <img
-                src={event?.image || "/placeholder.jpg"}
+                src={event?.image}
                 alt={event?.name}
                 className="w-full h-44 object-cover"
               />

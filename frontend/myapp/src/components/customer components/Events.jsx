@@ -27,7 +27,7 @@ const Events = () => {
     return <p className="text-center text-white py-10">Loading events...</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-950 px-6 py-16 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 pb-20 pt-14">
       <h1 className="text-4xl font-bold text-center mb-12 mt-2">
         Upcoming Events
       </h1>

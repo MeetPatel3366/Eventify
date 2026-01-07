@@ -42,6 +42,14 @@ export const deleteEvent = createAsyncThunk("events/delete", async (id) => {
   return id;
 });
 
+export const fetchprogressEvent = createAsyncThunk(
+  "events/progress",
+  async () => {
+    const res = await eventApi.fetchProgress();
+    return res.data.data;
+  }
+);
+
 const eventSlice = createSlice({
   name: "event",
   initialState: {
@@ -49,6 +57,7 @@ const eventSlice = createSlice({
     myEvents: [],
     event: null,
     myEventStats: [],
+    progressEvent: [],
     loading: false,
     error: null,
   },
@@ -116,10 +125,18 @@ const eventSlice = createSlice({
         state.events = state.events.filter((e) => e._id !== action.payload);
       })
 
+      .addCase(fetchprogressEvent.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchprogressEvent.fulfilled, (state, action) => {
+        state.loading = false;
+        state.progressEvent = action.payload;
+      })
+
       .addMatcher(
         (action) => action.type.endsWith("rejected"),
         (state, action) => {
-          console.error("event api error:", action.error);
+          console.log("event api error:", action.error);
           state.loading = false;
           state.error = action.error?.message || "something went wrong";
         }
