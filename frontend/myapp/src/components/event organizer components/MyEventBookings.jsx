@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import {
   checkInBooking,
+  fetchexportBookingsCSV,
   fetchMyEventBookings,
   resetBookingState,
 } from "../../store/bookingSlice";
@@ -83,7 +84,12 @@ const MyEventBookings = () => {
             <FaChevronLeft size={12} /> Back to Insights
           </button>
           <h1 className="text-3xl font-bold tracking-tight">Booking Details</h1>
-
+          <button
+            onClick={() => dispatch(fetchexportBookingsCSV(eventId))}
+            className="mt-2 mb-4 px-5 py-2 bg-green-600 rounded-lg hover:bg-green-700"
+          >
+            Download CSV
+          </button>
           {event && (
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400 font-medium">
               <span className="text-indigo-400 font-bold">{event.name}</span>

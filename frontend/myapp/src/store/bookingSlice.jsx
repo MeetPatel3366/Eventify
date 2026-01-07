@@ -33,6 +33,16 @@ export const checkInBooking = createAsyncThunk(
   }
 );
 
+export const fetchexportBookingsCSV = createAsyncThunk(
+  "booking/fetchexportBookingsCSV",
+  async (eventId) => {
+    window.open(
+      `${import.meta.env.VITE_BACKEND_URL}/bookings/event/${eventId}/export`,
+      "_blank"
+    );
+  }
+);
+
 const bookingSlice = createSlice({
   name: "booking",
   initialState: {
@@ -95,6 +105,14 @@ const bookingSlice = createSlice({
         if (index !== -1) {
           state.myEventBookings[index] = action.payload;
         }
+      })
+
+      .addCase(fetchexportBookingsCSV.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchexportBookingsCSV.fulfilled, (state, action) => {
+        state.loading = false;
       })
 
       .addMatcher(
