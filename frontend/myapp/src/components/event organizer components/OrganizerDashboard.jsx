@@ -38,8 +38,8 @@ export default function OrganizerDashboard() {
   }, [dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white px-6 py-16 mt-2">
-      <section className="max-w-7xl mx-auto mb-14">
+    <>
+      <section className="max-w-7xl mx-auto mb-14 mt-4">
         <h1 className="text-5xl font-extrabold mb-3">Organizer Dashboard</h1>
         <p className="text-gray-300 text-lg">
           Overview of your events, approvals, and attendees.
@@ -138,6 +138,6 @@ export default function OrganizerDashboard() {
           </div>
         )}
       </section>
-    </div>
+    </>
   );
 }

@@ -51,8 +51,8 @@ export default function AddEvent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white px-6 py-16 mt-4">
-      <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-10">
+    <>
+      <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-10 mt-4 mb-4">
         <h1 className="text-4xl font-extrabold mb-6 flex items-center gap-3">
           <FaPlusCircle className="text-indigo-400" />
           Create New Event
@@ -207,6 +207,6 @@ export default function AddEvent() {
           </button>
         </form>
       </section>
-    </div>
+    </>
   );
 }

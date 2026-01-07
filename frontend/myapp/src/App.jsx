@@ -9,11 +9,6 @@ import EventProgressPage from "./pages/customer pages/EventProgressPage";
 import AdminHomePage from "./pages/admin pages/AdminHomePage";
 
 import RoleBasedRoute from "./components/RoleBasedRoute";
-import Homepage from "./pages/event organizer pages/HomePage";
-import OrganizerDashboardPage from "./pages/event organizer pages/OrganizerDashboardPage";
-import MyEventsPage from "./pages/event organizer pages/MyEventsPage";
-import AddEventPage from "./pages/event organizer pages/AddEventPage";
-import EditEventPage from "./pages/event organizer pages/EditEventPage";
 import VerifyOtp from "./components/customer components/VerifyOtp";
 import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
 import PendingEventsPage from "./pages/admin pages/PendingEventsPage";
@@ -25,8 +20,6 @@ import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
 import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
 import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
 
-import EventInsightsPage from "./pages/event organizer pages/EventInsightsPage";
-import MyEventBookingsPage from "./pages/event organizer pages/MyEventBookingsPage";
 import AllUsersPage from "./pages/admin pages/AllUsersPage";
 import AllBookingsPage from "./pages/admin pages/AllBookingsPage";
 import Home from "./components/customer components/Home";
@@ -36,6 +29,14 @@ import Contact from "./components/customer components/Contact";
 import EventBooking from "./components/customer components/EventBooking";
 import MyBookings from "./components/customer components/MyBookings";
 import CustomerMainLayout from "../layouts/CustomerMainLayout";
+import EventOrganizerLayout from "../layouts/EventOrganizerLayout";
+import OrganizerHome from "./components/event organizer components/OrganizerHome";
+import OrganizerDashboard from "./components/event organizer components/OrganizerDashboard";
+import MyEvents from "./components/event organizer components/MyEvents";
+import EventInsights from "./components/event organizer components/EventInsights";
+import AddEvent from "./components/event organizer components/AddEvent";
+import EditEvent from "./components/event organizer components/EditEvent";
+import MyEventBookings from "./components/event organizer components/MyEventBookings";
 
 function App() {
   return (
@@ -198,62 +199,65 @@ function App() {
       <Route path="/organizer/register" element={<Register />} />
       <Route path="/organizer/verify-otp" element={<VerifyOtp />} />
       <Route path="/organizer" element={<Login />} />
-      <Route
-        path="/organizer/home"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <Homepage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/dashboard"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <OrganizerDashboardPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <MyEventsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events-stats"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <EventInsightsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events/add"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <AddEventPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events/edit/:id"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <EditEventPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/organizer/events/:eventId/bookings"
-        element={
-          <RoleBasedRoute allowedRoles={["eventorganizer"]}>
-            <MyEventBookingsPage />
-          </RoleBasedRoute>
-        }
-      />
+
+      <Route element={<EventOrganizerLayout />}>
+        <Route
+          path="/organizer/home"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <OrganizerHome />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/dashboard"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <OrganizerDashboard />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <MyEvents />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events-stats"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <EventInsights />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/add"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <AddEvent />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/edit/:id"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <EditEvent />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/:eventId/bookings"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <MyEventBookings />
+            </RoleBasedRoute>
+          }
+        />
+      </Route>
     </Routes>
   );
 }

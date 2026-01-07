@@ -6,7 +6,9 @@ import authApi from "../../api/authApi";
 
 const Logout = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const isAdmin = location.pathname.includes("/admin");
+  const isOrganizer = location.pathname.includes("organizer");
 
   useEffect(() => {
     const doLogout = async () => {
@@ -16,7 +18,13 @@ const Logout = () => {
         console.log(err);
       } finally {
         dispatch(logout());
-        navigate("/", { replace: true });
+        if (isAdmin) {
+          navigate("/admin", { replace: true });
+        } else if (isOrganizer) {
+          navigate("/organizer", { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       }
     };
     doLogout();

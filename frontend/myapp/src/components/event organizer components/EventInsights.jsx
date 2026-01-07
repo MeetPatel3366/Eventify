@@ -12,38 +12,27 @@ import { NavLink } from "react-router-dom";
 
 const EventInsights = () => {
   const dispatch = useDispatch();
-  const { myEventStats, loading } = useSelector((state) => state.event);
+  const { myEventStats } = useSelector((state) => state.event);
 
   useEffect(() => {
     dispatch(fetchMyEventsWithStats());
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f172a]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-400 font-medium">Loading analytics...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 p-6 md:p-12 mt-10">
-      <header className="mb-10 border-b border-slate-700/50 pb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Event Insights</h1>
-        <p className="text-slate-400 mt-1 text-sm">
+    <>
+    <section className="max-w-7xl mx-auto mb-6 mt-4">
+        <h1 className="text-5xl font-extrabold mb-3">Event Insights</h1>
+        <p className="text-gray-300 text-lg">
           Track sales, attendance, and revenue for your active events.
         </p>
-      </header>
+      </section>
 
       {myEventStats.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 bg-slate-800/30 rounded-2xl border border-slate-700">
           <p className="text-slate-500 text-lg">No active event data found.</p>
         </div>
       ) : (
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {myEventStats.map((event) => (
             <NavLink to={`/organizer/events/${event._id}/bookings`}>
               <div
@@ -138,7 +127,7 @@ const EventInsights = () => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

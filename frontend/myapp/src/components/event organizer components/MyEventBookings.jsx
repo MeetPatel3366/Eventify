@@ -57,24 +57,24 @@ const MyEventBookings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f172a]">
+      <>
         <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0f172a]">
+      <>
         <div className="bg-red-500/10 border border-red-500/50 p-6 rounded-xl text-red-400">
           {error}
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 p-6 md:p-10 mt-10">
+    <>
       <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <button
@@ -299,7 +299,7 @@ const MyEventBookings = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
