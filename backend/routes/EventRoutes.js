@@ -36,6 +36,8 @@ router.get("/rejected", isLoggedIn, isAdmin, getRejectedEvents);
 
 router.get("/approved", isLoggedIn, isAdmin, getEvents);
 
+router.get("/progress", isLoggedIn, getEventProgress);
+
 router.post(
   "/",
   upload.single("image"),
@@ -45,8 +47,6 @@ router.post(
 );
 
 router.get("/", isLoggedIn, getEvents);
-
-router.get("/progress", isLoggedIn, getEventProgress);
 
 router.get("/:id", isLoggedIn, getEvent);
 
