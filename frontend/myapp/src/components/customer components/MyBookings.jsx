@@ -25,10 +25,14 @@ const MyBookings = () => {
     );
   }
 
-  if (!bookings?.length) {
+  if (!bookings || bookings.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        No bookings found
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center text-white p-6">
+        <div className="text-center">
+          <FaTicketAlt className="text-5xl text-gray-600 mb-4 mx-auto" />
+          <h2 className="text-2xl font-semibold">No bookings found</h2>
+          <p className="text-gray-400">You haven't booked any events yet.</p>
+        </div>
       </div>
     );
   }
