@@ -38,7 +38,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white px-6 py-16">
+    <>
       <section className="max-w-6xl mx-auto text-center mb-6 mt-6">
         <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
         <p className="text-gray-300 text-lg">
@@ -130,7 +130,7 @@ const Contact = () => {
           <p className="text-gray-300">123 Event Street, New York, NY</p>
         </div>
       </section>
-    </div>
+    </>
   );
 };
 

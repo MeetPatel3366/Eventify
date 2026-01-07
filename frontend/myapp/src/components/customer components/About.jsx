@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white px-6 py-16">
+    <>
       <section className="max-w-6xl mx-auto mb-20 grid md:grid-cols-2 gap-10 items-center mt-10">
         <div>
           <h1 className="text-5xl font-bold mb-6 leading-tight">
@@ -92,7 +92,7 @@ const About = () => {
           ensuring a trustworthy experience for every customer.
         </p>
       </section>
-    </div>
+    </>
   );
 }
 

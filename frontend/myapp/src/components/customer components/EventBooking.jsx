@@ -41,16 +41,8 @@ const EventBooking = () => {
     dispatch(createBooking({ eventId: id, quantity }));
   };
 
-  if (!event) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Loading...
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-8 px-4 flex items-center justify-center">
+    <>
       <div className="max-w-2xl w-full bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
         <img
           src={event.image}
@@ -145,7 +137,7 @@ const EventBooking = () => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

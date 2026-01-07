@@ -4,11 +4,6 @@ import Login from "./components/customer components/Login";
 import Register from "./components/customer components/Register";
 import Logout from "./components/customer components/Logout";
 
-import HomePage from "./pages/customer pages/HomePage";
-import EventsPage from "./pages/customer pages/EventsPage";
-import PaymentsPage from "./pages/customer pages/PaymentsPage";
-import AboutPage from "./pages/customer pages/AboutPage";
-import ContactPage from "./pages/customer pages/ContactPage";
 import EventProgressPage from "./pages/customer pages/EventProgressPage";
 
 import AdminHomePage from "./pages/admin pages/AdminHomePage";
@@ -29,11 +24,18 @@ import ApprovedOrganizerPage from "./pages/admin pages/ApprovedOrganizerPage";
 import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
 import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
 import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
-import EventBookingPage from "./pages/customer pages/EventBookingPage";
-import MyBookingsPage from "./pages/customer pages/MyBookingsPage";
+
 import EventInsightsPage from "./pages/event organizer pages/EventInsightsPage";
 import MyEventBookingsPage from "./pages/event organizer pages/MyEventBookingsPage";
 import AllUsersPage from "./pages/admin pages/AllUsersPage";
+import AllBookingsPage from "./pages/admin pages/AllBookingsPage";
+import Home from "./components/customer components/Home";
+import Events from "./components/customer components/Events";
+import About from "./components/customer components/About";
+import Contact from "./components/customer components/Contact";
+import EventBooking from "./components/customer components/EventBooking";
+import MyBookings from "./components/customer components/MyBookings";
+import CustomerMainLayout from "../layouts/CustomerMainLayout";
 
 function App() {
   return (
@@ -44,62 +46,64 @@ function App() {
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
 
-      <Route
-        path="/home"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <HomePage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/events"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <EventsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/about"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <AboutPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/contact"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <ContactPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/events/:id/book"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <EventBookingPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/my-bookings"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <MyBookingsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/event-progress"
-        element={
-          <RoleBasedRoute allowedRoles={["customer"]}>
-            <EventProgressPage />
-          </RoleBasedRoute>
-        }
-      />
+      <Route element={<CustomerMainLayout />}>
+        <Route
+          path="/home"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <Home />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/events"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <Events />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <About />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <Contact />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/events/:id/book"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <EventBooking />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <MyBookings />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/event-progress"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <EventProgressPage />
+            </RoleBasedRoute>
+          }
+        />
+      </Route>
 
       <Route path="/admin" element={<Login />} />
       <Route
@@ -179,6 +183,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <AdminContactReplyPage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/all-bookings"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AllBookingsPage />
           </RoleBasedRoute>
         }
       />

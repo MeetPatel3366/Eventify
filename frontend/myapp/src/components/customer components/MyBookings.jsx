@@ -11,34 +11,25 @@ import { fetchMyBookings } from "../../store/bookingSlice";
 
 const MyBookings = () => {
   const dispatch = useDispatch();
-  const { bookings, loading } = useSelector((state) => state.booking);
+  const { bookings } = useSelector((state) => state.booking);
 
   useEffect(() => {
     dispatch(fetchMyBookings());
   }, [dispatch]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Loading your bookings...
-      </div>
-    );
-  }
 
   if (!bookings || bookings.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center text-white p-6">
         <div className="text-center">
           <FaTicketAlt className="text-5xl text-gray-600 mb-4 mx-auto" />
           <h2 className="text-2xl font-semibold">No bookings found</h2>
           <p className="text-gray-400">You haven't booked any events yet.</p>
         </div>
-      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 pb-20 pt-16">
+    <>
       <h1 className="text-3xl font-bold mb-8 text-center">My Bookings</h1>
       <div
         className="
@@ -116,7 +107,7 @@ const MyBookings = () => {
           );
         })}
       </div>
-    </div>
+    </>
   );
 };
 

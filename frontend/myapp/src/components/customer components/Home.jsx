@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black text-white">
+    <>
       <section className="max-w-7xl mx-auto px-6 py-28 grid lg:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <h1 className="text-6xl font-extrabold leading-tight">
@@ -147,7 +147,7 @@ const Home = () => {
           View Events
         </NavLink>
       </section>
-    </div>
+    </>
   );
 }
 

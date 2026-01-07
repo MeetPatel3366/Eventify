@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const Events = () => {
   const dispatch = useDispatch();
-  const navigate=useNavigate()
-  const { events, loading } = useSelector((state) => state.event);
+  const navigate = useNavigate();
+  const { events } = useSelector((state) => state.event);
 
   const upcomingEvents = events.filter(
     (event) => new Date(event.datetime) >= new Date()
@@ -16,26 +16,22 @@ const Events = () => {
     dispatch(fetchEvents());
   }, [dispatch]);
 
-  const handleBooking=(selectedEvent)=>{
-    if(selectedEvent.availableSeats > 0)
-    {
+  const handleBooking = (selectedEvent) => {
+    if (selectedEvent.availableSeats > 0) {
       navigate(`/events/${selectedEvent._id}/book`);
     }
-  }
-
-  if (loading)
-    return <p className="text-center text-white py-10">Loading events...</p>;
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6 pb-20 pt-14">
-      <h1 className="text-4xl font-bold text-center mb-12 mt-2">
+    <>
+      <h1 className="text-4xl font-bold text-center mb-8 mt-2">
         Upcoming Events
       </h1>
-      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
         {upcomingEvents.map((event) => (
           <div
             key={event._id}
-            className="bg-white/10 backdrop-blur-xl border border-white/20 p-5 rounded-3xl shadow-xl hover:shadow-2xl transition"
+            className="bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-3xl shadow-xl hover:shadow-2xl transition"
           >
             <div className="rounded-2xl overflow-hidden mb-4">
               <img
@@ -83,7 +79,6 @@ const Events = () => {
             <p className="text-gray-300 text-sm mb-5 line-clamp-3">
               {event.description}
             </p>
-            
 
             <button
               disabled={event.availableSeats === 0}
@@ -92,14 +87,14 @@ const Events = () => {
                   ? "bg-gray-600 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
               }`}
-              onClick={()=>handleBooking(event)}
+              onClick={() => handleBooking(event)}
             >
               {event.availableSeats === 0 ? "Sold Out" : "Book Now"}
             </button>
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 };
 
