@@ -12,6 +12,7 @@ const {
   getPendingEvents,
   getRejectedEvents,
   getMyEventsWithStats,
+  getEventProgress,
 } = require("../controllers/EventController");
 const upload = require("../utils/multer");
 const {
@@ -44,6 +45,8 @@ router.post(
 );
 
 router.get("/", isLoggedIn, getEvents);
+
+router.get("/progress", isLoggedIn, getEventProgress);
 
 router.get("/:id", isLoggedIn, getEvent);
 

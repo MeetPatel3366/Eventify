@@ -409,6 +409,56 @@ const getRejectedEvents = async (req, res) => {
   }
 };
 
+const getEventProgress = async (req, res) => {
+  try {
+    const events = await Event.find({ status: "approved" }).sort({
+      datetime: 1,
+    });
+    const now = new Date();
+
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date(now);
+    endOfToday.setHours(23, 59, 29, 999);
+
+    const processedEvents = events.map((event) => {
+      const eventDate = new Date(event.datetime);
+      let progressStatus = "";
+      let progressPercentage = 0;
+
+      if (eventDate > endOfToday) {
+        progressStatus = "Planned";
+        progressPercentage = 30;
+      } else if (eventDate >= startOfToday && eventDate <= endOfToday) {
+        progressStatus = "Ongoing";
+        progressPercentage = 70;
+      } else {
+        progressStatus = "Completed";
+        progressPercentage = 100;
+      }
+
+      return {
+        ...event._doc,
+        image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+        progressStatus,
+        progressPercentage,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      count: processedEvents.length,
+      data: processedEvents,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getEvent,
   getEvents,
@@ -421,4 +471,5 @@ module.exports = {
   getPendingEvents,
   getRejectedEvents,
   getMyEventsWithStats,
+  getEventProgress,
 };
