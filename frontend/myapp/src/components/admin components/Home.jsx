@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchAdminStats,
+  fetchAllUsers,
   fetchApprovedEvents,
   fetchApprovedOrganizers,
   fetchPendingEvents,
@@ -25,6 +26,7 @@ const AdminHome = () => {
     dispatch(fetchPendingOrganizers());
     dispatch(fetchApprovedOrganizers());
     dispatch(fetchRejectedOrganizers());
+    dispatch(fetchAllUsers());
   }, [dispatch]);
 
   return (
@@ -42,14 +44,23 @@ const AdminHome = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-14">
         {[
-          { label: "Total Users", value: stats?.totalUsers },
-          { label: "Active Organizers", value: stats?.approvedOrganizers },
+          {
+            label: "Total Users",
+            value: stats?.totalUsers,
+            path: "/admin/users",
+          },
+          {
+            label: "Active Organizers",
+            value: stats?.approvedOrganizers,
+            path: "/admin/approved-organizers",
+          },
           { label: "Total Events", value: stats?.totalEvents },
           { label: "Past Events", value: stats?.pastEvents },
           { label: "Upcoming Events", value: stats?.upcomingEvents },
         ].map((stat, index) => (
           <div
             key={index}
+            onClick={() => stat.path && navigate(stat.path)}
             className="group bg-white/10 backdrop-blur-xl rounded-2xl p-6
             border border-white/10 shadow-xl
             hover:bg-white/15 hover:-translate-y-1 transition-all text-center"
@@ -57,9 +68,7 @@ const AdminHome = () => {
             <h3 className="text-sm text-gray-400 tracking-wide">
               {stat.label}
             </h3>
-            <p className="text-3xl font-bold mt-3">
-              {stat.value || 0}
-            </p>
+            <p className="text-3xl font-bold mt-3">{stat.value || 0}</p>
           </div>
         ))}
       </div>

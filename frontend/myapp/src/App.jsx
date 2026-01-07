@@ -33,6 +33,7 @@ import EventBookingPage from "./pages/customer pages/EventBookingPage";
 import MyBookingsPage from "./pages/customer pages/MyBookingsPage";
 import EventInsightsPage from "./pages/event organizer pages/EventInsightsPage";
 import MyEventBookingsPage from "./pages/event organizer pages/MyEventBookingsPage";
+import AllUsersPage from "./pages/admin pages/AllUsersPage";
 
 function App() {
   return (
@@ -106,6 +107,14 @@ function App() {
         element={
           <RoleBasedRoute allowedRoles={["admin"]}>
             <AdminHomePage />
+          </RoleBasedRoute>
+        }
+      />
+      <Route
+        path="/admin/users"
+        element={
+          <RoleBasedRoute allowedRoles={["admin"]}>
+            <AllUsersPage />
           </RoleBasedRoute>
         }
       />

@@ -1,6 +1,9 @@
 import api from "./axiosInstance";
 const adminApi = {
   fetchAdminStats: () => api.get("/admin/stats"),
+
+  fetchAllUsers: () => api.get("/admin/users"),
+
   pendingEvents: () => api.get("/events/pending"),
 
   approvedEvents: () => api.get("/events/approved"),
@@ -26,7 +29,9 @@ const adminApi = {
 
   fetchSingleContactMessage: (id) => api.get(`/admin/contact-message/${id}`),
 
-  replyToContactMessage:(id)=>api.post(`admin/contact-message/reply/${id}`),
+  replyToContactMessage: (id) => api.post(`admin/contact-message/reply/${id}`),
+
+  deleteUser: (id) => api.delete(`/admin/user/${id}`),
 };
 
 export default adminApi;

@@ -100,7 +100,7 @@ const bookingSlice = createSlice({
       .addMatcher(
         (action) => action.type.endsWith("rejected"),
         (state, action) => {
-          console.error("booking api error:", action.error);
+          console.log("booking api error:", action.error);
           state.loading = false;
           state.error = action.error?.message || "something went wrong";
         }
