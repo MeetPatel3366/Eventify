@@ -14,6 +14,8 @@ const eventApi = {
   update: (id, formData) => api.put(`/events/${id}`, formData),
 
   delete: (id) => api.delete(`/events/${id}`),
+
+  fetchProgress: () => api.get(`/events/progress`),
 };
 
 export default eventApi;
