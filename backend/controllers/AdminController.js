@@ -89,10 +89,13 @@ const getApprovedOrganizers = async (req, res) => {
     const organizers = await User.find({
       role: "eventorganizer",
       organizerStatus: "approved",
-    }).select("username email createdAt");
+    })
+      .select("username email createdAt")
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
+      count: organizers.length,
       organizers,
     });
   } catch (error) {
@@ -273,6 +276,49 @@ const replyContactMessage = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const customers = await User.find({ role: "customer" })
+      .select("username email createdAt")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: customers.length,
+      customers,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "user not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "user deleted successfully",
+      deleteUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getPendingOrganizers,
@@ -282,5 +328,7 @@ module.exports = {
   rejectOrganizer,
   getAllContactMessages,
   getContactMessage,
-  replyContactMessage
+  replyContactMessage,
+  getAllUsers,
+  deleteUser,
 };

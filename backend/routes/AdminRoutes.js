@@ -9,11 +9,15 @@ const {
   getAllContactMessages,
   getContactMessage,
   replyContactMessage,
+  getAllUsers,
+  deleteUser,
 } = require("../controllers/AdminController");
 const { isLoggedIn, isAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.get("/stats", isLoggedIn, isAdmin, getAdminStats);
+
+router.get("/users", isLoggedIn, isAdmin, getAllUsers);
 
 router.get("/pending-organizers", isLoggedIn, isAdmin, getPendingOrganizers);
 
@@ -29,6 +33,13 @@ router.get("/contact-messages", isLoggedIn, isAdmin, getAllContactMessages);
 
 router.get("/contact-message/:id", isLoggedIn, isAdmin, getContactMessage);
 
-router.post("/contact-message/reply/:id", isLoggedIn, isAdmin, replyContactMessage);
+router.delete("/user/:id", isLoggedIn, isAdmin, deleteUser);
+
+router.post(
+  "/contact-message/reply/:id",
+  isLoggedIn,
+  isAdmin,
+  replyContactMessage
+);
 
 module.exports = router;
