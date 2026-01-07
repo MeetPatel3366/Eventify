@@ -167,9 +167,68 @@ const markBookingCheckedIn = async (req, res) => {
   }
 };
 
+const exportBookingsCSV = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const organizerId = req.user.id;
+
+    console.log(eventId);
+    console.log(organizerId);
+    const event = await Event.findOne({
+      _id: eventId,
+      organizerId: organizerId,
+    });
+
+    if (!event) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized export booking csv for this event",
+      });
+    }
+
+    const bookings = await Booking.find({ eventId: event._id }).populate(
+      "userId",
+      "username email"
+    );
+
+    const csvRows = [
+      [
+        "UserName",
+        "Email",
+        "Seats",
+        "Amount",
+        "Status",
+        "Checked In",
+        "Booked On",
+      ],
+      ...bookings.map((b) => [
+        b.userId.username,
+        b.userId.email,
+        b.quantity,
+        b.totalAmount,
+        b.status,
+        b.checkedIn ? "Yes" : "No",
+        new Date(b.createdAt).toLocaleString(),
+      ]),
+    ];
+
+    const csv = csvRows.map((r) => r.join(",")).join("\n");
+
+    res.header("Content-Type", "text/csv");
+    res.attachment(`event-${eventId}-bookings.csv`);
+    return res.send(csv);
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
   myBookings,
   getMyEventBookings,
   markBookingCheckedIn,
+  exportBookingsCSV,
 };

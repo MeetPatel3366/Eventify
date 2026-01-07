@@ -4,6 +4,7 @@ const {
   myBookings,
   getMyEventBookings,
   markBookingCheckedIn,
+  exportBookingsCSV,
 } = require("../controllers/BookingController");
 const {
   isLoggedIn,
@@ -23,5 +24,7 @@ router.patch(
   isEventOrganizer,
   markBookingCheckedIn
 );
+
+router.get("/event/:eventId/export",isLoggedIn,isEventOrganizer,exportBookingsCSV)
 
 module.exports = router;
