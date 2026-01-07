@@ -22,7 +22,6 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-black/70 backdrop-blur-xl border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
-
           <div
             onClick={() => navigate("/admin")}
             className="text-2xl font-extrabold cursor-pointer text-white tracking-wide"

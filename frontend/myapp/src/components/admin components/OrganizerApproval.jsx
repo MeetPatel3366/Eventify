@@ -6,7 +6,7 @@ const OrganizerApproval = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+    <>
       <h1 className="text-3xl font-bold mb-8 text-center">
         Organizer Approval Requests
       </h1>
@@ -47,7 +47,7 @@ const OrganizerApproval = () => {
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 };
 

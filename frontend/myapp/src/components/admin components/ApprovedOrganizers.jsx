@@ -19,7 +19,7 @@ const ApprovedOrganizers = () => {
   }, [dispatch]);
 
   return (
-    <div className="min-h-[calc(99vh-64px)] bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8 ">
+    <>
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center text-green-400">
           Approved Organizers
@@ -78,7 +78,7 @@ const ApprovedOrganizers = () => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

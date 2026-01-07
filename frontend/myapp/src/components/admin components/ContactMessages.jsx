@@ -4,7 +4,6 @@ import { NavLink } from "react-router-dom";
 
 const ContactMessages = () => {
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -13,8 +12,6 @@ const ContactMessages = () => {
         setMessages(response.data.messages);
       } catch (error) {
         console.error("Failed to fetch contact messages:", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchMessages();
@@ -31,7 +28,7 @@ const ContactMessages = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+    <>
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Contact Messages</h1>
@@ -41,11 +38,7 @@ const ContactMessages = () => {
         </div>
 
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-xl overflow-hidden">
-          {loading ? (
-            <div className="p-10 text-center text-gray-400">
-              Loading messages...
-            </div>
-          ) : messages.length === 0 ? (
+          {messages.length === 0 ? (
             <div className="p-10 text-center text-gray-400">
               No contact messages found
             </div>
@@ -106,7 +99,7 @@ const ContactMessages = () => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

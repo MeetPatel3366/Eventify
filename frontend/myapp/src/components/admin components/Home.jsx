@@ -30,7 +30,7 @@ const AdminHome = () => {
   }, [dispatch]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+    <>
       <div className="mb-12 flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tight">
@@ -73,7 +73,7 @@ const AdminHome = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 pb-14">
         <AdminCard
           title="Pending Events"
           description="Review and approve new event requests"
@@ -122,7 +122,7 @@ const AdminHome = () => {
           onClick={() => navigate("/admin/rejected-organizers")}
         />
       </div>
-    </div>
+    </>
   );
 };
 

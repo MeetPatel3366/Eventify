@@ -12,7 +12,7 @@ const RejectedEvents = () => {
     const { rejectedEvents } = useSelector((state) => state.admin);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+        <>
             <h1 className="text-4xl font-extrabold text-white mb-10 text-center tracking-wide">
                 Rejected Events
             </h1>
@@ -114,7 +114,7 @@ const RejectedEvents = () => {
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 

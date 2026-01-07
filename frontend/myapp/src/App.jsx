@@ -5,23 +5,9 @@ import Register from "./components/customer components/Register";
 import Logout from "./components/customer components/Logout";
 
 import EventProgressPage from "./pages/customer pages/EventProgressPage";
-
-import AdminHomePage from "./pages/admin pages/AdminHomePage";
-
 import RoleBasedRoute from "./components/RoleBasedRoute";
 import VerifyOtp from "./components/customer components/VerifyOtp";
 import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
-import PendingEventsPage from "./pages/admin pages/PendingEventsPage";
-import ApprovedEventsPage from "./pages/admin pages/ApprovedEventsPage";
-import RejectedEventsPage from "./pages/admin pages/rejectedEventsPage";
-import OrganizerApprovalPage from "./pages/admin pages/OrganizerApprovalPage";
-import ApprovedOrganizerPage from "./pages/admin pages/ApprovedOrganizerPage";
-import RejectedOrganizersPage from "./pages/admin pages/RejectedOrganizersPage";
-import ContactMessagesPage from "./pages/admin pages/ContactMessagesPage";
-import AdminContactReplyPage from "./pages/admin pages/AdminContactReplyPage";
-
-import AllUsersPage from "./pages/admin pages/AllUsersPage";
-import AllBookingsPage from "./pages/admin pages/AllBookingsPage";
 import Home from "./components/customer components/Home";
 import Events from "./components/customer components/Events";
 import About from "./components/customer components/About";
@@ -37,6 +23,18 @@ import EventInsights from "./components/event organizer components/EventInsights
 import AddEvent from "./components/event organizer components/AddEvent";
 import EditEvent from "./components/event organizer components/EditEvent";
 import MyEventBookings from "./components/event organizer components/MyEventBookings";
+import AdminMainLayout from "../layouts/AdminMainLayout";
+import AdminHome from "./components/admin components/Home";
+import AllUsers from "./components/admin components/AllUsers";
+import PendingEvents from "./components/admin components/PendingEvents";
+import ApprovedEvents from "./components/admin components/ApprovedEvents";
+import RejectedEvents from "./components/admin components/rejectedEvents";
+import OrganizerApproval from "./components/admin components/OrganizerApproval";
+import ApprovedOrganizers from "./components/admin components/ApprovedOrganizers";
+import ContactMessages from "./components/admin components/ContactMessages";
+import RejectedOrganizers from "./components/admin components/RejectedOrganizers";
+import AdminContactReply from "./components/admin components/AdminContactReply";
+import AllBookings from "./components/admin components/AllBookings";
 
 function App() {
   return (
@@ -107,94 +105,96 @@ function App() {
       </Route>
 
       <Route path="/admin" element={<Login />} />
-      <Route
-        path="/admin/home"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <AdminHomePage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <AllUsersPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/pending-events"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <PendingEventsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/events"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <ApprovedEventsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/rejected-events"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <RejectedEventsPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/pending-organizers"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <OrganizerApprovalPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/approved-organizers"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <ApprovedOrganizerPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/contact-messages"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <ContactMessagesPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/rejected-organizers"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <RejectedOrganizersPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/contact/:id"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <AdminContactReplyPage />
-          </RoleBasedRoute>
-        }
-      />
-      <Route
-        path="/admin/all-bookings"
-        element={
-          <RoleBasedRoute allowedRoles={["admin"]}>
-            <AllBookingsPage />
-          </RoleBasedRoute>
-        }
-      />
+      <Route element={<AdminMainLayout />}>
+        <Route
+          path="/admin/home"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <AdminHome />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <AllUsers />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/pending-events"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <PendingEvents />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/events"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <ApprovedEvents />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/rejected-events"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <RejectedEvents />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/pending-organizers"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <OrganizerApproval />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/approved-organizers"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <ApprovedOrganizers />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/contact-messages"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <ContactMessages />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/rejected-organizers"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <RejectedOrganizers />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/contact/:id"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <AdminContactReply />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/all-bookings"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <AllBookings />
+            </RoleBasedRoute>
+          }
+        />
+      </Route>
 
       <Route path="/organizer/register" element={<Register />} />
       <Route path="/organizer/verify-otp" element={<VerifyOtp />} />
