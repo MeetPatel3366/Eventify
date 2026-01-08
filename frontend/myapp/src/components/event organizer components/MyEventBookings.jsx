@@ -44,8 +44,6 @@ const MyEventBookings = () => {
     eventDate.getMonth() === today.getMonth() &&
     eventDate.getFullYear() === today.getFullYear();
 
-  const isPastEvent = eventDate < today && !isEventToday;
-
   useEffect(() => {
     dispatch(fetchMyEventBookings(eventId));
   }, [dispatch, eventId]);
@@ -121,7 +119,7 @@ const MyEventBookings = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] uppercase text-slate-500 font-bold ml-1">
+            <label className="text-[10px] text-white font-bold ml-1">
               Search Guest
             </label>
             <input
@@ -136,7 +134,7 @@ const MyEventBookings = () => {
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] uppercase text-slate-500 font-bold ml-1">
+            <label className="text-[10px] text-white font-bold ml-1">
               Status Filter
             </label>
             <select
