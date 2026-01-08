@@ -57,6 +57,11 @@ const AdminHome = () => {
           { label: "Total Events", value: stats?.totalEvents },
           { label: "Past Events", value: stats?.pastEvents },
           { label: "Upcoming Events", value: stats?.upcomingEvents },
+          {
+            label: "Confirmed Bookings",
+            value: stats?.allBookings,
+            path: "/admin/all-bookings",
+          },
         ].map((stat, index) => (
           <div
             key={index}

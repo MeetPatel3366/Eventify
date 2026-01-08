@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const Event = require("../models/EventModel");
+const Booking = require("../models/BookingModel");
 const ContactMessage = require("../models/ContactMessageModel");
 
 const getAdminStats = async (req, res) => {
@@ -33,13 +34,15 @@ const getAdminStats = async (req, res) => {
 
     const upcomingEvents = await Event.countDocuments({
       status: "approved",
-      date: { $gte: now },
+      datetime: { $gte: now },
     });
 
     const pastEvents = await Event.countDocuments({
       status: "approved",
-      date: { $lt: now },
+      datetime: { $lt: now },
     });
+
+    const allBookings = await Booking.countDocuments({ status: "confirmed" });
 
     return res.status(200).json({
       success: true,
@@ -55,6 +58,7 @@ const getAdminStats = async (req, res) => {
         rejectedEvents,
         upcomingEvents,
         pastEvents,
+        allBookings,
       },
     });
   } catch (error) {
