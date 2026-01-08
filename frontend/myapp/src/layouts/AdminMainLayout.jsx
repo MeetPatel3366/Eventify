@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Footer from "../src/components/customer components/Footer";
-import Navbar from "../src/components/admin components/Navbar";
+import Footer from "../components/customer components/Footer";
+import Navbar from "../components/admin components/Navbar";
 
 const AdminMainLayout = () => {
   return (

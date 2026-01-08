@@ -8,7 +8,6 @@ const AdminContactReply = () => {
 
   const [message, setMessage] = useState(null);
   const [reply, setReply] = useState("");
-  const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
@@ -20,8 +19,6 @@ const AdminContactReply = () => {
       // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Failed to load message");
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -48,14 +45,6 @@ const AdminContactReply = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center text-gray-400">
-        Loading message...
-      </div>
-    );
-  }
-
   if (!message) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center text-red-400">
@@ -65,7 +54,7 @@ const AdminContactReply = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-8">
+    <>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Reply to Contact Message</h1>
@@ -142,7 +131,7 @@ const AdminContactReply = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
