@@ -4,7 +4,6 @@ import Login from "./components/customer components/Login";
 import Register from "./components/customer components/Register";
 import Logout from "./components/customer components/Logout";
 
-import EventProgressPage from "./pages/customer pages/EventProgressPage";
 import RoleBasedRoute from "./components/RoleBasedRoute";
 import VerifyOtp from "./components/customer components/VerifyOtp";
 import VerifyLoginOtp from "./components/customer components/VerifyLoginOtp";
@@ -14,8 +13,8 @@ import About from "./components/customer components/About";
 import Contact from "./components/customer components/Contact";
 import EventBooking from "./components/customer components/EventBooking";
 import MyBookings from "./components/customer components/MyBookings";
-import CustomerMainLayout from "../layouts/CustomerMainLayout";
-import EventOrganizerLayout from "../layouts/EventOrganizerLayout";
+import CustomerMainLayout from "./layouts/CustomerMainLayout";
+import EventOrganizerLayout from "./layouts/EventOrganizerLayout";
 import OrganizerHome from "./components/event organizer components/OrganizerHome";
 import OrganizerDashboard from "./components/event organizer components/OrganizerDashboard";
 import MyEvents from "./components/event organizer components/MyEvents";
@@ -23,7 +22,7 @@ import EventInsights from "./components/event organizer components/EventInsights
 import AddEvent from "./components/event organizer components/AddEvent";
 import EditEvent from "./components/event organizer components/EditEvent";
 import MyEventBookings from "./components/event organizer components/MyEventBookings";
-import AdminMainLayout from "../layouts/AdminMainLayout";
+import AdminMainLayout from "./layouts/AdminMainLayout";
 import AdminHome from "./components/admin components/Home";
 import AllUsers from "./components/admin components/AllUsers";
 import PendingEvents from "./components/admin components/PendingEvents";
@@ -35,6 +34,7 @@ import ContactMessages from "./components/admin components/ContactMessages";
 import RejectedOrganizers from "./components/admin components/RejectedOrganizers";
 import AdminContactReply from "./components/admin components/AdminContactReply";
 import AllBookings from "./components/admin components/AllBookings";
+import EventProgress from "./components/customer components/EventProgress";
 
 function App() {
   return (
@@ -98,7 +98,7 @@ function App() {
           path="/event-progress"
           element={
             <RoleBasedRoute allowedRoles={["customer"]}>
-              <EventProgressPage />
+              <EventProgress />
             </RoleBasedRoute>
           }
         />

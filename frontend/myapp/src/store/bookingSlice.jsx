@@ -43,11 +43,21 @@ export const fetchexportBookingsCSV = createAsyncThunk(
   }
 );
 
+export const fetchAllBookings = createAsyncThunk(
+  "booking/fetchAllBookings",
+  async (filter) => {
+    const query = new URLSearchParams(filter).toString();
+    const res = await bookingsApi.allBookings(query);
+    return res.data.bookings;
+  }
+);
+
 const bookingSlice = createSlice({
   name: "booking",
   initialState: {
     bookings: [],
     myEventBookings: [],
+    allBookings: [],
     event: null,
     loading: false,
     error: null,
@@ -113,6 +123,15 @@ const bookingSlice = createSlice({
       })
       .addCase(fetchexportBookingsCSV.fulfilled, (state, action) => {
         state.loading = false;
+      })
+
+      .addCase(fetchAllBookings.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllBookings.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allBookings = action.payload;
       })
 
       .addMatcher(
