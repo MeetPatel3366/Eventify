@@ -225,10 +225,62 @@ const exportBookingsCSV = async (req, res) => {
   }
 };
 
+const getAllBookings = async (req, res) => {
+  try {
+    const { eventId, organizerId, status, startDate, endDate } = req.query;
+
+    let filter = {};
+
+    if (eventId) {
+      filter.eventId = eventId;
+    }
+
+    if (organizerId) {
+      const organizerEvents = await Event.find({ organizerId }).select("_id");
+      filter.eventId = { $in: organizerEvents.map((e) => e._id) };
+    }
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (startDate && endDate) {
+      filter.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    const bookings = await Booking.find(filter)
+      .populate("userId", "username email")
+      .populate("eventId", "name organizerId price location datetime")
+      .populate({
+        path: "eventId",
+        populate: {
+          path: "organizerId",
+          select: "username email",
+        },
+      })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "all bookings fetch successfully",
+      bookings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createBooking,
   myBookings,
   getMyEventBookings,
   markBookingCheckedIn,
   exportBookingsCSV,
+  getAllBookings,
 };
