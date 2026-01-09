@@ -6,6 +6,7 @@ const {
   markBookingCheckedIn,
   exportBookingsCSV,
   getAllBookings,
+  getBookingAnalytics,
 } = require("../controllers/BookingController");
 const {
   isLoggedIn,
@@ -19,6 +20,8 @@ router.post("/", isLoggedIn, createBooking);
 router.get("/my", isLoggedIn, myBookings);
 
 router.get("/all", isLoggedIn, isAdmin, getAllBookings);
+
+router.get("/analytics", isLoggedIn, isAdmin, getBookingAnalytics);
 
 router.get("/:eventID", isLoggedIn, isEventOrganizer, getMyEventBookings);
 

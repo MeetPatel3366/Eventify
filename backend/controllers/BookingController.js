@@ -153,7 +153,7 @@ const markBookingCheckedIn = async (req, res) => {
     }
 
     booking.checkedIn = true;
-    booking.save();
+    await booking.save();
 
     return res.status(200).json({
       success: true,
@@ -314,6 +314,114 @@ const getAllBookings = async (req, res) => {
   }
 };
 
+const getBookingAnalytics = async (req, res) => {
+  try {
+    const dailyBookings = await Booking.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id",
+          count: 1,
+        },
+      },
+      { $sort: { date: 1 } },
+    ]);
+
+    const dailyRevenue = await Booking.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          revenue: { $sum: "$totalAmount" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const topEvents = await Booking.aggregate([
+      {
+        $group: {
+          _id: "$eventId",
+          totalBookings: { $sum: "$quantity" },
+        },
+      },
+      { $sort: { totalBookings: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "events",
+          localField: "_id",
+          foreignField: "_id",
+          as: "details",
+        },
+      },
+      { $unwind: "$details" },
+      {
+        $project: {
+          _id: 1,
+          totalBookings: 1,
+          eventName: "$details.name",
+          category: "$details.category",
+          price: "$details.price",
+        },
+      },
+    ]);
+
+    const topOrganizers = await Booking.aggregate([
+      {
+        $lookup: {
+          from: "events",
+          localField: "eventId",
+          foreignField: "_id",
+          as: "event",
+        },
+      },
+      { $unwind: "$event" },
+      {
+        $group: {
+          _id: "$event.organizerId",
+          revenue: { $sum: "$totalAmount" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "organizer",
+        },
+      },
+      { $unwind: "$organizer" },
+      { $sort: { revenue: -1 } },
+      { $limit: 5 },
+      {
+        $project: {
+          _id: 1,
+          revenue: 1,
+          organizerName: "$organizer.username",
+          email: "$organizer.email",
+        },
+      },
+    ]);
+
+    console.log(dailyBookings, dailyRevenue, topEvents, topOrganizers);
+    return res.status(200).json({
+      success: true,
+      dailyBookings,
+      dailyRevenue,
+      topEvents,
+      topOrganizers,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createBooking,
   myBookings,
@@ -321,4 +429,5 @@ module.exports = {
   markBookingCheckedIn,
   exportBookingsCSV,
   getAllBookings,
+  getBookingAnalytics,
 };
