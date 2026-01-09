@@ -57,7 +57,10 @@ const addEvent = async (req, res) => {
 
 const getEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" });
+    const events = await Event.find({ status: "approved" }).populate(
+      "organizerId",
+      "username email"
+    );
 
     if (events.length == 0) {
       return res.status(200).json({
