@@ -10,6 +10,8 @@ const bookingsApi = {
   checkInBooking: (bookingId) => api.patch(`/bookings/${bookingId}/check-in`),
 
   allBookings: (query) => api.get(`/bookings/all?${query}`),
+
+  analytics: () => api.get("/bookings/analytics"),
 };
 
 export default bookingsApi;

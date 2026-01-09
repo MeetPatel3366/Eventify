@@ -35,6 +35,7 @@ import RejectedOrganizers from "./components/admin components/RejectedOrganizers
 import AdminContactReply from "./components/admin components/AdminContactReply";
 import AllBookings from "./components/admin components/AllBookings";
 import EventProgress from "./components/customer components/EventProgress";
+import BookingAnalytics from "./components/admin components/BookingAnalytics";
 
 function App() {
   return (
@@ -191,6 +192,14 @@ function App() {
           element={
             <RoleBasedRoute allowedRoles={["admin"]}>
               <AllBookings />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/booking-analytics"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <BookingAnalytics />
             </RoleBasedRoute>
           }
         />
