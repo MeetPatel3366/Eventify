@@ -52,6 +52,15 @@ export const fetchAllBookings = createAsyncThunk(
   }
 );
 
+export const fetchBookingAnalytics = createAsyncThunk(
+  "booking/fetchBookingAnalytics",
+  async () => {
+    const res = await bookingsApi.analytics();
+    console.log("bookin analytics : ", res);
+    return res.data;
+  }
+);
+
 const bookingSlice = createSlice({
   name: "booking",
   initialState: {
@@ -59,6 +68,10 @@ const bookingSlice = createSlice({
     myEventBookings: [],
     allBookings: [],
     event: null,
+    dailyBookings: [],
+    dailyRevenue: [],
+    topEvents: [],
+    topOrganizers: [],
     loading: false,
     error: null,
     success: false,
@@ -132,6 +145,18 @@ const bookingSlice = createSlice({
       .addCase(fetchAllBookings.fulfilled, (state, action) => {
         state.loading = false;
         state.allBookings = action.payload;
+      })
+
+      .addCase(fetchBookingAnalytics.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchBookingAnalytics.fulfilled, (state, action) => {
+        state.loading = false;
+        state.dailyBookings = action.payload.dailyBookings;
+        state.dailyRevenue = action.payload.dailyRevenue;
+        state.topEvents = action.payload.topEvents;
+        state.topOrganizers = action.payload.topOrganizers;
       })
 
       .addMatcher(
