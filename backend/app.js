@@ -36,7 +36,7 @@ app.use("/api/events", EventRoutes);
 app.use("/api/contact", ContactMessageRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/bookings", BookingRoutes);
-app.use("/asi/review", ReviewRoutes);
+app.use("/api/review", ReviewRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
