@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const createReview = async (req, res) => {
   try {
     const { eventId, rating, review } = req.body;
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     if (!mongoose.Types.ObjectId.isValid(eventId)) {
       return res.status(400).json({
@@ -73,6 +73,46 @@ const createReview = async (req, res) => {
   }
 };
 
+const getEventReviews = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event Id format",
+      });
+    }
+
+    const reviews = (
+      await Review.find({ eventId }).populate("userId", "username email")
+    ).sort({ createdAt: -1 });
+
+    if (reviews.length === 0) {
+      const eventExists = await Event.exists({ _id: eventId });
+
+      if (!eventExists) {
+        return res.status(404).json({
+          success: false,
+          message: "Event not found",
+        });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      count: reviews.length,
+      reviews,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReview,
+  getEventReviews,
 };
