@@ -10,13 +10,14 @@ const EventRoutes = require("./routes/EventRoutes");
 const UserRoutes = require("./routes/UserRoutes");
 const ContactMessageRoutes = require("./routes/ContactRoutes");
 const AdminRoutes = require("./routes/AdminRoutes");
-const BookingRoutes=require("./routes/BookingRoutes")
+const BookingRoutes = require("./routes/BookingRoutes");
+const ReviewRoutes = require("./routes/ReviewRoutes");
 
 //PORT
 PORT = process.env.PORT || 5000;
 
 //Disable ETag generation
-app.set('etag', false);
+app.set("etag", false);
 
 //middlewares
 app.use(
@@ -35,6 +36,7 @@ app.use("/api/events", EventRoutes);
 app.use("/api/contact", ContactMessageRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/bookings", BookingRoutes);
+app.use("/asi/review", ReviewRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
