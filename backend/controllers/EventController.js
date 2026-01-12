@@ -72,6 +72,7 @@ const getEvents = async (req, res) => {
 
     const updatedEvents = events.map((event) => ({
       ...event._doc,
+      isCompleted: new Date(event.datetime) < new Date(),
       image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
     }));
 
@@ -156,11 +157,14 @@ const getEvent = async (req, res) => {
 
     console.log("event : ", event);
 
+    const isCompleted = new Date(event.datetime) < new Date();
+
     return res.status(200).json({
       success: true,
       message: `event ${eventID} fetched successfully`,
       event: {
         ...event._doc,
+        isCompleted,
         image: event.image
           ? `${req.protocol}://${req.get("host")}/uploads/${event.image}`
           : null,
