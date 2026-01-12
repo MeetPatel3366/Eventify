@@ -150,8 +150,72 @@ const getMyReview = async (req, res) => {
   }
 };
 
+const updateReview = async (req, res) => {
+  try {
+    const { rating, review } = req.body;
+    const eventId = req.params;
+    const userId = req.user.id;
+
+    let updateData = {};
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event Id format",
+      });
+    }
+
+    if (rating !== undefined) {
+      if (rating && (rating < 1 || rating > 5)) {
+        return res.status(400).json({
+          success: false,
+          message: "Rating must be between 1 and 5",
+        });
+      }
+      updateData.rating = rating;
+    }
+
+    if (review !== undefined) {
+      updateData.review = review;
+    }
+
+    if (Object.keys(updateData).length == 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a rating or a review text to update",
+      });
+    }
+
+    updateData.isEdited = true;
+
+    const updatedReview = await Review.findByIdAndUpdate(
+      { userId, eventId },
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedReview) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: updatedReview,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReview,
   getEventReviews,
   getMyReview,
+  updateReview,
 };
