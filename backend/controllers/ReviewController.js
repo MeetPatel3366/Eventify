@@ -247,10 +247,76 @@ const deleteReview = async (req, res) => {
   }
 };
 
+const getEventRatingSummary = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event Id format",
+      });
+    }
+
+    const stats = await Review.aggregate([
+      {
+        $match: {
+          eventId: new mongoose.Types.ObjectId.createFromHexString(eventId),
+        },
+      },
+      {
+        $group: {
+          _id: "$eventId",
+          averageRating: { $avg: "$rating" },
+          totalReviews: { $sum: 1 },
+          ratingBreakdown: {
+            $push: "$rating",
+          },
+        },
+      },
+    ]);
+
+    if (stats.length == 0) {
+      return res.status(200).json({
+        success: true,
+        averageRating: 0,
+        totalReviews: 0,
+        breakdown: {
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0,
+        },
+      });
+    }
+
+    const { averageRating, totalReviews, ratingBreakdown } = stats[0];
+    const breakdown = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    ratingBreakdown.forEach((r) => breakdown[r]++);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        eventId,
+        averageRating: Number(averageRating.toFixed(1)),
+        totalReviews,
+        breakdown,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReview,
   getEventReviews,
   getMyReview,
   updateReview,
   deleteReview,
+  getEventRatingSummary,
 };

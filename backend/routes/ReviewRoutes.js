@@ -6,14 +6,17 @@ const {
   getMyReview,
   updateReview,
   deleteReview,
+  getEventRatingSummary,
 } = require("../controllers/ReviewController");
 const router = express.Router();
 
 router.post("/create", isLoggedIn, createReview);
 
-router.get("/:eventId", isLoggedIn, getEventReviews);
+router.get("/summary/:eventId", isLoggedIn, getEventRatingSummary);
 
 router.get("/my/:eventId", isLoggedIn, getMyReview);
+
+router.get("/:eventId", isLoggedIn, getEventReviews);
 
 router.put("/:eventId", isLoggedIn, updateReview);
 
