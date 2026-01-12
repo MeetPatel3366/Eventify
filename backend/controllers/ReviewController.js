@@ -112,7 +112,46 @@ const getEventReviews = async (req, res) => {
   }
 };
 
+const getMyReview = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const userId = req.user.id;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event Id format",
+      });
+    }
+
+    const review = await Review.findOne({ userId, eventId })
+      .populate("eventId", "name datetime image")
+      .lean();
+
+    if (!review) {
+      return res.status(200).json({
+        success: true,
+        hasReviewed: false,
+        message: "You have not reviewed this event yet.",
+        review: null,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      hasReviewed: true,
+      review,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReview,
   getEventReviews,
+  getMyReview,
 };
