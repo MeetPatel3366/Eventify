@@ -213,9 +213,44 @@ const updateReview = async (req, res) => {
   }
 };
 
+const deleteReview = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const userId = req.user.id;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event Id format",
+      });
+    }
+
+    const deletedReview = await Review.findOneAndDelete({ userId, eventId });
+
+    if (!deleteReview) {
+      return res.status(404).json({
+        success: false,
+        message: "Review not found or you don't have permission to delete it.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Review deleted successfully",
+      deletedReviewId: deletedReview._id,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createReview,
   getEventReviews,
   getMyReview,
   updateReview,
+  deleteReview,
 };
