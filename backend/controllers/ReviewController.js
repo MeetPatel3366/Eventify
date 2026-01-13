@@ -261,7 +261,7 @@ const getEventRatingSummary = async (req, res) => {
     const stats = await Review.aggregate([
       {
         $match: {
-          eventId: new mongoose.Types.ObjectId.createFromHexString(eventId),
+          eventId: new mongoose.Types.ObjectId(eventId),
         },
       },
       {
