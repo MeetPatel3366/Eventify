@@ -153,7 +153,7 @@ const getMyReview = async (req, res) => {
 const updateReview = async (req, res) => {
   try {
     const { rating, review } = req.body;
-    const {eventId} = req.params;
+    const { eventId } = req.params;
     const userId = req.user.id;
 
     let updateData = {};
@@ -188,7 +188,7 @@ const updateReview = async (req, res) => {
 
     updateData.isEdited = true;
 
-    const updatedReview = await Review.findByIdAndUpdate(
+    const updatedReview = await Review.findOneAndUpdate(
       { userId, eventId },
       { $set: updateData },
       { new: true, runValidators: true }
