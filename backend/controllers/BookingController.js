@@ -1,6 +1,7 @@
 const Booking = require("../models/BookingModel");
 const Event = require("../models/EventModel");
 const User = require("../models/UserModel");
+const Review = require("../models/ReviewModel");
 
 const createBooking = async (req, res) => {
   try {
@@ -52,28 +53,33 @@ const myBookings = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const bookings = await Booking.find({ userId })
-      .populate("eventId")
-      .sort({ createdAt: -1 });
+    const [bookings, userReviews] = await Promise.all([
+      Booking.find({ userId }).populate("eventId").sort({ createdAt: -1 }),
+      Review.find({ userId }).lean(),
+    ]);
 
-    const formattedBookings = bookings.map((booking) => ({
-      ...booking.toObject(),
-      eventId: {
-        ...booking.eventId.toObject(),
-        image: booking.eventId.image
-          ? `${req.protocol}://${req.get("host")}/uploads/${
-              booking.eventId.image
-            }`
-          : null,
-      },
-    }));
+    const formattedBookings = bookings.map((booking) => {
+      const bookingObj = booking.toObject();
+      const event = bookingObj.eventId;
 
-    if (!bookings) {
-      return res.status(404).json({
-        success: false,
-        message: "No bookings found",
-      });
-    }
+      const existingReview = userReviews.find(
+        (rev) => rev.eventId.toString() === event._id.toString()
+      );
+
+      return {
+        ...bookingObj,
+        hasReviewed: !!existingReview,
+        userReview: existingReview || null,
+
+        eventId: {
+          ...event,
+          image: event.image
+            ? `${req.protocol}://${req.get("host")}/uploads/${event.image}`
+            : null,
+          isCompleted: new Date(event.datetime) < new Date(),
+        },
+      };
+    });
 
     return res.status(200).json({
       success: true,
