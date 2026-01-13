@@ -84,9 +84,9 @@ const getEventReviews = async (req, res) => {
       });
     }
 
-    const reviews = (
-      await Review.find({ eventId }).populate("userId", "username email")
-    ).sort({ createdAt: -1 });
+    const reviews = await Review.find({ eventId })
+      .populate("userId", "username email")
+      .sort({ createdAt: -1 });
 
     if (reviews.length === 0) {
       const eventExists = await Event.exists({ _id: eventId });
