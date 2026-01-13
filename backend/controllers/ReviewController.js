@@ -279,14 +279,17 @@ const getEventRatingSummary = async (req, res) => {
     if (stats.length == 0) {
       return res.status(200).json({
         success: true,
-        averageRating: 0,
-        totalReviews: 0,
-        breakdown: {
-          1: 0,
-          2: 0,
-          3: 0,
-          4: 0,
-          5: 0,
+        data: {
+          eventId,
+          averageRating: 0,
+          totalReviews: 0,
+          breakdown: {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+          },
         },
       });
     }
