@@ -3,6 +3,7 @@ import authReducer from "./authSlice";
 import eventReducer from "./eventSlice";
 import adminReducer from "./adminSlice";
 import bookingReducer from "./bookingSlice";
+import reviewReducer from "./reviewSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
     event: eventReducer,
     admin: adminReducer,
     booking: bookingReducer,
+    review: reviewReducer,
   },
 });
