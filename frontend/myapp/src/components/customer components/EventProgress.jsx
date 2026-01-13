@@ -133,7 +133,7 @@ const EventProgress = () => {
                   </div>
                 </div>
 
-                {rating && (
+                {event.isCompleted && rating && (
                   <div className="mb-4 bg-black/20 p-3 rounded-xl border border-white/10">
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2 text-yellow-400">
