@@ -56,7 +56,7 @@ const reviewSlice = createSlice({
     error: null,
     reviews: [],
     myReview: null,
-    summary: null,
+    summary: {},
   },
   reducers: {
     resetReviewState: (state) => {
@@ -125,7 +125,14 @@ const reviewSlice = createSlice({
       })
       .addCase(getEventRatingSummary.fulfilled, (state, action) => {
         state.loading = false;
-        state.summary = action.payload.data;
+        const { eventId, averageRating, totalReviews, breakdown } =
+          action.payload.data;
+
+        state.summary[eventId] = {
+          avg: averageRating,
+          count: totalReviews,
+          breakdown,
+        };
       })
 
       .addMatcher(
