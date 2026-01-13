@@ -153,7 +153,7 @@ const getMyReview = async (req, res) => {
 const updateReview = async (req, res) => {
   try {
     const { rating, review } = req.body;
-    const eventId = req.params;
+    const {eventId} = req.params;
     const userId = req.user.id;
 
     let updateData = {};

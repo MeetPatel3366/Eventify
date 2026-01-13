@@ -450,6 +450,7 @@ const getEventProgress = async (req, res) => {
         image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
         progressStatus,
         progressPercentage,
+        isCompleted: new Date(event.datetime) < new Date(),
       };
     });
 
