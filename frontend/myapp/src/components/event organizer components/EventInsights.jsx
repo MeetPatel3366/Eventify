@@ -4,15 +4,18 @@ import {
   FaCalendarAlt,
   FaMapMarkerAlt,
   FaRupeeSign,
+  FaStar,
   FaUndo,
   FaUsers,
 } from "react-icons/fa";
 import { fetchMyEventsWithStats } from "../../store/eventSlice";
+import { getEventRatingSummary } from "../../store/reviewSlice";
 import { NavLink } from "react-router-dom";
 
 const EventInsights = () => {
   const dispatch = useDispatch();
   const { myEventStats } = useSelector((state) => state.event);
+  const { summary } = useSelector((state) => state.review);
 
   const [filters, setFilters] = useState({
     name: "",
@@ -30,6 +33,17 @@ const EventInsights = () => {
   useEffect(() => {
     dispatch(fetchMyEventsWithStats());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (myEventStats?.length > 0) {
+      myEventStats.forEach((event) => {
+        const eventTime = new Date(event.datetime).getTime();
+        if (eventTime < Date.now()) {
+          dispatch(getEventRatingSummary(event._id));
+        }
+      });
+    }
+  }, [myEventStats, dispatch]);
 
   const resetFilters = () => {
     setFilters({
@@ -158,7 +172,7 @@ const EventInsights = () => {
             <>
               <input
                 type="date"
-                className="bg-slate-800 p-2 border border-slate-700 rounded text-white col-span-1"
+                className="bg-slate-800 p-2 border border-slate-700 rounded text-white"
                 value={filters.customStart}
                 onChange={(e) =>
                   setFilters({ ...filters, customStart: e.target.value })
@@ -166,7 +180,7 @@ const EventInsights = () => {
               />
               <input
                 type="date"
-                className="bg-slate-800 p-2 border border-slate-700 rounded text-white col-span-1"
+                className="bg-slate-800 p-2 border border-slate-700 rounded text-white"
                 value={filters.customEnd}
                 onChange={(e) =>
                   setFilters({ ...filters, customEnd: e.target.value })
@@ -271,96 +285,119 @@ const EventInsights = () => {
         </div>
       ) : (
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-10 pb-16">
-          {filteredEvents.map((event) => (
-            <NavLink
-              key={event._id}
-              to={`/organizer/events/${event._id}/bookings`}
-            >
-              <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-500 transition-colors">
-                <div className="relative h-40">
-                  <img
-                    src={`http://localhost:4000/uploads/${event.image}`}
-                    className="w-full h-full object-cover"
-                    alt={event.name}
-                  />
-                  <div className="absolute top-3 left-3 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded ">
-                    {event.category}
-                  </div>
-                </div>
+          {filteredEvents.map((event) => {
+            const eventDate = new Date(event.datetime);
+            const now = new Date();
 
-                <div className="px-5 py-3">
-                  <h2 className="text-lg font-bold text-white truncate">
-                    {event.name}
-                  </h2>
-
-                  <div className="mt-2 text-xs text-slate-400 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <FaCalendarAlt />
-                      {new Date(event.datetime).toLocaleDateString("en-IN", {
-                        dateStyle: "medium",
-                      })}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FaMapMarkerAlt />
-                      <span className="truncate">{event.location}</span>
+            return (
+              <NavLink
+                key={event._id}
+                to={`/organizer/events/${event._id}/bookings`}
+              >
+                <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-500 transition-colors">
+                  <div className="relative h-40">
+                    <img
+                      src={`http://localhost:4000/uploads/${event.image}`}
+                      className="w-full h-full object-cover"
+                      alt={event.name}
+                    />
+                    <div className="absolute top-3 left-3 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded ">
+                      {event.category}
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 mt-3 border-t border-slate-700 pt-1">
-                    <div>
-                      <span className="text-[10px] text-slate-400 ">Price</span>
-                      <p className="text-sm">₹{event.price}</p>
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 ">
-                        Tickets Sold
-                      </span>
-                      <p className="text-sm">
-                        {event.bookedSeats} / {event.totalSeats}
-                      </p>
-                    </div>
-                  </div>
+                  <div className="px-5 py-3">
+                    <h2 className="text-lg font-bold text-white truncate">
+                      {event.name}
+                    </h2>
 
-                  <div className="mt-4">
-                    <div className="flex justify-between text-[11px] text-slate-400">
-                      <span>Occupancy</span>
-                      <span className="text-indigo-400">
-                        {Math.round(
-                          (event.bookedSeats / event.totalSeats) * 100
-                        )}
-                        %
-                      </span>
+                    <div className="mt-2 text-xs text-slate-400 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <FaCalendarAlt />
+                        {new Date(event.datetime).toLocaleDateString("en-IN", {
+                          dateStyle: "medium",
+                        })}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaMapMarkerAlt />
+                        <span className="truncate">{event.location}</span>
+                      </div>
                     </div>
-                    <div className="h-2 bg-slate-900 rounded-full mt-1 overflow-hidden">
-                      <div
-                        className="h-full bg-indigo-500"
-                        style={{
-                          width: `${
+
+                    <div className="mt-3 h-6 flex items-center gap-3">
+                      {eventDate < now && summary[event._id] ? (
+                        <>
+                          <FaStar className="text-yellow-400 " />
+                          <span>{summary[event._id].avg} / 5</span>
+                          <span className="text-slate-400">
+                            {summary[event._id].count} reviews
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-slate-500 text-sm ">
+                          No ratings yet
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-3 border-t border-slate-700 pt-1">
+                      <div>
+                        <span className="text-[10px] text-slate-400 ">
+                          Price
+                        </span>
+                        <p className="text-sm">₹{event.price}</p>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400 ">
+                          Tickets Sold
+                        </span>
+                        <p className="text-sm">
+                          {event.bookedSeats} / {event.totalSeats}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <div className="flex justify-between text-[11px] text-slate-400">
+                        <span>Occupancy</span>
+                        <span className="text-indigo-400">
+                          {Math.round(
                             (event.bookedSeats / event.totalSeats) * 100
-                          }%`,
-                        }}
-                      />
+                          )}
+                          %
+                        </span>
+                      </div>
+                      <div className="h-2 bg-slate-900 rounded-full mt-1 overflow-hidden">
+                        <div
+                          className="h-full bg-indigo-500"
+                          style={{
+                            width: `${
+                              (event.bookedSeats / event.totalSeats) * 100
+                            }%`,
+                          }}
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="mt-5 bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-700/50 flex justify-between">
-                    <div>
-                      <span className="text-[9px] text-slate-400 font-bold ">
-                        Net Revenue
-                      </span>
-                      <p className="text-lg font-bold text-emerald-400 flex items-center">
-                        <FaRupeeSign className="text-xs mr-1" />
-                        {event.totalRevenue.toLocaleString("en-IN")}
-                      </p>
-                    </div>
-                    <div className="bg-slate-800 p-2 rounded border border-slate-700">
-                      <FaUsers className="text-slate-400 text-sm" />
+                    <div className="mt-5 bg-slate-900/50 px-3 py-2 rounded-lg border border-slate-700/50 flex justify-between">
+                      <div>
+                        <span className="text-[9px] text-slate-400 font-bold ">
+                          Net Revenue
+                        </span>
+                        <p className="text-lg font-bold text-emerald-400 flex items-center">
+                          <FaRupeeSign className="text-xs mr-1" />
+                          {event.totalRevenue.toLocaleString("en-IN")}
+                        </p>
+                      </div>
+                      <div className="bg-slate-800 p-2 rounded border border-slate-700">
+                        <FaUsers className="text-slate-400 text-sm" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </NavLink>
-          ))}
+              </NavLink>
+            );
+          })}
         </div>
       )}
     </>
