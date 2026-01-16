@@ -2,6 +2,7 @@ const User = require("../models/UserModel");
 const Event = require("../models/EventModel");
 const Booking = require("../models/BookingModel");
 const ContactMessage = require("../models/ContactMessageModel");
+const Review = require("../models/ReviewModel");
 
 const getAdminStats = async (req, res) => {
   try {
@@ -323,6 +324,68 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const getAllEventsWithStats = async (req, res) => {
+  try {
+    const events = await Event.find({ status: "approved" }).populate(
+      "organizerId",
+      "username email"
+    );
+
+    if (events.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "No approved events found",
+        events: [],
+      });
+    }
+
+    const eventsWithStats = await Promise.all(
+      events.map(async (event) => {
+        const bookings = await Booking.find({
+          eventId: event._id,
+          status: "confirmed",
+        });
+
+        const totalRevenue = bookings.reduce(
+          (sum, b) => sum + b.totalAmount,
+          0
+        );
+
+        const bookedSeats = event.totalSeats - event.availableSeats;
+
+        const reviews = await Review.find({ eventId: event._id });
+
+        const avgRating =
+          reviews.length > 0
+            ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+            : 0;
+
+        return {
+          ...event.toObject(),
+          organizer: event.organizerId,
+          bookedSeats,
+          totalRevenue,
+          totalBookings: bookings.length,
+          avgRating,
+          reviewCount: reviews.length,
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "All events with stats fetched successfully",
+      events: eventsWithStats,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getPendingOrganizers,
@@ -335,4 +398,5 @@ module.exports = {
   replyContactMessage,
   getAllUsers,
   deleteUser,
+  getAllEventsWithStats,
 };

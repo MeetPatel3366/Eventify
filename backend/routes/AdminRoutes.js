@@ -11,11 +11,14 @@ const {
   replyContactMessage,
   getAllUsers,
   deleteUser,
+  getAllEventsWithStats,
 } = require("../controllers/AdminController");
 const { isLoggedIn, isAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.get("/stats", isLoggedIn, isAdmin, getAdminStats);
+
+router.get("/all-events-stats", isLoggedIn, isAdmin, getAllEventsWithStats);
 
 router.get("/users", isLoggedIn, isAdmin, getAllUsers);
 
