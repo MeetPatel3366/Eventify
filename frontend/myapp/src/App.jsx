@@ -36,6 +36,7 @@ import AdminContactReply from "./components/admin components/AdminContactReply";
 import AllBookings from "./components/admin components/AllBookings";
 import EventProgress from "./components/customer components/EventProgress";
 import BookingAnalytics from "./components/admin components/BookingAnalytics";
+import MyEventReviews from "./components/event organizer components/MyEventReviews";
 
 function App() {
   return (
@@ -263,6 +264,14 @@ function App() {
           element={
             <RoleBasedRoute allowedRoles={["eventorganizer"]}>
               <MyEventBookings />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/events/:eventId/reviews"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <MyEventReviews />
             </RoleBasedRoute>
           }
         />

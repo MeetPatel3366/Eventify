@@ -25,6 +25,8 @@ const MyEventBookings = () => {
     (state) => state.booking
   );
 
+  console.log("event: ", event);
+
   const [filters, setFilters] = useState({
     guest: "",
     checkIn: "all",
@@ -59,7 +61,6 @@ const MyEventBookings = () => {
         : filters.checkIn === "checked"
         ? b.checkedIn === true
         : b.checkedIn === false;
-
     return guestMatch && checkInMatch;
   });
 
@@ -95,6 +96,14 @@ const MyEventBookings = () => {
             >
               Download CSV
             </button>
+            {eventDate < Date.now() && (
+              <button
+                onClick={() => navigate(`/organizer/events/${eventId}/reviews`)}
+                className="w-fit px-4 py-1.5 bg-yellow-600/20 text-yellow-400 border border-yellow-600/30 rounded-lg hover:bg-yellow-600 hover:text-white transition-all text-sm font-medium"
+              >
+                View Reviews
+              </button>
+            )}
           </div>
 
           {event && (
