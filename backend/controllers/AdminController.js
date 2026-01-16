@@ -3,6 +3,7 @@ const Event = require("../models/EventModel");
 const Booking = require("../models/BookingModel");
 const ContactMessage = require("../models/ContactMessageModel");
 const Review = require("../models/ReviewModel");
+const mongoose = require("mongoose");
 
 const getAdminStats = async (req, res) => {
   try {
@@ -381,7 +382,45 @@ const getAllEventsWithStats = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "Server error",
+      message: error.message,
+    });
+  }
+};
+
+const getBookingsByEvent = async (req, res) => {
+  try {
+    const { eventId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(eventId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Event Id format",
+      });
+    }
+
+    const event = await Event.findById(eventId).populate(
+      "organizerId",
+      "username email"
+    );
+
+    if (!event) {
+      return res.status(404).json({ msg: "Event not found" });
+    }
+
+    const bookings = await Booking.find({ eventId })
+      .populate("userId", "username email")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Bookings fetched successfully",
+      event,
+      bookings,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
@@ -399,4 +438,5 @@ module.exports = {
   getAllUsers,
   deleteUser,
   getAllEventsWithStats,
+  getBookingsByEvent,
 };

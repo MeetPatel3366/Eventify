@@ -12,6 +12,7 @@ const {
   getAllUsers,
   deleteUser,
   getAllEventsWithStats,
+  getBookingsByEvent,
 } = require("../controllers/AdminController");
 const { isLoggedIn, isAdmin } = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -43,6 +44,13 @@ router.post(
   isLoggedIn,
   isAdmin,
   replyContactMessage
+);
+
+router.get(
+  "/events/:eventId/bookings",
+  isLoggedIn,
+  isAdmin,
+  getBookingsByEvent
 );
 
 module.exports = router;
