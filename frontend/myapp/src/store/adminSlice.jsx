@@ -102,6 +102,14 @@ export const deleteUser = createAsyncThunk("admin/deleteUser", async (id) => {
   return res.data.deleteUser;
 });
 
+export const fetchEventsWithStats = createAsyncThunk(
+  "admin/fetchEventsWithStats",
+  async () => {
+    const res = await adminApi.getAllEventsWithStats();
+    return res.data.events;
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
@@ -113,6 +121,7 @@ const adminSlice = createSlice({
     approvedOrganizers: [],
     rejectedOrganizers: [],
     allUsers: [],
+    eventsWithStats: [],
     loading: false,
     error: null,
   },
@@ -241,6 +250,14 @@ const adminSlice = createSlice({
         state.approvedOrganizers = state.approvedOrganizers.filter(
           (org) => org._id !== deletedId
         );
+      })
+
+      .addCase(fetchEventsWithStats.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchEventsWithStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.eventsWithStats = action.payload;
       })
 
       .addMatcher(

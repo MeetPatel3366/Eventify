@@ -8,6 +8,8 @@ const adminApi = {
 
   approvedEvents: () => api.get("/events/approved"),
 
+  getAllEventsWithStats: () => api.get("/admin/all-events-stats"),
+
   rejectedEvents: () => api.get("/events/rejected"),
 
   approveEvent: (id) => api.patch(`/events/approve/${id}`),
