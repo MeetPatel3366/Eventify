@@ -37,6 +37,9 @@ import AllBookings from "./components/admin components/AllBookings";
 import EventProgress from "./components/customer components/EventProgress";
 import BookingAnalytics from "./components/admin components/BookingAnalytics";
 import MyEventReviews from "./components/event organizer components/MyEventReviews";
+import AdminEventInsights from "./components/admin components/AdminEventInsights";
+import EventBookings from "./components/admin components/EventBookings";
+import EventReviews from "./components/admin components/EventReviews";
 
 function App() {
   return (
@@ -136,7 +139,7 @@ function App() {
           path="/admin/events"
           element={
             <RoleBasedRoute allowedRoles={["admin"]}>
-              <ApprovedEvents />
+              <AdminEventInsights />
             </RoleBasedRoute>
           }
         />
@@ -201,6 +204,22 @@ function App() {
           element={
             <RoleBasedRoute allowedRoles={["admin"]}>
               <BookingAnalytics />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/events/:eventId/bookings"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <EventBookings />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/events/reviews/:eventId"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <EventReviews />
             </RoleBasedRoute>
           }
         />
