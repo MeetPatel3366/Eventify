@@ -110,6 +110,14 @@ export const fetchEventsWithStats = createAsyncThunk(
   }
 );
 
+export const fetchEventBookings = createAsyncThunk(
+  "admin/fetchEventBookings",
+  async (eventId) => {
+    const res = await adminApi.getEventBookingsByEvent(eventId);
+    return res.data;
+  }
+);
+
 const adminSlice = createSlice({
   name: "admin",
   initialState: {
@@ -122,6 +130,8 @@ const adminSlice = createSlice({
     rejectedOrganizers: [],
     allUsers: [],
     eventsWithStats: [],
+    eventBookings: [],
+    selectedEvent: null,
     loading: false,
     error: null,
   },
@@ -258,6 +268,15 @@ const adminSlice = createSlice({
       .addCase(fetchEventsWithStats.fulfilled, (state, action) => {
         state.loading = false;
         state.eventsWithStats = action.payload;
+      })
+
+      .addCase(fetchEventBookings.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchEventBookings.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedEvent = action.payload.event;
+        state.eventBookings = action.payload.bookings;
       })
 
       .addMatcher(

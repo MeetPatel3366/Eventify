@@ -34,6 +34,9 @@ const adminApi = {
   replyToContactMessage: (id) => api.post(`admin/contact-message/reply/${id}`),
 
   deleteUser: (id) => api.delete(`/admin/user/${id}`),
+
+  getEventBookingsByEvent: (eventId) =>
+    api.get(`/admin/events/${eventId}/bookings`),
 };
 
 export default adminApi;

@@ -267,7 +267,7 @@ const AdminEventInsights = () => {
             return (
               <NavLink
                 key={event._id}
-                to={`/admin/events/${event._id}`}
+                to={`/admin/events/${event._id}/bookings`}
                 className="group"
               >
                 <div className="bg-slate-900/40 border border-slate-800 rounded-[2rem] overflow-hidden backdrop-blur-md transition-all duration-500 ">
