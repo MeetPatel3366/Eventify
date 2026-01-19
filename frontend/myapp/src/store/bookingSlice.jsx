@@ -5,8 +5,16 @@ export const createBooking = createAsyncThunk(
   "booking/create",
   async (bookingData) => {
     const res = await bookingsApi.booking(bookingData);
-    return res.data.booking;
-  }
+    return res.data;
+  },
+);
+
+export const verifyBookingPayment = createAsyncThunk(
+  "booking/verify",
+  async (data) => {
+    const res = await bookingsApi.verifyBookingPayment(data);
+    return res.data;
+  },
 );
 
 export const fetchMyBookings = createAsyncThunk(
@@ -14,7 +22,7 @@ export const fetchMyBookings = createAsyncThunk(
   async () => {
     const res = await bookingsApi.myBookings();
     return res.data.bookings;
-  }
+  },
 );
 
 export const fetchMyEventBookings = createAsyncThunk(
@@ -22,7 +30,7 @@ export const fetchMyEventBookings = createAsyncThunk(
   async (eventID) => {
     const res = await bookingsApi.myEventBookings(eventID);
     return res.data;
-  }
+  },
 );
 
 export const checkInBooking = createAsyncThunk(
@@ -30,7 +38,7 @@ export const checkInBooking = createAsyncThunk(
   async (bookingId) => {
     const res = await bookingsApi.checkInBooking(bookingId);
     return res.data.booking;
-  }
+  },
 );
 
 export const fetchexportBookingsCSV = createAsyncThunk(
@@ -38,9 +46,9 @@ export const fetchexportBookingsCSV = createAsyncThunk(
   async (eventId) => {
     window.open(
       `${import.meta.env.VITE_BACKEND_URL}/bookings/event/${eventId}/export`,
-      "_blank"
+      "_blank",
     );
-  }
+  },
 );
 
 export const fetchAllBookings = createAsyncThunk(
@@ -49,7 +57,7 @@ export const fetchAllBookings = createAsyncThunk(
     const query = new URLSearchParams(filter).toString();
     const res = await bookingsApi.allBookings(query);
     return res.data.bookings;
-  }
+  },
 );
 
 export const fetchBookingAnalytics = createAsyncThunk(
@@ -58,7 +66,7 @@ export const fetchBookingAnalytics = createAsyncThunk(
     const res = await bookingsApi.analytics();
     console.log("bookin analytics : ", res);
     return res.data;
-  }
+  },
 );
 
 const bookingSlice = createSlice({
@@ -72,6 +80,9 @@ const bookingSlice = createSlice({
     dailyRevenue: [],
     topEvents: [],
     topOrganizers: [],
+    booking: null,
+    order: null,
+    key: null,
     loading: false,
     error: null,
     success: false,
@@ -93,6 +104,19 @@ const bookingSlice = createSlice({
         state.success = false;
       })
       .addCase(createBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = false;
+        state.booking = action.payload.booking;
+        state.order = action.payload.order;
+        state.key = action.payload.key;
+      })
+
+      .addCase(verifyBookingPayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(verifyBookingPayment.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
       })
@@ -123,7 +147,7 @@ const bookingSlice = createSlice({
       .addCase(checkInBooking.fulfilled, (state, action) => {
         state.loading = false;
         const index = state.myEventBookings.findIndex(
-          (b) => b._id == action.payload._id
+          (b) => b._id == action.payload._id,
         );
         if (index !== -1) {
           state.myEventBookings[index] = action.payload;
@@ -165,7 +189,7 @@ const bookingSlice = createSlice({
           console.log("booking api error:", action.error);
           state.loading = false;
           state.error = action.error?.message || "something went wrong";
-        }
+        },
       );
   },
 });
