@@ -9,8 +9,13 @@ import {
   FaArrowLeft,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { createBooking, resetBookingState } from "../../store/bookingSlice";
+import {
+  createBooking,
+  resetBookingState,
+  verifyBookingPayment,
+} from "../../store/bookingSlice";
 import { fetchEvent } from "../../store/eventSlice";
+import { loadRazorpay } from "../../utils/loadRazorpay";
 
 const EventBooking = () => {
   const navigate = useNavigate();
@@ -25,20 +30,68 @@ const EventBooking = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => navigate("/my-bookings"), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [success, navigate]);
-
-  useEffect(() => {
     return () => {
       dispatch(resetBookingState());
     };
   }, [dispatch]);
 
+  const verifyPayment = async (response, bookingId) => {
+    try {
+      const res = await dispatch(
+        verifyBookingPayment({
+          bookingId,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_signature: response.razorpay_signature,
+        }),
+      );
+
+      console.log("Payment Verification Response: ", res);
+      if (res.payload.success) {
+        navigate("/my-bookings");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Payment verification failed");
+    }
+  };
+
   const handleBooking = async () => {
-    dispatch(createBooking({ eventId: id, quantity }));
+    const result = await dispatch(createBooking({ eventId: id, quantity }));
+
+    console.log("Booking Result: ", result);
+    if (!result.payload?.order) {
+      alert("Something went wrong.");
+      return;
+    }
+
+    const res = await loadRazorpay();
+    if (!res) {
+      alert("Razorpay SDK failed to load.");
+      return;
+    }
+
+    const { order, key, bookingId } = result.payload;
+    console.log("Order Details: ", order, key, bookingId);
+
+    const options = {
+      key,
+      amount: order.amount,
+      currency: "INR",
+      name: "Eventify",
+      image: "https://cdn-icons-png.flaticon.com/512/1161/1161388.png",
+      description: "Event Booking Payment",
+      order_id: order.id,
+      handler: async function (response) {
+        verifyPayment(response, bookingId);
+      },
+      theme: {
+        color: "#6366f1",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
   };
 
   if (!event) {
@@ -123,8 +176,11 @@ const EventBooking = () => {
                       setQuantity(
                         Math.max(
                           1,
-                          Math.min(Number(e.target.value), event.availableSeats)
-                        )
+                          Math.min(
+                            Number(e.target.value),
+                            event.availableSeats,
+                          ),
+                        ),
                       )
                     }
                     className="w-12 bg-transparent text-white font-bold text-center py-1 focus:outline-none"
