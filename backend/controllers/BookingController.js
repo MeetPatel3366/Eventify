@@ -2,6 +2,13 @@ const Booking = require("../models/BookingModel");
 const Event = require("../models/EventModel");
 const User = require("../models/UserModel");
 const Review = require("../models/ReviewModel");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_TEST_KEY_ID,
+  key_secret: process.env.RAZORPAY_TEST_KEY_SECRET,
+});
 
 const createBooking = async (req, res) => {
   try {
@@ -9,23 +16,16 @@ const createBooking = async (req, res) => {
     const userId = req.user.id;
     console.log(eventId, quantity, userId);
 
-    const event = await Event.findOneAndUpdate(
-      { _id: eventId, status: "approved", availableSeats: { $gte: quantity } },
-      { $inc: { availableSeats: -quantity } },
-      { new: true }
-    );
+    const event = await Event.findOne({
+      _id: eventId,
+      status: "approved",
+      availableSeats: { $gte: quantity },
+    });
 
     if (!event) {
       return res.status(404).json({
         success: false,
-        message: "Event not found",
-      });
-    }
-
-    if (event.availableSeats < quantity) {
-      return res.status(400).json({
-        success: false,
-        message: "Not enough seats available",
+        message: "Event not found or not enough seats",
       });
     }
 
@@ -34,11 +34,84 @@ const createBooking = async (req, res) => {
       eventId,
       quantity,
       totalAmount: event.price * quantity,
+      paymentStatus: "pending",
+      status: "pending",
     });
 
-    return res.status(201).json({
+    const options = {
+      amount: booking.totalAmount * 100,
+      currency: "INR",
+      receipt: `receipt_order_${booking._id}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+
+    booking.razorpayOrderId = order.id;
+    await booking.save();
+
+    return res.status(200).json({
       success: true,
-      message: "Event booked successfully",
+      message: "Razorpay order created successfully",
+      order,
+      bookingId: booking._id,
+      key: process.env.RAZORPAY_TEST_KEY_ID,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const verifyBookingPayment = async (req, res) => {
+  try {
+    const {
+      bookingId,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
+
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSign = crypto
+      .createHmac("sha256", process.env.RAZORPAY_TEST_KEY_SECRET)
+      .update(sign)
+      .digest("hex");
+
+    if (expectedSign !== razorpay_signature) {
+      booking.paymentStatus = "failed";
+      await booking.save();
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment signature",
+      });
+    }
+
+    booking.razorpayPaymentId = razorpay_payment_id;
+    booking.razorpaySignature = razorpay_signature;
+    booking.paymentStatus = "paid";
+    booking.status = "confirmed";
+
+    await Event.updateOne(
+      { _id: booking.eventId },
+      { $inc: { availableSeats: -booking.quantity } },
+    );
+
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment verified successfully",
       booking,
     });
   } catch (error) {
@@ -63,7 +136,7 @@ const myBookings = async (req, res) => {
       const event = bookingObj.eventId;
 
       const existingReview = userReviews.find(
-        (rev) => rev.eventId.toString() === event._id.toString()
+        (rev) => rev.eventId.toString() === event._id.toString(),
       );
 
       return {
@@ -195,7 +268,7 @@ const exportBookingsCSV = async (req, res) => {
 
     const bookings = await Booking.find({ eventId: event._id }).populate(
       "userId",
-      "username email"
+      "username email",
     );
 
     const csvRows = [
@@ -268,7 +341,7 @@ const getAllBookings = async (req, res) => {
 
       eventIds = eventIds
         ? eventIds.filter((id) =>
-            organizerEventIds.some((oid) => oid.equals(id))
+            organizerEventIds.some((oid) => oid.equals(id)),
           )
         : organizerEventIds;
     }
@@ -430,6 +503,7 @@ const getBookingAnalytics = async (req, res) => {
 
 module.exports = {
   createBooking,
+  verifyBookingPayment,
   myBookings,
   getMyEventBookings,
   markBookingCheckedIn,

@@ -7,6 +7,7 @@ const {
   exportBookingsCSV,
   getAllBookings,
   getBookingAnalytics,
+  verifyBookingPayment,
 } = require("../controllers/BookingController");
 const {
   isLoggedIn,
@@ -16,6 +17,8 @@ const {
 const router = express.Router();
 
 router.post("/", isLoggedIn, createBooking);
+
+router.post("/verify", isLoggedIn, verifyBookingPayment);
 
 router.get("/my", isLoggedIn, myBookings);
 
@@ -29,14 +32,14 @@ router.patch(
   "/:bookingId/check-in",
   isLoggedIn,
   isEventOrganizer,
-  markBookingCheckedIn
+  markBookingCheckedIn,
 );
 
 router.get(
   "/event/:eventId/export",
   isLoggedIn,
   isEventOrganizer,
-  exportBookingsCSV
+  exportBookingsCSV,
 );
 
 module.exports = router;
