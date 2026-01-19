@@ -8,6 +8,7 @@ const {
   getAllBookings,
   getBookingAnalytics,
   verifyBookingPayment,
+  cancelBooking,
 } = require("../controllers/BookingController");
 const {
   isLoggedIn,
@@ -25,6 +26,8 @@ router.get("/my", isLoggedIn, myBookings);
 router.get("/all", isLoggedIn, isAdmin, getAllBookings);
 
 router.get("/analytics", isLoggedIn, isAdmin, getBookingAnalytics);
+
+router.post("/:bookingId/cancel", isLoggedIn, cancelBooking);
 
 router.get("/:eventID", isLoggedIn, isEventOrganizer, getMyEventBookings);
 

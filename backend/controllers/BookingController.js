@@ -122,6 +122,69 @@ const verifyBookingPayment = async (req, res) => {
   }
 };
 
+const cancelBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    console.log("start cancellation for bookingId :", bookingId);
+
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    if (booking.userId.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized to cancel booking",
+      });
+    }
+
+    if (booking.isCancelled) {
+      return res.status(400).json({
+        success: false,
+        message: "Booking already cancelled",
+      });
+    }
+
+    if (booking.paymentStatus !== "paid") {
+      return res.status(400).json({
+        success: false,
+        message: "Only paid bookings can be cancelled",
+      });
+    }
+
+    const refund = await razorpay.payments.refund(booking.razorpayPaymentId, {
+      amount: booking.totalAmount * 100,
+      speed: "normal",
+    });
+
+    booking.status = "cancelled";
+    booking.paymentStatus = "refunded";
+    booking.isCancelled = true;
+    await booking.save();
+
+    const event = await Event.findById(booking.eventId);
+    event.availableSeats += booking.quantity;
+    await event.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Booking cancelled & refunded successfully",
+      booking,
+      refund,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const myBookings = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -504,6 +567,7 @@ const getBookingAnalytics = async (req, res) => {
 module.exports = {
   createBooking,
   verifyBookingPayment,
+  cancelBooking,
   myBookings,
   getMyEventBookings,
   markBookingCheckedIn,
