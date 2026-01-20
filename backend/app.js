@@ -12,6 +12,7 @@ const ContactMessageRoutes = require("./routes/ContactRoutes");
 const AdminRoutes = require("./routes/AdminRoutes");
 const BookingRoutes = require("./routes/BookingRoutes");
 const ReviewRoutes = require("./routes/ReviewRoutes");
+const CategoryRoutes = require("./routes/CategoryRoutes");
 
 //PORT
 PORT = process.env.PORT || 5000;
@@ -24,7 +25,7 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 app.use(cookieParser());
 app.use(express.json());
@@ -37,6 +38,7 @@ app.use("/api/contact", ContactMessageRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/bookings", BookingRoutes);
 app.use("/api/review", ReviewRoutes);
+app.use("/api/categories", CategoryRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
