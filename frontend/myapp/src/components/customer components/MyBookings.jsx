@@ -10,7 +10,7 @@ import {
   FaSearch,
   FaTrash,
 } from "react-icons/fa";
-import { fetchMyBookings } from "../../store/bookingSlice";
+import { cancelBooking, fetchMyBookings } from "../../store/bookingSlice";
 import {
   getEventRatingSummary,
   createReview,
@@ -51,10 +51,10 @@ const MyBookings = () => {
     }
   }, [bookings, dispatch]);
 
-  // Search Logic
-  const filteredBookings = bookings.filter((booking) =>
-    booking.eventId?.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredBookings = bookings.filter((booking) => {
+    const eventName = booking.eventId?.name || "";
+    return eventName.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   const handleOpenReviewModal = (event, existingReview = null) => {
     setReviewModal({
@@ -90,6 +90,26 @@ const MyBookings = () => {
       dispatch(fetchMyBookings());
       dispatch(getEventRatingSummary(deleteModal.eventId));
       setDeleteModal({ isOpen: false, eventId: null });
+    }
+  };
+
+  const canCancelBooking = (eventDateTime, bookingStatus) => {
+    const eventTime = new Date(eventDateTime).getTime();
+    const currentTime = Date.now();
+
+    const timeDifference = eventTime - currentTime;
+    const hoursLeft = timeDifference / (1000 * 60 * 60);
+
+    return bookingStatus === "confirmed" && hoursLeft >= 24;
+  };
+
+  const handleCancel = async (bookingId) => {
+    try {
+      await dispatch(cancelBooking(bookingId));
+      alert("Booking cancelled successfully. Refund initiated!");
+      dispatch(fetchMyBookings());
+    } catch (error) {
+      alert("Cancellation failed.");
     }
   };
 
@@ -170,6 +190,15 @@ const MyBookings = () => {
                       {booking.status}
                     </span>
                   </div>
+
+                  {canCancelBooking(event?.datetime, booking.status) && (
+                    <button
+                      onClick={() => handleCancel(booking._id)}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold py-2 rounded-lg transition"
+                    >
+                      Cancel Booking
+                    </button>
+                  )}
 
                   {isCompleted && (
                     <div className="flex flex-col gap-2">

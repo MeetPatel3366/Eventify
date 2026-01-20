@@ -17,6 +17,14 @@ export const verifyBookingPayment = createAsyncThunk(
   },
 );
 
+export const cancelBooking = createAsyncThunk(
+  "booking/cancel",
+  async (bookingId) => {
+    const res = await bookingsApi.cancelBooking(bookingId);
+    return res.data;
+  },
+);
+
 export const fetchMyBookings = createAsyncThunk(
   "booking/fetchMyBookings",
   async () => {
@@ -119,6 +127,23 @@ const bookingSlice = createSlice({
       .addCase(verifyBookingPayment.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
+      })
+
+      .addCase(cancelBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(cancelBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        const updatedBooking = action.payload.booking;
+        const index = state.bookings.findIndex(
+          (b) => b._id == updatedBooking._id,
+        );
+        if (index !== -1) {
+          state.bookings[index] = updatedBooking;
+        }
       })
 
       .addCase(fetchMyBookings.pending, (state) => {

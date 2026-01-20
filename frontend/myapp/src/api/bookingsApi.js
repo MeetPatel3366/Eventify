@@ -5,6 +5,8 @@ const bookingsApi = {
 
   verifyBookingPayment: (formData) => api.post(`/bookings/verify`, formData),
 
+  cancelBooking: (bookingId) => api.post(`/bookings/${bookingId}/cancel`),
+
   myBookings: () => api.get("/bookings/my"),
 
   myEventBookings: (eventID) => api.get(`/bookings/${eventID}`),
