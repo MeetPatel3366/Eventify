@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: function(){
+      required: function () {
         return !this.isOAuthUser;
       },
     },
@@ -44,8 +44,39 @@ const userSchema = new mongoose.Schema(
         return this.role == "eventorganizer" ? "pending" : "approved";
       },
     },
+    fullName: {
+      type: String,
+      trim: true,
+    },
+    phoneNumber: {
+      type: Number,
+      trim: true,
+    },
+    profileImage: {
+      public_id: {
+        type: String,
+      },
+      secure_url: {
+        type: String,
+      },
+    },
+    bio: {
+      type: String,
+      maxLength: [500, "Bio cannot exceed 500 characters"],
+    },
+    organizationName: {
+      type: String,
+      trim: true,
+    },
+    organizationWebsite: {
+      type: String,
+    },
+    organizationDescription: {
+      type: String,
+      maxlength: [500, "Organization description cannot exceed 500 characters"],
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("User", userSchema);
