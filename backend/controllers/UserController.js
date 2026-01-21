@@ -10,6 +10,7 @@ const {
   decodeIdToken,
 } = require("arctic");
 const google = require("../utils/google");
+const handleFileUpload = require("../utils/handleFileUpload");
 
 const register = async (req, res) => {
   try {
@@ -173,7 +174,7 @@ const login = async (req, res) => {
       const token = jwt.sign(
         { id: user._id, role: user.role },
         process.env.JWT_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "7d" },
       );
 
       res.cookie("token", token, {
@@ -379,7 +380,7 @@ const verifyLoginOtp = async (req, res) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "7d",
-      }
+      },
     );
 
     res.cookie("token", token, {
@@ -458,8 +459,8 @@ const getGoogleLoginCallback = async (req, res, next) => {
     res.redirect(`${process.env.FRONTEND_URL}`);
     return next(
       new Error(
-        "Couldn't login with Google because of invalid login attempt. Please try again!"
-      )
+        "Couldn't login with Google because of invalid login attempt. Please try again!",
+      ),
     );
   }
 
@@ -471,8 +472,8 @@ const getGoogleLoginCallback = async (req, res, next) => {
     res.redirect(`${process.env.FRONTEND_URL}/login`);
     return next(
       new Error(
-        "Couldn't login with Google because of invalid login attempt. Please try again!"
-      )
+        "Couldn't login with Google because of invalid login attempt. Please try again!",
+      ),
     );
   }
 
@@ -562,7 +563,7 @@ const getGoogleLoginCallback = async (req, res, next) => {
     res.clearCookie("google_code_verifier");
 
     return res.redirect(
-      `${process.env.FRONTEND_URL}/login-otp-verify?email=${user.email}`
+      `${process.env.FRONTEND_URL}/login-otp-verify?email=${user.email}`,
     );
   }
 
@@ -574,7 +575,7 @@ const getGoogleLoginCallback = async (req, res, next) => {
     process.env.JWT_SECRET,
     {
       expiresIn: "7d",
-    }
+    },
   );
 
   res.cookie("token", token, {
@@ -609,6 +610,93 @@ const logout = async (req, res) => {
   }
 };
 
+const getMyProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select(
+      "-password -otp -otpExpiry",
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User profile fetched successfully",
+      profile: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const updateMyProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const allowedUpdates = [
+      "fullName",
+      "phoneNumber",
+      "bio",
+      "organizationName",
+      "organizationWebsite",
+      "organizationDescription",
+    ];
+
+    const updates = {};
+
+    allowedUpdates.forEach((field) => {
+      if (req.body[field] != undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    if (req.file) {
+      console.log("file", req.file);
+      const imageData = await handleFileUpload(
+        req.file,
+        "eventify/profile-images",
+        user.profileImage?.public_id,
+      );
+
+      updates.profileImage = imageData;
+      console.log("imageData", imageData);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+      runValidators: true,
+    }).select("-password -otp -otpExpiry");
+
+    console.log("up", updatedUser);
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      profile: updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -617,5 +705,7 @@ module.exports = {
   verifyLoginOtp,
   getGoogleLoginPage,
   getGoogleLoginCallback,
+  getMyProfile,
+  updateMyProfile,
   logout,
 };
