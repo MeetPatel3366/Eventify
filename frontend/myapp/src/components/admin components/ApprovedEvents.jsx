@@ -45,7 +45,7 @@ const ApprovedEvents = () => {
                   {event.name}
                 </h2>
                 <p className="text-xs text-gray-500 capitalize mt-1">
-                  {event.category}
+                  {event.category.name}
                 </p>
               </div>
 

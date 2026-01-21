@@ -18,6 +18,7 @@ const AdminHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stats } = useSelector((state) => state.admin);
+  console.log("stats : ",stats)
 
   useEffect(() => {
     dispatch(fetchAdminStats());
@@ -140,6 +141,13 @@ const AdminHome = () => {
           count={stats?.rejectedOrganizers}
           color="from-slate-700 to-slate-900"
           onClick={() => navigate("/admin/rejected-organizers")}
+        />
+        <AdminCard
+          title="Event Categories"
+          description="Manage festival, concert, and workshop types"
+          count={stats?.totalCategories }
+          color="from-violet-600 to-violet-900"
+          onClick={() => navigate("/admin/eventcategories")}
         />
       </div>
     </div>

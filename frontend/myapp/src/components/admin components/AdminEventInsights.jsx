@@ -96,7 +96,7 @@ const AdminEventInsights = () => {
       filters.location ? event.location === filters.location : true
     )
     .filter((event) =>
-      filters.category ? event.category === filters.category : true
+      filters.category ? event.category.name === filters.category : true
     )
     .filter((event) => {
       const now = new Date();
@@ -278,7 +278,7 @@ const AdminEventInsights = () => {
                       alt={event.name}
                     />
                     <div className="absolute top-4 left-4 bg-cyan-600 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter shadow-lg">
-                      {event.category}
+                      {event.category.name}
                     </div>
                   </div>
 

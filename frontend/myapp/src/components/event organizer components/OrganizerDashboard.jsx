@@ -112,7 +112,7 @@ export default function OrganizerDashboard() {
                   </p>
 
                   <p className="text-gray-400 text-sm mb-4 capitalize">
-                    Category: {event.category}
+                    Category: {event.category.name}
                   </p>
 
                   <span

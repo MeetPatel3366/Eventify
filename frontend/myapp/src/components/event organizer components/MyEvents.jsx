@@ -75,7 +75,7 @@ const MyEvents = () => {
   };
 
   const uniqueLocations = [...new Set(myEvents.map((e) => e.location))];
-  const uniqueCategories = [...new Set(myEvents.map((e) => e.category))];
+  const uniqueCategories = [...new Set(myEvents.map((e) => e.category?.name).filter(Boolean))];
 
   const filteredEvents = myEvents
     .filter(filterByDate)
@@ -85,7 +85,7 @@ const MyEvents = () => {
         : true
     )
     .filter((e) => (filters.location ? e.location === filters.location : true))
-    .filter((e) => (filters.category ? e.category === filters.category : true))
+    .filter((e) => (filters.category ? e.category?.name === filters.category : true))
     .filter((e) => (filters.status ? e.status === filters.status : true))
     .filter((e) => {
       const occ = getOccupancyRate(e);
@@ -241,7 +241,7 @@ const MyEvents = () => {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute top-3 left-3 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded">
-                    {event.category}
+                    {event.category.name}
                   </div>
                 </div>
 

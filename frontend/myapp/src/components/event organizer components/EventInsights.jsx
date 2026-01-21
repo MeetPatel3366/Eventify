@@ -96,7 +96,7 @@ const EventInsights = () => {
       filters.location ? event.location === filters.location : true
     )
     .filter((event) =>
-      filters.category ? event.category === filters.category : true
+      filters.category ? event.category?.name === filters.category : true
     )
     .filter((event) => {
       const now = new Date();
@@ -212,7 +212,7 @@ const EventInsights = () => {
             }
           >
             <option value="">All Categories</option>
-            {[...new Set(myEventStats.map((e) => e.category))].map((cat) => (
+            {[...new Set(myEventStats.map((e) => e.category?.name).filter(Boolean))].map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
               </option>
@@ -302,7 +302,7 @@ const EventInsights = () => {
                       alt={event.name}
                     />
                     <div className="absolute top-3 left-3 bg-indigo-600 text-white text-[10px] px-2 py-1 rounded ">
-                      {event.category}
+                      {event.category.name}
                     </div>
                   </div>
 

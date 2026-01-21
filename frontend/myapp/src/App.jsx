@@ -40,6 +40,7 @@ import MyEventReviews from "./components/event organizer components/MyEventRevie
 import AdminEventInsights from "./components/admin components/AdminEventInsights";
 import EventBookings from "./components/admin components/EventBookings";
 import EventReviews from "./components/admin components/EventReviews";
+import EventCategory from "./components/admin components/EventCategory";
 
 function App() {
   return (
@@ -220,6 +221,14 @@ function App() {
           element={
             <RoleBasedRoute allowedRoles={["admin"]}>
               <EventReviews />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/admin/eventcategories"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <EventCategory />
             </RoleBasedRoute>
           }
         />

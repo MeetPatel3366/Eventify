@@ -41,9 +41,9 @@ const Events = () => {
               />
             </div>
 
-            {event.category && (
+            {event.category.name && (
               <span className="text-xs px-3 py-1 bg-indigo-600/80 rounded-full shadow mb-3 inline-block">
-                {event.category}
+                {event.category.name}
               </span>
             )}
             <div className="flex items-center justify-between mb-3">

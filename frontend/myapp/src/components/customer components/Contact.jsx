@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios"
+import axios from "axios";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,24 +21,28 @@ const Contact = () => {
 
     try {
       console.log(import.meta.env.VITE_BACKEND_URL);
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/contact/`, formData, { withCredentials: true });
-      setSubmitted(true)
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/contact/`,
+        formData,
+        { withCredentials: true },
+      );
+      setSubmitted(true);
       setFormData({
         name: "",
         email: "",
         message: "",
-      })
+      });
 
       // eslint-disable-next-line no-unused-vars
     } catch (err) {
-      setError("failed to send message. please try again.")
+      setError("failed to send message. please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
+    <div className="py-14">
       <section className="max-w-6xl mx-auto text-center mb-6 mt-6">
         <h1 className="text-5xl font-bold mb-4">Contact Us</h1>
         <p className="text-gray-300 text-lg">
@@ -130,7 +134,7 @@ const Contact = () => {
           <p className="text-gray-300">123 Event Street, New York, NY</p>
         </div>
       </section>
-    </>
+    </div>
   );
 };
 
