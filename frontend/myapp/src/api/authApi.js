@@ -30,6 +30,10 @@ const authApi = {
       otp,
     }),
 
+  getMyProfile: () => api.get("/auth/me"),
+
+  updateProfile: (formData) => api.put("/auth/me", formData),
+
   logout: () => api.get("/auth/logout"),
 };
 
