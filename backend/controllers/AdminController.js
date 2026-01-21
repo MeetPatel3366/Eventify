@@ -3,6 +3,7 @@ const Event = require("../models/EventModel");
 const Booking = require("../models/BookingModel");
 const ContactMessage = require("../models/ContactMessageModel");
 const Review = require("../models/ReviewModel");
+const Category = require("../models/CategoryModel");
 const mongoose = require("mongoose");
 
 const getAdminStats = async (req, res) => {
@@ -46,6 +47,8 @@ const getAdminStats = async (req, res) => {
 
     const allBookings = await Booking.countDocuments({ status: "confirmed" });
 
+    const totalCategories = await Category.countDocuments();
+
     return res.status(200).json({
       success: true,
       message: "stats fetched successfully",
@@ -61,6 +64,7 @@ const getAdminStats = async (req, res) => {
         upcomingEvents,
         pastEvents,
         allBookings,
+        totalCategories,
       },
     });
   } catch (error) {
@@ -327,10 +331,9 @@ const deleteUser = async (req, res) => {
 
 const getAllEventsWithStats = async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" }).populate(
-      "organizerId",
-      "username email"
-    );
+    const events = await Event.find({ status: "approved" })
+      .populate("organizerId", "username email")
+      .populate("category", "name");
 
     if (events.length === 0) {
       return res.status(200).json({
@@ -349,7 +352,7 @@ const getAllEventsWithStats = async (req, res) => {
 
         const totalRevenue = bookings.reduce(
           (sum, b) => sum + b.totalAmount,
-          0
+          0,
         );
 
         const bookedSeats = event.totalSeats - event.availableSeats;
@@ -370,7 +373,7 @@ const getAllEventsWithStats = async (req, res) => {
           avgRating,
           reviewCount: reviews.length,
         };
-      })
+      }),
     );
 
     return res.status(200).json({
@@ -398,10 +401,9 @@ const getBookingsByEvent = async (req, res) => {
       });
     }
 
-    const event = await Event.findById(eventId).populate(
-      "organizerId",
-      "username email"
-    );
+    const event = await Event.findById(eventId)
+      .populate("organizerId", "username email")
+      .populate("category", "name");
 
     if (!event) {
       return res.status(404).json({ msg: "Event not found" });

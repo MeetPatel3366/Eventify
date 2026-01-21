@@ -34,7 +34,7 @@ const addEvent = async (req, res) => {
       "image: ",
       req.file
         ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-        : null
+        : null,
     );
 
     return res.status(201).json({
@@ -57,10 +57,9 @@ const addEvent = async (req, res) => {
 
 const getEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" }).populate(
-      "organizerId",
-      "username email"
-    );
+    const events = await Event.find({ status: "approved" })
+      .populate("organizerId", "username email")
+      .populate("category", "name");
 
     if (events.length == 0) {
       return res.status(200).json({
@@ -147,7 +146,9 @@ const updateEvent = async (req, res) => {
 const getEvent = async (req, res) => {
   try {
     const eventID = await req.params.id;
-    const event = await Event.findById(eventID);
+    const event = await Event.findById(eventID)
+      .populate("category", "name")
+      .populate("organizerId", "username email");
     if (!event) {
       return res.status(404).json({
         success: false,
@@ -209,7 +210,7 @@ const approveEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id).populate(
       "organizerId",
-      "username email"
+      "username email",
     );
 
     if (!event) {
@@ -245,7 +246,7 @@ const rejectEvent = async (req, res) => {
     console.log("feedback: ", feedback);
     const event = await Event.findById(req.params.id).populate(
       "organizerId",
-      "username email"
+      "username email",
     );
 
     if (!event) {
@@ -280,7 +281,10 @@ const getMyEvents = async (req, res) => {
   try {
     // This tells the browser/Postman: "Do not store this, always ask for a fresh copy"
     res.set("Cache-Control", "no-store");
-    const events = await Event.find({ organizerId: req.user.id });
+    const events = await Event.find({ organizerId: req.user.id }).populate(
+      "category",
+      "name",
+    );
 
     if (events.length == 0) {
       return res.status(404).json({
@@ -307,7 +311,7 @@ const getMyEventsWithStats = async (req, res) => {
     const events = await Event.find({
       organizerId: req.user.id,
       status: "approved",
-    });
+    }).populate("category", "name");
 
     if (events.length == 0) {
       return res.status(200).json({
@@ -326,7 +330,7 @@ const getMyEventsWithStats = async (req, res) => {
 
         const totalRevenue = bookings.reduce(
           (total, booking) => total + booking.totalAmount,
-          0
+          0,
         );
 
         return {
@@ -334,7 +338,7 @@ const getMyEventsWithStats = async (req, res) => {
           bookedSeats: event.totalSeats - event.availableSeats,
           totalRevenue,
         };
-      })
+      }),
     );
 
     return res.status(200).json({
@@ -354,10 +358,9 @@ const getMyEventsWithStats = async (req, res) => {
 
 const getPendingEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "pending" }).populate(
-      "organizerId",
-      "username email"
-    );
+    const events = await Event.find({ status: "pending" })
+      .populate("organizerId", "username email")
+      .populate("category", "name");
 
     if (events.length == 0) {
       return res.status(404).json({
@@ -386,10 +389,9 @@ const getPendingEvents = async (req, res) => {
 
 const getRejectedEvents = async (req, res) => {
   try {
-    const events = await Event.find({ status: "rejected" }).populate(
-      "organizerId",
-      "username email"
-    );
+    const events = await Event.find({ status: "rejected" })
+      .populate("organizerId", "username email")
+      .populate("category", "name");
 
     if (events.length == 0) {
       return res.status(404).json({
@@ -418,9 +420,11 @@ const getRejectedEvents = async (req, res) => {
 
 const getEventProgress = async (req, res) => {
   try {
-    const events = await Event.find({ status: "approved" }).sort({
-      datetime: 1,
-    });
+    const events = await Event.find({ status: "approved" })
+      .sort({
+        datetime: 1,
+      })
+      .populate("category", "name");
     const now = new Date();
 
     const startOfToday = new Date(now);
