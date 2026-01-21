@@ -4,6 +4,7 @@ import eventReducer from "./eventSlice";
 import adminReducer from "./adminSlice";
 import bookingReducer from "./bookingSlice";
 import reviewReducer from "./reviewSlice";
+import categoryReducer from "./categorySlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     admin: adminReducer,
     booking: bookingReducer,
     review: reviewReducer,
+    category: categoryReducer,
   },
 });
