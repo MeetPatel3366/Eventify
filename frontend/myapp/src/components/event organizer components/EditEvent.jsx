@@ -5,17 +5,27 @@ import {
   FaImage,
   FaAlignLeft,
   FaEdit,
+  FaUsers,
 } from "react-icons/fa";
 import { TbCurrencyRupee } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvent, updateEvent } from "../../store/eventSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import { fetchCategories } from "../../store/categorySlice";
 
 const EditEvent = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { event, loading } = useSelector((state) => state.event);
+
+  const { categories, loading: categoryLoading } = useSelector(
+    (state) => state.category,
+  );
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -113,14 +123,32 @@ const EditEvent = () => {
           <div>
             <label className="block mb-2">Category</label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
-              <input
-                type="text"
+              <select
                 name="category"
-                value={formData.category}
+                id="category"
                 required
+                value={formData.category}
                 onChange={handleChange}
-                className="w-full bg-transparent focus:outline-none"
-              />
+                className="w-full bg-transparent focus:outline-none text-white"
+              >
+                <option value="" className="text-black">
+                  Select Category
+                </option>
+
+                {categoryLoading ? (
+                  <option disabled>Loading...</option>
+                ) : (
+                  categories.map((cat) => (
+                    <option
+                      key={cat._id}
+                      value={cat._id}
+                      className="text-black"
+                    >
+                      {cat.name}
+                    </option>
+                  ))
+                )}
+              </select>
             </div>
           </div>
 
