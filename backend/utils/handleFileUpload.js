@@ -6,20 +6,28 @@ const handleFileUpload = async (
   file,
   folder = "eventify",
   oldPublicId = null,
+  isEvent = false,
 ) => {
   if (!file) return null;
 
   try {
-    const result = await cloudinary.uploader.upload(file.path, {
+    const uploadOptions = {
       folder,
       resource_type: "image",
-      width: 300,
-      height: 300,
-      crop: "fill",
-      gravity: "face",
       quality: "auto",
-    });
+    };
+    if (isEvent) {
+      uploadOptions.width = 1200;
+      uploadOptions.height = 630;
+      uploadOptions.crop = "fill";
+    } else {
+      uploadOptions.width = 300;
+      uploadOptions.height = 300;
+      uploadOptions.crop = "fill";
+      uploadOptions.gravity = "face";
+    }
 
+    const result = await cloudinary.uploader.upload(file.path, uploadOptions);
     if (oldPublicId) {
       await cloudinary.uploader.destroy(oldPublicId);
     }
