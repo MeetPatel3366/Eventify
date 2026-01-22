@@ -1,6 +1,7 @@
 const Event = require("../models/EventModel.js");
 const Booking = require("../models/BookingModel.js");
-const { deleteImage } = require("../utils/deleteFile.js");
+const cloudinary = require("../utils/cloudinary.js");
+const handleFileUpload = require("../utils/handleFileUpload.js");
 
 const addEvent = async (req, res) => {
   try {
@@ -14,6 +15,16 @@ const addEvent = async (req, res) => {
       price,
     } = req.body;
 
+    let imageData = null;
+    if (req.file) {
+      imageData = await handleFileUpload(
+        req.file,
+        "eventify/events",
+        null,
+        true,
+      );
+    }
+
     const newEvent = await Event.create({
       name,
       category,
@@ -25,27 +36,17 @@ const addEvent = async (req, res) => {
       status: "pending",
       totalSeats,
       availableSeats: totalSeats,
-      image: req.file ? req.file.filename : null,
+      image: imageData,
     });
 
     console.log("newEvent: ", newEvent);
     console.log("newEvent._doc", newEvent._doc);
-    console.log(
-      "image: ",
-      req.file
-        ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-        : null,
-    );
+    console.log("image: ", req.file);
 
     return res.status(201).json({
       success: true,
       message: "event submitted for approval",
-      event: {
-        ...newEvent._doc,
-        image: req.file
-          ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-          : null,
-      },
+      event: newEvent,
     });
   } catch (error) {
     return res.status(500).json({
@@ -72,7 +73,7 @@ const getEvents = async (req, res) => {
     const updatedEvents = events.map((event) => ({
       ...event._doc,
       isCompleted: new Date(event.datetime) < new Date(),
-      image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+      image: event.image?.secure_url || null,
     }));
 
     console.log("events: ", updatedEvents);
@@ -105,7 +106,7 @@ const updateEvent = async (req, res) => {
 
     event.name = req.body.name || event.name;
     event.category = req.body.category || event.category;
-    event.date = req.body.date || event.date;
+    event.datetime = new Date(req.body.datetime) || event.datetime;
     event.location = req.body.location || event.location;
     event.description = req.body.description || event.description;
     event.price = req.body.price || event.price;
@@ -117,8 +118,13 @@ const updateEvent = async (req, res) => {
         : event.availableSeats;
 
     if (req.file) {
-      deleteImage(event.image);
-      event.image = req.file.filename;
+      const imageData = await handleFileUpload(
+        req.file,
+        "eventify/events",
+        event.image?.public_id,
+        true,
+      );
+      event.image = imageData;
     }
 
     const updatedEvent = await event.save();
@@ -128,12 +134,7 @@ const updateEvent = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "event updated successfully",
-      updatedEvent: {
-        ...updatedEvent._doc,
-        image: updatedEvent.image
-          ? `${req.protocol}://${req.get("host")}/uploads/${updatedEvent.image}`
-          : null,
-      },
+      updatedEvent,
     });
   } catch (error) {
     return res.status(500).json({
@@ -164,11 +165,9 @@ const getEvent = async (req, res) => {
       success: true,
       message: `event ${eventID} fetched successfully`,
       event: {
-        ...event._doc,
-        isCompleted,
-        image: event.image
-          ? `${req.protocol}://${req.get("host")}/uploads/${event.image}`
-          : null,
+        ...event.toObject(),
+        isCompleted: new Date(event.datetime) < new Date(),
+        image: event.image?.secure_url || null,
       },
     });
   } catch (error) {
@@ -190,7 +189,9 @@ const deleteEvent = async (req, res) => {
       });
     }
 
-    deleteImage(event.image);
+    if (event.image?.public_id) {
+      await cloudinary.uploader.destroy(event.image.public_id);
+    }
 
     console.log("delete event : ", event);
 
@@ -229,7 +230,7 @@ const approveEvent = async (req, res) => {
       message: "Event approved successfully",
       event: {
         ...event._doc,
-        image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+        image: event.image?.secure_url || null,
       },
     });
   } catch (error) {
@@ -266,7 +267,7 @@ const rejectEvent = async (req, res) => {
       message: "event rejected",
       event: {
         ...event._doc,
-        image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+        image: event.image?.secure_url || null,
       },
     });
   } catch (error) {
@@ -293,10 +294,15 @@ const getMyEvents = async (req, res) => {
       });
     }
 
+    const updatedEvents = events.map((event) => ({
+      ...event.toObject(),
+      image: event.image?.secure_url || null,
+    }));
+
     return res.status(200).json({
       success: true,
       message: "events fetched successfully",
-      events,
+      events: updatedEvents,
     });
   } catch (error) {
     return res.status(500).json({
@@ -371,7 +377,7 @@ const getPendingEvents = async (req, res) => {
 
     const updatedEvents = events.map((event) => ({
       ...event._doc,
-      image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+      image: event.image?.secure_url || null,
     }));
 
     return res.status(200).json({
@@ -402,7 +408,7 @@ const getRejectedEvents = async (req, res) => {
 
     const updatedEvents = events.map((event) => ({
       ...event._doc,
-      image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+      image: event.image?.secure_url || null,
     }));
 
     return res.status(200).json({
@@ -451,7 +457,7 @@ const getEventProgress = async (req, res) => {
 
       return {
         ...event._doc,
-        image: `${req.protocol}://${req.get("host")}/uploads/${event.image}`,
+        image: event.image?.secure_url || null,
         progressStatus,
         progressPercentage,
         isCompleted: new Date(event.datetime) < new Date(),
