@@ -1,10 +1,20 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import { getMyProfile } from "../../store/authSlice";
+import { FaUserCircle } from "react-icons/fa";
 
 const Navbar = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(getMyProfile());
+    }
+  }, []);
   return (
-    <nav
-      className="w-full fixed top-0 left-0 z-50 bg-black border-b border-white/10"
-    >
+    <nav className="w-full fixed top-0 left-0 z-50 bg-black border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link
           to="/home"
@@ -62,6 +72,28 @@ const Navbar = () => {
               Contact Us
             </NavLink>
           </li>
+
+          {user && (
+            <li>
+              <NavLink
+                to="/my-profile"
+                className="flex items-center justify-center transition-all hover:scale-110"
+              >
+                {user?.profileImage?.secure_url ? (
+                  <img
+                    src={user.profileImage.secure_url}
+                    alt="Profile"
+                    className="w-9 h-9 rounded-full object-cover border border-white/20 shadow-md"
+                  />
+                ) : (
+                  <FaUserCircle
+                    size={28}
+                    className="text-white hover:text-indigo-400"
+                  />
+                )}
+              </NavLink>
+            </li>
+          )}
 
           <li>
             <NavLink

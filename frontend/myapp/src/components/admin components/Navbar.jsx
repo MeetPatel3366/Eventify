@@ -1,10 +1,20 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { logout } from "../../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getMyProfile, logout } from "../../store/authSlice";
+import { FaUserCircle } from "react-icons/fa";
+import { useEffect } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(getMyProfile());
+    }
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -45,9 +55,23 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="hidden sm:inline-block text-xs px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              Admin
-            </span>
+            <NavLink
+              to="/admin/my-profile"
+              className="flex items-center transition-all hover:opacity-80 active:scale-95"
+            >
+              {user?.profileImage?.secure_url ? (
+                <img
+                  src={user.profileImage.secure_url}
+                  alt="Admin"
+                  className="w-9 h-9 rounded-full object-cover border border-white/10 shadow-sm"
+                />
+              ) : (
+                <FaUserCircle
+                  size={28}
+                  className="text-white/70 hover:text-white transition-colors"
+                />
+              )}
+            </NavLink>
 
             <button
               onClick={handleLogout}
