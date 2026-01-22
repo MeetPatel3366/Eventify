@@ -38,6 +38,9 @@ const ApprovedOrganizers = () => {
                   <th className="p-4 font-semibold text-gray-300">Username</th>
                   <th className="p-4 font-semibold text-gray-300">Email</th>
                   <th className="p-4 font-semibold text-gray-300">
+                    Phone Number
+                  </th>
+                  <th className="p-4 font-semibold text-gray-300">
                     Joined Date
                   </th>
                   <th className="p-4 font-semibold text-gray-300">Status</th>
@@ -55,6 +58,7 @@ const ApprovedOrganizers = () => {
                     <td className="p-4 font-medium">{index + 1}</td>
                     <td className="p-4 font-medium">{org.username}</td>
                     <td className="p-4 text-gray-400">{org.email}</td>
+                    <td className="p-4 text-gray-400">{org.phoneNumber}</td>
                     <td className="p-4 text-gray-400 text-sm">
                       {new Date(org.createdAt).toLocaleDateString()}
                     </td>

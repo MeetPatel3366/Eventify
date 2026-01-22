@@ -100,7 +100,7 @@ const getApprovedOrganizers = async (req, res) => {
       role: "eventorganizer",
       organizerStatus: "approved",
     })
-      .select("username email createdAt")
+      .select("username email phoneNumber createdAt")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -289,7 +289,7 @@ const replyContactMessage = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const customers = await User.find({ role: "customer" })
-      .select("username email createdAt")
+      .select("username email phoneNumber createdAt")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({

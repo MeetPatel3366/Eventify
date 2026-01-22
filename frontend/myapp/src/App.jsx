@@ -41,6 +41,7 @@ import AdminEventInsights from "./components/admin components/AdminEventInsights
 import EventBookings from "./components/admin components/EventBookings";
 import EventReviews from "./components/admin components/EventReviews";
 import EventCategory from "./components/admin components/EventCategory";
+import MyProfile from "./components/customer components/MyProfile";
 
 function App() {
   return (
@@ -105,6 +106,14 @@ function App() {
           element={
             <RoleBasedRoute allowedRoles={["customer"]}>
               <EventProgress />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/my-profile"
+          element={
+            <RoleBasedRoute allowedRoles={["customer"]}>
+              <MyProfile />
             </RoleBasedRoute>
           }
         />
@@ -232,6 +241,14 @@ function App() {
             </RoleBasedRoute>
           }
         />
+        <Route
+          path="/admin/my-profile"
+          element={
+            <RoleBasedRoute allowedRoles={["admin"]}>
+              <MyProfile />
+            </RoleBasedRoute>
+          }
+        />
       </Route>
 
       <Route path="/organizer/register" element={<Register />} />
@@ -300,6 +317,14 @@ function App() {
           element={
             <RoleBasedRoute allowedRoles={["eventorganizer"]}>
               <MyEventReviews />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/organizer/my-profile"
+          element={
+            <RoleBasedRoute allowedRoles={["eventorganizer"]}>
+              <MyProfile />
             </RoleBasedRoute>
           }
         />

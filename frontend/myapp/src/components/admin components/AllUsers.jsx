@@ -36,6 +36,9 @@ const AllUsers = () => {
                   <th className="p-4 font-semibold text-gray-300">Username</th>
                   <th className="p-4 font-semibold text-gray-300">Email</th>
                   <th className="p-4 font-semibold text-gray-300">
+                    Phone Number
+                  </th>
+                  <th className="p-4 font-semibold text-gray-300">
                     Joined Date
                   </th>
                   <th className="p-4 font-semibold text-center text-gray-300">
@@ -52,6 +55,7 @@ const AllUsers = () => {
                     <td className="p-4 font-medium">{index + 1}</td>
                     <td className="p-4 font-medium">{user.username}</td>
                     <td className="p-4 text-gray-400">{user.email}</td>
+                    <td className="p-4 text-gray-400">{user.phoneNumber}</td>
                     <td className="p-4 text-gray-400 text-sm">
                       {new Date(user.createdAt).toLocaleDateString()}
                     </td>

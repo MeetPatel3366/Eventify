@@ -16,7 +16,7 @@ const AdminContactReply = () => {
       try {
         const res = await adminApi.fetchSingleContactMessage(id);
         setMessage(res.data.data);
-      // eslint-disable-next-line no-unused-vars
+        // eslint-disable-next-line no-unused-vars
       } catch (err) {
         setError("Failed to load message");
       }
@@ -37,7 +37,7 @@ const AdminContactReply = () => {
     try {
       await adminApi.replyToContactMessage(id, { reply });
       navigate("/admin/contact-messages");
-    // eslint-disable-next-line no-unused-vars
+      // eslint-disable-next-line no-unused-vars
     } catch (err) {
       setError("Failed to send reply");
     } finally {
@@ -55,7 +55,7 @@ const AdminContactReply = () => {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto pb-10">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Reply to Contact Message</h1>
           <p className="text-gray-400">
@@ -89,8 +89,8 @@ const AdminContactReply = () => {
                   message.status === "new"
                     ? "bg-red-500/20 text-red-400"
                     : message.status === "read"
-                    ? "bg-yellow-500/20 text-yellow-400"
-                    : "bg-green-500/20 text-green-400"
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-green-500/20 text-green-400"
                 }`}
             >
               {message.status.toUpperCase()}
@@ -109,13 +109,11 @@ const AdminContactReply = () => {
             className="w-full p-4 rounded-xl bg-white/20 text-white border border-white/20 focus:outline-none focus:border-white/40 resize-none"
           />
 
-          {error && (
-            <p className="text-red-400 text-sm mt-3">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-sm mt-3">{error}</p>}
 
           <div className="flex justify-end gap-4 mt-6">
             <button
-              onClick={() => navigate("/admin/contact")}
+              onClick={() => navigate("/admin/contact-messages")}
               className="px-5 py-2 rounded-lg bg-gray-600 hover:bg-gray-700 transition font-semibold"
             >
               Cancel
