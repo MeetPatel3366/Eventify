@@ -42,7 +42,7 @@ const MyEvents = () => {
 
     const weekStart = new Date(today);
     weekStart.setDate(
-      today.getDate() - (today.getDay() === 0 ? 6 : today.getDay() - 1)
+      today.getDate() - (today.getDay() === 0 ? 6 : today.getDay() - 1),
     );
 
     const weekEnd = new Date(weekStart);
@@ -75,17 +75,21 @@ const MyEvents = () => {
   };
 
   const uniqueLocations = [...new Set(myEvents.map((e) => e.location))];
-  const uniqueCategories = [...new Set(myEvents.map((e) => e.category?.name).filter(Boolean))];
+  const uniqueCategories = [
+    ...new Set(myEvents.map((e) => e.category?.name).filter(Boolean)),
+  ];
 
   const filteredEvents = myEvents
     .filter(filterByDate)
     .filter((e) =>
       filters.search
         ? e.name.toLowerCase().includes(filters.search.toLowerCase())
-        : true
+        : true,
     )
     .filter((e) => (filters.location ? e.location === filters.location : true))
-    .filter((e) => (filters.category ? e.category?.name === filters.category : true))
+    .filter((e) =>
+      filters.category ? e.category?.name === filters.category : true,
+    )
     .filter((e) => (filters.status ? e.status === filters.status : true))
     .filter((e) => {
       const occ = getOccupancyRate(e);

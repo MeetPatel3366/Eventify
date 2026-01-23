@@ -240,7 +240,7 @@ const MyProfile = () => {
             </div>
           ) : (
             <>
-              <h3 className="text-3xl font-black">{user?.fullName}</h3>
+              <h3 className="text-3xl font-black">{user?.fullName || "---"}</h3>
               <p className="text-white/60 mt-2 text-sm">
                 {user?.bio || "Tell the community about yourself..."}
               </p>

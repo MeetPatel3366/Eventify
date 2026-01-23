@@ -19,7 +19,7 @@ const handleFileUpload = async (
     if (isEvent) {
       uploadOptions.width = 1200;
       uploadOptions.height = 630;
-      uploadOptions.crop = "fill";
+      uploadOptions.crop = "limit";
     } else {
       uploadOptions.width = 300;
       uploadOptions.height = 300;

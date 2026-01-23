@@ -273,7 +273,7 @@ const AdminEventInsights = () => {
                 <div className="bg-slate-900/40 border border-slate-800 rounded-[2rem] overflow-hidden backdrop-blur-md transition-all duration-500 ">
                   <div className="relative h-44 overflow-hidden">
                     <img
-                      src={`http://localhost:4000/uploads/${event.image}`}
+                      src={event.image?.secure_url}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       alt={event.name}
                     />

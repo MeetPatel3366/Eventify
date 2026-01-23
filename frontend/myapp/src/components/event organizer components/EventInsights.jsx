@@ -297,7 +297,7 @@ const EventInsights = () => {
                 <div className="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden hover:border-slate-500 transition-colors">
                   <div className="relative h-40">
                     <img
-                      src={`http://localhost:4000/uploads/${event.image}`}
+                      src={event.image?.secure_url}
                       className="w-full h-full object-cover"
                       alt={event.name}
                     />
