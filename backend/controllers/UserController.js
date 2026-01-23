@@ -14,9 +14,24 @@ const handleFileUpload = require("../utils/handleFileUpload");
 
 const register = async (req, res) => {
   try {
-    const { username, email, password, confirmpassword, role } = req.body;
+    const {
+      fullName,
+      phoneNumber,
+      username,
+      email,
+      password,
+      confirmpassword,
+      role,
+    } = req.body;
 
-    if (!username || !email || !password || !confirmpassword) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      !confirmpassword ||
+      !fullName ||
+      !phoneNumber
+    ) {
       return res.status(400).json({
         success: false,
         message: "all fields required",
@@ -468,7 +483,8 @@ const getGoogleLoginCallback = async (req, res, next) => {
   try {
     // artic will verify the code given by google with code verifier internally
     tokens = await google.validateAuthorizationCode(code, codeVerifier);
-  } catch {
+  } catch (err) {
+    console.error("google.validateAuthorizationCode error:", err);
     res.redirect(`${process.env.FRONTEND_URL}/login`);
     return next(
       new Error(
@@ -477,7 +493,15 @@ const getGoogleLoginCallback = async (req, res, next) => {
     );
   }
 
-  const claims = decodeIdToken(tokens.idToken());
+  let claims;
+  try {
+    claims = decodeIdToken(tokens.idToken());
+  } catch (err) {
+    console.error("decodeIdToken error:", err);
+    res.redirect(`${process.env.FRONTEND_URL}/login`);
+    return next(new Error("Couldn't login with Google. Please try again!"));
+  }
+
   const { sub: googleUserId, name, email } = claims;
 
   // Find user with this email
@@ -522,6 +546,7 @@ const getGoogleLoginCallback = async (req, res, next) => {
 
       user = newUser;
     } catch (err) {
+      console.error("User OauthAccount create error:", err);
       if (newUser) {
         await User.findByIdAndDelete(newUser._id);
       }
