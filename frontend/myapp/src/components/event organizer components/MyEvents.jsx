@@ -236,7 +236,7 @@ const MyEvents = () => {
               >
                 <div className="relative h-44">
                   <img
-                    src={`http://localhost:4000/uploads/${event.image}`}
+                    src={event.image}
                     alt={event.name}
                     className="w-full h-full object-cover"
                   />

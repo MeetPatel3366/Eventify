@@ -42,6 +42,7 @@ import EventBookings from "./components/admin components/EventBookings";
 import EventReviews from "./components/admin components/EventReviews";
 import EventCategory from "./components/admin components/EventCategory";
 import MyProfile from "./components/customer components/MyProfile";
+import CheckProfile from "./components/CheckProfile";
 
 function App() {
   return (
@@ -52,7 +53,13 @@ function App() {
       <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
 
-      <Route element={<CustomerMainLayout />}>
+      <Route
+        element={
+          <CheckProfile>
+            <CustomerMainLayout />
+          </CheckProfile>
+        }
+      >
         <Route
           path="/home"
           element={
@@ -120,7 +127,13 @@ function App() {
       </Route>
 
       <Route path="/admin" element={<Login />} />
-      <Route element={<AdminMainLayout />}>
+      <Route
+        element={
+          <CheckProfile>
+            <AdminMainLayout />
+          </CheckProfile>
+        }
+      >
         <Route
           path="/admin/home"
           element={
@@ -255,7 +268,13 @@ function App() {
       <Route path="/organizer/verify-otp" element={<VerifyOtp />} />
       <Route path="/organizer" element={<Login />} />
 
-      <Route element={<EventOrganizerLayout />}>
+      <Route
+        element={
+          <CheckProfile>
+            <EventOrganizerLayout />
+          </CheckProfile>
+        }
+      >
         <Route
           path="/organizer/home"
           element={

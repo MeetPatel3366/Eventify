@@ -23,6 +23,7 @@ const MyProfile = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [statusMessage, setStatusMessage] = useState({ type: "", text: "" });
+  const [errMsg, setErrMsg] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -60,6 +61,10 @@ const MyProfile = () => {
       });
       setPreviewImage(null);
       setSelectedFile(null);
+
+      if (!user.fullName || !user.phoneNumber) {
+        setErrMsg(true);
+      }
     }
   }, [user]);
 
@@ -68,7 +73,9 @@ const MyProfile = () => {
     let error = "";
 
     if (name === "fullName") {
-      if (!/^[a-zA-Z\s]*$/.test(value)) {
+      if (!value) {
+        error = "Full name is required";
+      } else if (!/^[a-zA-Z\s]*$/.test(value)) {
         error = "Full name must contain only letters";
       }
     }
@@ -142,6 +149,11 @@ const MyProfile = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 mt-1 text-slate-100 min-h-screen">
+      {errMsg && (
+        <p className="text-xs font-semibold text-rose-400 mb-3">
+          Full name and phone number are required to complete event bookings.
+        </p>
+      )}
       {statusMessage.text && (
         <div
           className={`fixed top-24 right-6 p-4 rounded-2xl border backdrop-blur-md z-50 shadow-2xl ${
@@ -228,7 +240,7 @@ const MyProfile = () => {
             </div>
           ) : (
             <>
-              <h1 className="text-3xl font-black">{user?.fullName}</h1>
+              <h3 className="text-3xl font-black">{user?.fullName}</h3>
               <p className="text-white/60 mt-2 text-sm">
                 {user?.bio || "Tell the community about yourself..."}
               </p>
