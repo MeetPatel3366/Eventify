@@ -8,33 +8,34 @@ import {
   FaListUl,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMyEvents } from "../../store/eventSlice";
+import { fetchMyEvents, fetchMyEventsWithStats } from "../../store/eventSlice";
 
 export default function OrganizerDashboard() {
   const { myEvents, myEventStats, loading } = useSelector(
-    (state) => state.event
+    (state) => state.event,
   );
   const dispatch = useDispatch();
   const today = new Date();
   const upcomingEvents = myEvents.filter(
-    (event) => new Date(event.datetime) >= today
+    (event) => new Date(event.datetime) >= today,
   );
 
   const approvedEvents = myEvents.filter((e) => e.status == "approved").length;
   const pendingEvents = myEvents.filter((e) => e.status == "pending").length;
 
   const stats = useMemo(() => {
-    return myEventStats.reduce(
+    return myEventStats?.reduce(
       (accum, curr) => ({
         totalRevenue: accum.totalRevenue + curr.totalRevenue,
         totalBooked: accum.totalBooked + curr.bookedSeats,
       }),
-      { totalRevenue: 0, totalBooked: 0 }
+      { totalRevenue: 0, totalBooked: 0 },
     );
   }, [myEventStats]);
 
   useEffect(() => {
     dispatch(fetchMyEvents());
+    dispatch(fetchMyEventsWithStats());
   }, [dispatch]);
 
   return (
@@ -99,7 +100,7 @@ export default function OrganizerDashboard() {
                 className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-xl"
               >
                 <img
-                  src={`http://localhost:4000/uploads/${event.image}`}
+                  src={event.image}
                   alt={event.name}
                   className="h-44 w-full object-cover"
                 />
@@ -120,8 +121,8 @@ export default function OrganizerDashboard() {
                       event.status === "approved"
                         ? "bg-green-600"
                         : event.status === "pending"
-                        ? "bg-yellow-600"
-                        : "bg-red-600"
+                          ? "bg-yellow-600"
+                          : "bg-red-600"
                     }`}
                   >
                     {event.status}
