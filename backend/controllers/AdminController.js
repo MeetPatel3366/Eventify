@@ -4,6 +4,7 @@ const Booking = require("../models/BookingModel");
 const ContactMessage = require("../models/ContactMessageModel");
 const Review = require("../models/ReviewModel");
 const Category = require("../models/CategoryModel");
+const OauthAccount = require("../models/OauthAccountModel");
 const mongoose = require("mongoose");
 
 const getAdminStats = async (req, res) => {
@@ -100,7 +101,7 @@ const getApprovedOrganizers = async (req, res) => {
       role: "eventorganizer",
       organizerStatus: "approved",
     })
-      .select("username email phoneNumber createdAt")
+      .select("username email phoneNumber fullName createdAt")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -289,7 +290,7 @@ const replyContactMessage = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const customers = await User.find({ role: "customer" })
-      .select("username email phoneNumber createdAt")
+      .select("username email phoneNumber fullName createdAt")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
@@ -316,10 +317,15 @@ const deleteUser = async (req, res) => {
         message: "user not found",
       });
     }
+
+    if (deletedUser.isOAuthUser) {
+      await OauthAccount.findOneAndDelete({ userId: id });
+    }
+
     return res.status(200).json({
       success: true,
       message: "user deleted successfully",
-      deleteUser,
+      deletedUser,
     });
   } catch (error) {
     return res.status(500).json({

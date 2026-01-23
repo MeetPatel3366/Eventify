@@ -6,7 +6,7 @@ export const fetchPendingEvents = createAsyncThunk(
   async () => {
     const res = await adminApi.pendingEvents();
     return res.data.events;
-  }
+  },
 );
 
 export const fetchApprovedEvents = createAsyncThunk(
@@ -14,7 +14,7 @@ export const fetchApprovedEvents = createAsyncThunk(
   async () => {
     const res = await adminApi.approvedEvents();
     return res.data.events;
-  }
+  },
 );
 
 export const fetchRejectedEvents = createAsyncThunk(
@@ -22,7 +22,7 @@ export const fetchRejectedEvents = createAsyncThunk(
   async () => {
     const res = await adminApi.rejectedEvents();
     return res.data.events;
-  }
+  },
 );
 
 export const approveEvent = createAsyncThunk(
@@ -30,7 +30,7 @@ export const approveEvent = createAsyncThunk(
   async (id) => {
     const res = await adminApi.approveEvent(id);
     return res.data.event;
-  }
+  },
 );
 
 export const rejectEvent = createAsyncThunk(
@@ -38,7 +38,7 @@ export const rejectEvent = createAsyncThunk(
   async ({ id, feedback }) => {
     const res = await adminApi.rejectEvent(id, feedback);
     return res.data.event;
-  }
+  },
 );
 
 export const fetchPendingOrganizers = createAsyncThunk(
@@ -46,7 +46,7 @@ export const fetchPendingOrganizers = createAsyncThunk(
   async () => {
     const res = await adminApi.fetchPendingOrganizers();
     return res.data.organizers;
-  }
+  },
 );
 
 export const fetchApprovedOrganizers = createAsyncThunk(
@@ -54,7 +54,7 @@ export const fetchApprovedOrganizers = createAsyncThunk(
   async () => {
     const res = await adminApi.fetchApprovedOrganizers();
     return res.data.organizers;
-  }
+  },
 );
 
 export const fetchRejectedOrganizers = createAsyncThunk(
@@ -62,7 +62,7 @@ export const fetchRejectedOrganizers = createAsyncThunk(
   async () => {
     const res = await adminApi.fetchRejectedOrganizers();
     return res.data.organizers;
-  }
+  },
 );
 
 export const approveOrganizer = createAsyncThunk(
@@ -70,7 +70,7 @@ export const approveOrganizer = createAsyncThunk(
   async (id) => {
     const res = await adminApi.approveOrganizer(id);
     return res.data.organizer;
-  }
+  },
 );
 
 export const rejectOrganizer = createAsyncThunk(
@@ -78,7 +78,7 @@ export const rejectOrganizer = createAsyncThunk(
   async (id) => {
     const res = await adminApi.rejectOrganizer(id);
     return res.data.organizer;
-  }
+  },
 );
 
 export const fetchAdminStats = createAsyncThunk(
@@ -86,7 +86,7 @@ export const fetchAdminStats = createAsyncThunk(
   async () => {
     const res = await adminApi.fetchAdminStats();
     return res.data.stats;
-  }
+  },
 );
 
 export const fetchAllUsers = createAsyncThunk(
@@ -94,12 +94,12 @@ export const fetchAllUsers = createAsyncThunk(
   async () => {
     const res = await adminApi.fetchAllUsers();
     return res.data.customers;
-  }
+  },
 );
 
 export const deleteUser = createAsyncThunk("admin/deleteUser", async (id) => {
   const res = await adminApi.deleteUser(id);
-  return res.data.deleteUser;
+  return res.data.deletedUser;
 });
 
 export const fetchEventsWithStats = createAsyncThunk(
@@ -107,7 +107,7 @@ export const fetchEventsWithStats = createAsyncThunk(
   async () => {
     const res = await adminApi.getAllEventsWithStats();
     return res.data.events;
-  }
+  },
 );
 
 export const fetchEventBookings = createAsyncThunk(
@@ -115,7 +115,7 @@ export const fetchEventBookings = createAsyncThunk(
   async (eventId) => {
     const res = await adminApi.getEventBookingsByEvent(eventId);
     return res.data;
-  }
+  },
 );
 
 const adminSlice = createSlice({
@@ -177,7 +177,7 @@ const adminSlice = createSlice({
         state.loading = false;
         state.approvedEvents.push(action.payload);
         state.pendingEvents = state.pendingEvents.filter(
-          (event) => event._id !== action.payload._id
+          (event) => event._id !== action.payload._id,
         );
       })
 
@@ -188,7 +188,7 @@ const adminSlice = createSlice({
         state.loading = false;
         state.rejectedEvents.push(action.payload);
         state.pendingEvents = state.pendingEvents.filter(
-          (event) => event._id !== action.payload._id
+          (event) => event._id !== action.payload._id,
         );
       })
 
@@ -223,7 +223,7 @@ const adminSlice = createSlice({
         state.loading = false;
         state.approvedOrganizers.push(action.payload);
         state.pendingOrganizers = state.pendingOrganizers.filter(
-          (organizer) => organizer._id !== action.payload._id
+          (organizer) => organizer._id !== action.payload._id,
         );
       })
 
@@ -234,7 +234,7 @@ const adminSlice = createSlice({
         state.loading = false;
         state.rejectedOrganizers.push(action.payload);
         state.pendingOrganizers = state.pendingOrganizers.filter(
-          (organizer) => organizer._id !== action.payload._id
+          (organizer) => organizer._id !== action.payload._id,
         );
       })
 
@@ -254,11 +254,11 @@ const adminSlice = createSlice({
         const deletedId = action.payload._id;
 
         state.allUsers = state.allUsers.filter(
-          (user) => user._id !== deletedId
+          (user) => user._id !== deletedId,
         );
 
         state.approvedOrganizers = state.approvedOrganizers.filter(
-          (org) => org._id !== deletedId
+          (org) => org._id !== deletedId,
         );
       })
 
@@ -285,7 +285,7 @@ const adminSlice = createSlice({
           console.log("admin api error:", action.error);
           state.loading = false;
           state.error = action.error?.message || "something went wrong";
-        }
+        },
       );
   },
 });

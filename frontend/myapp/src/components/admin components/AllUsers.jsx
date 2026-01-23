@@ -34,6 +34,7 @@ const AllUsers = () => {
                 <tr className="border-b border-gray-700 bg-gray-800/50">
                   <th className="p-4 font-semibold text-gray-300">Sr. No.</th>
                   <th className="p-4 font-semibold text-gray-300">Username</th>
+                  <th className="p-4 font-semibold text-gray-300">Full Name</th>
                   <th className="p-4 font-semibold text-gray-300">Email</th>
                   <th className="p-4 font-semibold text-gray-300">
                     Phone Number
@@ -54,6 +55,7 @@ const AllUsers = () => {
                   >
                     <td className="p-4 font-medium">{index + 1}</td>
                     <td className="p-4 font-medium">{user.username}</td>
+                    <td className="p-4 font-medium">{user.fullName}</td>
                     <td className="p-4 text-gray-400">{user.email}</td>
                     <td className="p-4 text-gray-400">{user.phoneNumber}</td>
                     <td className="p-4 text-gray-400 text-sm">

@@ -24,7 +24,7 @@ const CheckProfile = ({ children }) => {
     if (!needsCompletion) return;
 
     let target = "/my-profile";
-    
+
     if (user.role === "eventorganizer") {
       target = "/organizer/my-profile";
     }
