@@ -22,7 +22,7 @@ const MyEventBookings = () => {
   const dispatch = useDispatch();
 
   const { myEventBookings, event, loading, error } = useSelector(
-    (state) => state.booking
+    (state) => state.booking,
   );
 
   console.log("event: ", event);
@@ -52,21 +52,21 @@ const MyEventBookings = () => {
 
   const filteredBookings = myEventBookings.filter((b) => {
     const guestMatch =
-      b.userId?.username?.toLowerCase().includes(filters.guest.toLowerCase()) ||
+      b.userId?.fullName?.toLowerCase().includes(filters.guest.toLowerCase()) ||
       b.userId?.email?.toLowerCase().includes(filters.guest.toLowerCase());
 
     const checkInMatch =
       filters.checkIn === "all"
         ? true
         : filters.checkIn === "checked"
-        ? b.checkedIn === true
-        : b.checkedIn === false;
+          ? b.checkedIn === true
+          : b.checkedIn === false;
     return guestMatch && checkInMatch;
   });
 
   const totalSeatsSold = myEventBookings.reduce(
     (acc, b) => acc + (b.quantity || 0),
-    0
+    0,
   );
 
   if (error) {
@@ -172,10 +172,11 @@ const MyEventBookings = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-slate-900/50 text-slate-400 uppercase text-[11px]">
-              <tr>
+              <tr className="text-center">
                 <th className="px-6 py-4">#</th>
-                <th className="px-6 py-4">Guest</th>
-                <th className="px-6 py-4 text-center">Seats</th>
+                <th className="px-6 py-4">Guest Name & Email</th>
+                <th className="px-6 py-4">Guest Phone Number</th>
+                <th className="px-6 py-4">Seats</th>
                 <th className="px-6 py-4">Amount</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Date</th>
@@ -196,26 +197,28 @@ const MyEventBookings = () => {
               ) : (
                 filteredBookings.map((b, i) => (
                   <tr key={b._id} className="hover:bg-white/[0.03]">
-                    <td className="px-6 py-4 text-slate-500">{i + 1}</td>
+                    <td className="px-6 py-4 text-slate-500 text-center">{i + 1}</td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-center">
                       <p className="font-bold text-slate-100">
-                        {b.userId?.username}
+                        {b.userId?.fullName || b.userId?.username}
                       </p>
                       <p className="text-xs text-slate-400">
                         {b.userId?.email}
                       </p>
                     </td>
 
+                    <td className="px-6 py-4 text-center">{b.userId?.phoneNumber}</td>
+
                     <td className="px-6 py-4 text-center">
-                      <span className="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-400">
+                      <span className="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-center">
                         {b.quantity}
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 font-bold">₹{b.totalAmount}</td>
+                    <td className="px-6 py-4 font-bold text-center">₹{b.totalAmount}</td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-center">
                       <span
                         className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
                           b.status === "confirmed"
@@ -227,11 +230,11 @@ const MyEventBookings = () => {
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-xs text-slate-400">
+                    <td className="px-6 py-4 text-xs text-slate-400 text-center">
                       {new Date(b.createdAt).toLocaleString("en-IN")}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 text-center">
                       {b.checkedIn ? (
                         <span className="flex items-center gap-1 text-emerald-400 text-xs">
                           <FaCheckCircle /> Arrived
@@ -250,7 +253,7 @@ const MyEventBookings = () => {
                           <FaUserCheck /> Check-In
                         </button>
                       ) : (
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-slate-500 text-center">
                           Unavailable
                         </span>
                       )}

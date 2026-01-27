@@ -209,9 +209,7 @@ const myBookings = async (req, res) => {
 
         eventId: {
           ...event,
-          image: event.image
-            ? `${req.protocol}://${req.get("host")}/uploads/${event.image}`
-            : null,
+          image: event.image?.secure_url || null,
           isCompleted: new Date(event.datetime) < new Date(),
         },
       };
@@ -252,7 +250,7 @@ const getMyEventBookings = async (req, res) => {
       eventId: eventID,
       status: "confirmed",
     })
-      .populate("userId", "username email")
+      .populate("userId", "username email fullName phoneNumber")
       .sort({ createdAt: -1 });
 
     return res.status(200).json({
