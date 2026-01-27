@@ -1,9 +1,9 @@
-const ContactMessage = require("../models/ContactMessageModel");
+import ContactMessage from "../models/ContactMessageModel.js";
 
 const contactForm = async (req, res) => {
   try {
     const { name, email, message } = req.body;
-    console.log(name,email,message);
+    console.log(name, email, message);
 
     const newMessage = new ContactMessage({
       name,
@@ -25,4 +25,4 @@ const contactForm = async (req, res) => {
   }
 };
 
-module.exports = { contactForm };
+export { contactForm };

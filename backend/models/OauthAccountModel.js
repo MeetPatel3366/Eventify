@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const oauthAccountSchema = new mongoose.Schema(
   {
@@ -18,7 +18,7 @@ const oauthAccountSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-module.exports = mongoose.model("OauthAccount", oauthAccountSchema);
+export default mongoose.model("OauthAccount", oauthAccountSchema);

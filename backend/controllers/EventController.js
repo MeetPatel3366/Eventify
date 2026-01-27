@@ -1,7 +1,7 @@
-const Event = require("../models/EventModel.js");
-const Booking = require("../models/BookingModel.js");
-const cloudinary = require("../utils/cloudinary.js");
-const handleFileUpload = require("../utils/handleFileUpload.js");
+import Event from "../models/EventModel.js";
+import Booking from "../models/BookingModel.js";
+import cloudinary from "../utils/cloudinary.js";
+import handleFileUpload from "../utils/handleFileUpload.js";
 
 const addEvent = async (req, res) => {
   try {
@@ -477,7 +477,7 @@ const getEventProgress = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getEvent,
   getEvents,
   addEvent,

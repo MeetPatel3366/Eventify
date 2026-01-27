@@ -1,6 +1,6 @@
-const express = require("express");
-const { isLoggedIn } = require("../middleware/authMiddleware");
-const {
+import express from "express";
+import { isLoggedIn } from "../middleware/authMiddleware.js";
+import {
   register,
   login,
   verify,
@@ -11,8 +11,8 @@ const {
   logout,
   getMyProfile,
   updateMyProfile,
-} = require("../controllers/UserController");
-const upload = require("../utils/multer");
+} from "../controllers/UserController.js";
+import upload from "../utils/multer.js";
 const router = express.Router();
 
 router.post("/register", register);
@@ -35,4 +35,4 @@ router.put("/me", upload.single("profileImage"), isLoggedIn, updateMyProfile);
 
 router.get("/logout", logout);
 
-module.exports = router;
+export default router;

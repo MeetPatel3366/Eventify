@@ -1,6 +1,6 @@
-const cloudinary = require("./cloudinary");
-const fs = require("fs");
-const path = require("path");
+import cloudinary from "./cloudinary.js";
+import fs from "fs";
+import path from "path";
 
 const handleFileUpload = async (
   file,
@@ -50,4 +50,4 @@ const handleFileUpload = async (
   }
 };
 
-module.exports = handleFileUpload;
+export default handleFileUpload;

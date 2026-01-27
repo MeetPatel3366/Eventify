@@ -1,9 +1,9 @@
-const Booking = require("../models/BookingModel");
-const Event = require("../models/EventModel");
-const User = require("../models/UserModel");
-const Review = require("../models/ReviewModel");
-const Razorpay = require("razorpay");
-const crypto = require("crypto");
+import Booking from "../models/BookingModel.js";
+import Event from "../models/EventModel.js";
+import User from "../models/UserModel.js";
+import Review from "../models/ReviewModel.js";
+import Razorpay from "razorpay";
+import crypto from "crypto";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_TEST_KEY_ID,
@@ -562,7 +562,7 @@ const getBookingAnalytics = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createBooking,
   verifyBookingPayment,
   cancelBooking,

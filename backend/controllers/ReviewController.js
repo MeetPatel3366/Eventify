@@ -1,7 +1,7 @@
-const Review = require("../models/ReviewModel");
-const Booking = require("../models/BookingModel");
-const Event = require("../models/EventModel");
-const mongoose = require("mongoose");
+import Review from "../models/ReviewModel.js";
+import Booking from "../models/BookingModel.js";
+import Event from "../models/EventModel.js";
+import mongoose from "mongoose";
 
 const createReview = async (req, res) => {
   try {
@@ -191,7 +191,7 @@ const updateReview = async (req, res) => {
     const updatedReview = await Review.findOneAndUpdate(
       { userId, eventId },
       { $set: updateData },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedReview) {
@@ -315,7 +315,7 @@ const getEventRatingSummary = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createReview,
   getEventReviews,
   getMyReview,

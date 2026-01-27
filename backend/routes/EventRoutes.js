@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+import {
   addEvent,
   getEvents,
   getEvent,
@@ -13,13 +13,13 @@ const {
   getRejectedEvents,
   getMyEventsWithStats,
   getEventProgress,
-} = require("../controllers/EventController");
-const upload = require("../utils/multer");
-const {
+} from "../controllers/EventController.js";
+import upload from "../utils/multer.js";
+import {
   isLoggedIn,
   isEventOrganizer,
   isAdmin,
-} = require("../middleware/authMiddleware");
+} from "../middleware/authMiddleware.js";
 
 router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
 
@@ -27,7 +27,7 @@ router.get(
   "/my-with-stats",
   isLoggedIn,
   isEventOrganizer,
-  getMyEventsWithStats
+  getMyEventsWithStats,
 );
 
 router.get("/pending", isLoggedIn, isAdmin, getPendingEvents);
@@ -43,7 +43,7 @@ router.post(
   upload.single("image"),
   isLoggedIn,
   isEventOrganizer,
-  addEvent
+  addEvent,
 );
 
 router.get("/", isLoggedIn, getEvents);
@@ -55,7 +55,7 @@ router.put(
   upload.single("image"),
   isLoggedIn,
   isEventOrganizer,
-  updateEvent
+  updateEvent,
 );
 
 router.delete("/:id", isLoggedIn, isEventOrganizer, deleteEvent);
@@ -64,4 +64,4 @@ router.patch("/approve/:id", isLoggedIn, isAdmin, approveEvent);
 
 router.patch("/reject/:id", isLoggedIn, isAdmin, rejectEvent);
 
-module.exports = router;
+export default router;

@@ -1,5 +1,5 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   getPendingOrganizers,
   approveOrganizer,
   rejectOrganizer,
@@ -13,8 +13,8 @@ const {
   deleteUser,
   getAllEventsWithStats,
   getBookingsByEvent,
-} = require("../controllers/AdminController");
-const { isLoggedIn, isAdmin } = require("../middleware/authMiddleware");
+} from "../controllers/AdminController.js";
+import { isLoggedIn, isAdmin } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.get("/stats", isLoggedIn, isAdmin, getAdminStats);
@@ -43,14 +43,14 @@ router.post(
   "/contact-message/reply/:id",
   isLoggedIn,
   isAdmin,
-  replyContactMessage
+  replyContactMessage,
 );
 
 router.get(
   "/events/:eventId/bookings",
   isLoggedIn,
   isAdmin,
-  getBookingsByEvent
+  getBookingsByEvent,
 );
 
-module.exports = router;
+export default router;

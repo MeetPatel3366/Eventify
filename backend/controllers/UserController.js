@@ -1,16 +1,12 @@
-const User = require("../models/UserModel");
-const OauthAccount = require("../models/OauthAccountModel");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
-const {
-  generateState,
-  generateCodeVerifier,
-  decodeIdToken,
-} = require("arctic");
-const google = require("../utils/google");
-const handleFileUpload = require("../utils/handleFileUpload");
+import User from "../models/UserModel.js";
+import OauthAccount from "../models/OauthAccountModel.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import { generateState, generateCodeVerifier, decodeIdToken } from "arctic";
+import google from "../utils/google.js";
+import handleFileUpload from "../utils/handleFileUpload.js";
 
 const register = async (req, res) => {
   try {
@@ -722,7 +718,7 @@ const updateMyProfile = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   register,
   login,
   verify,

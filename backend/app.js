@@ -1,21 +1,23 @@
-const express = require("express");
+import express from "express";
+import dotenv from "dotenv"
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import connectDB from "./db/connect.js";
+
+dotenv.config()
 const app = express();
-const cors = require("cors");
-require("dotenv").config();
-const cookieParser = require("cookie-parser");
-const connectDB = require("./db/connect");
 
 //importing routes
-const EventRoutes = require("./routes/EventRoutes");
-const UserRoutes = require("./routes/UserRoutes");
-const ContactMessageRoutes = require("./routes/ContactRoutes");
-const AdminRoutes = require("./routes/AdminRoutes");
-const BookingRoutes = require("./routes/BookingRoutes");
-const ReviewRoutes = require("./routes/ReviewRoutes");
-const CategoryRoutes = require("./routes/CategoryRoutes");
+import EventRoutes from "./routes/EventRoutes.js";
+import UserRoutes from "./routes/UserRoutes.js";
+import ContactMessageRoutes from "./routes/ContactRoutes.js";
+import AdminRoutes from"./routes/AdminRoutes.js";
+import BookingRoutes from "./routes/BookingRoutes.js";
+import ReviewRoutes from "./routes/ReviewRoutes.js";
+import CategoryRoutes from "./routes/CategoryRoutes.js";
 
 //PORT
-PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 //Disable ETag generation
 app.set("etag", false);

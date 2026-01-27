@@ -1,5 +1,5 @@
-const Category = require("../models/CategoryModel");
-const Event = require("../models/EventModel");
+import Category from "../models/CategoryModel.js";
+import Event from "../models/EventModel.js";
 
 const getAllCategories = async (req, res) => {
   try {
@@ -136,9 +136,4 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-module.exports = {
-  getAllCategories,
-  addCategory,
-  editCategory,
-  deleteCategory,
-};
+export { getAllCategories, addCategory, editCategory, deleteCategory };

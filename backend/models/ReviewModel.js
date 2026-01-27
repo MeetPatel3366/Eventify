@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -23,10 +23,10 @@ const reviewSchema = new mongoose.Schema(
       maxlength: 500,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // prevent duplicate reviews
 reviewSchema.index({ userId: 1, eventId: 1 }, { unique: true });
 
-module.exports = mongoose.model("Review", reviewSchema);
+export default mongoose.model("Review", reviewSchema);

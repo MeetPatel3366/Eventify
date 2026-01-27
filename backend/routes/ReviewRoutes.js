@@ -1,13 +1,13 @@
-const express = require("express");
-const { isLoggedIn } = require("../middleware/authMiddleware");
-const {
+import express from "express";
+import { isLoggedIn } from "../middleware/authMiddleware.js";
+import {
   createReview,
   getEventReviews,
   getMyReview,
   updateReview,
   deleteReview,
   getEventRatingSummary,
-} = require("../controllers/ReviewController");
+} from "../controllers/ReviewController.js";
 const router = express.Router();
 
 router.post("/create", isLoggedIn, createReview);
@@ -22,4 +22,4 @@ router.put("/:eventId", isLoggedIn, updateReview);
 
 router.delete("/:eventId", isLoggedIn, deleteReview);
 
-module.exports = router;
+export default router;

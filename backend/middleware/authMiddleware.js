@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 const isLoggedIn = (req, res, next) => {
   try {
@@ -57,4 +57,4 @@ const isAdminOrOrganizer = (req, res, next) => {
   });
 };
 
-module.exports = { isLoggedIn, isAdmin, isEventOrganizer, isAdminOrOrganizer };
+export { isLoggedIn, isAdmin, isEventOrganizer, isAdminOrOrganizer };

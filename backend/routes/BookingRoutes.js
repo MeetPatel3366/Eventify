@@ -1,5 +1,5 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   createBooking,
   myBookings,
   getMyEventBookings,
@@ -9,12 +9,12 @@ const {
   getBookingAnalytics,
   verifyBookingPayment,
   cancelBooking,
-} = require("../controllers/BookingController");
-const {
+} from "../controllers/BookingController.js";
+import {
   isLoggedIn,
   isEventOrganizer,
   isAdmin,
-} = require("../middleware/authMiddleware");
+} from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", isLoggedIn, createBooking);
@@ -45,4 +45,4 @@ router.get(
   exportBookingsCSV,
 );
 
-module.exports = router;
+export default router;

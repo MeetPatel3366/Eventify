@@ -1,12 +1,12 @@
-const User = require("../models/UserModel");
-const Event = require("../models/EventModel");
-const Booking = require("../models/BookingModel");
-const ContactMessage = require("../models/ContactMessageModel");
-const Review = require("../models/ReviewModel");
-const Category = require("../models/CategoryModel");
-const OauthAccount = require("../models/OauthAccountModel");
-const nodemailer = require("nodemailer");
-const mongoose = require("mongoose");
+import User from "../models/UserModel.js";
+import Event from "../models/EventModel.js";
+import Booking from "../models/BookingModel.js";
+import ContactMessage from "../models/ContactMessageModel.js";
+import Review from "../models/ReviewModel.js";
+import Category from "../models/CategoryModel.js";
+import OauthAccount from "../models/OauthAccountModel.js";
+import nodemailer from "nodemailer";
+import mongoose from "mongoose";
 
 const getAdminStats = async (req, res) => {
   try {
@@ -249,16 +249,14 @@ const getContactMessage = async (req, res) => {
 const replyContactMessage = async (req, res) => {
   try {
     const { reply } = req.body;
-    console.log("reply :",reply);
+    console.log("reply :", reply);
 
-    if(!reply)
-    {
+    if (!reply) {
       return res.status(400).json({
-        success:false,
-        message:"Reply field is required"
-      })
+        success: false,
+        message: "Reply field is required",
+      });
     }
-    
 
     const message = await ContactMessage.findById(req.params.id);
 
@@ -444,7 +442,7 @@ const getBookingsByEvent = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getAdminStats,
   getPendingOrganizers,
   getApprovedOrganizers,
