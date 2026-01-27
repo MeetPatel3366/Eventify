@@ -502,12 +502,21 @@ const getBookingAnalytics = async (req, res) => {
       },
       { $unwind: "$details" },
       {
+        $lookup: {
+          from: "categories",
+          localField: "details.category",
+          foreignField: "_id",
+          as: "categoryDetails",
+        },
+      },
+      { $unwind: "$categoryDetails" },
+      {
         $project: {
           _id: 1,
           totalBookings: 1,
           eventName: "$details.name",
-          category: "$details.category",
           price: "$details.price",
+          category: "$categoryDetails.name",
         },
       },
     ]);

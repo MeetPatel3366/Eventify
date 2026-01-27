@@ -17,8 +17,9 @@ import { TrendingUp, Users, Calendar, IndianRupee, Award } from "lucide-react";
 export default function BookingAnalytics() {
   const dispatch = useDispatch();
   const { dailyBookings, dailyRevenue, topEvents, topOrganizers } = useSelector(
-    (s) => s.booking
+    (s) => s.booking,
   );
+  console.log("top events : ", topEvents);
 
   useEffect(() => {
     dispatch(fetchBookingAnalytics());
@@ -32,7 +33,7 @@ export default function BookingAnalytics() {
       map.set(item.date, existing + item.count);
     });
     return Array.from(map, ([date, count]) => ({ date, count })).sort(
-      (a, b) => new Date(a.date) - new Date(b.date)
+      (a, b) => new Date(a.date) - new Date(b.date),
     );
   }, [dailyBookings]);
 
@@ -218,7 +219,7 @@ export default function BookingAnalytics() {
                     </td>
                     <td className="py-6">
                       <span className="px-3 py-1 bg-slate-800 rounded-full text-[10px] border border-slate-700 font-bold uppercase text-slate-400">
-                        {e.category.name}
+                        {e.category}
                       </span>
                     </td>
                     <td className="py-6 font-bold text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-1">
