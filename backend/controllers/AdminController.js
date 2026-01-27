@@ -5,6 +5,7 @@ const ContactMessage = require("../models/ContactMessageModel");
 const Review = require("../models/ReviewModel");
 const Category = require("../models/CategoryModel");
 const OauthAccount = require("../models/OauthAccountModel");
+const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 
 const getAdminStats = async (req, res) => {
@@ -248,6 +249,16 @@ const getContactMessage = async (req, res) => {
 const replyContactMessage = async (req, res) => {
   try {
     const { reply } = req.body;
+    console.log("reply :",reply);
+
+    if(!reply)
+    {
+      return res.status(400).json({
+        success:false,
+        message:"Reply field is required"
+      })
+    }
+    
 
     const message = await ContactMessage.findById(req.params.id);
 

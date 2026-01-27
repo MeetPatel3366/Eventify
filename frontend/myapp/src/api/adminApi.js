@@ -31,7 +31,8 @@ const adminApi = {
 
   fetchSingleContactMessage: (id) => api.get(`/admin/contact-message/${id}`),
 
-  replyToContactMessage: (id) => api.post(`admin/contact-message/reply/${id}`),
+  replyToContactMessage: (id, data) =>
+    api.post(`admin/contact-message/reply/${id}`, data),
 
   deleteUser: (id) => api.delete(`/admin/user/${id}`),
 
