@@ -19,7 +19,7 @@ const EditEvent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { event, loading } = useSelector((state) => state.event);
+  const { event } = useSelector((state) => state.event);
   const { categories, loading: categoryLoading } = useSelector(
     (state) => state.category,
   );
@@ -37,6 +37,7 @@ const EditEvent = () => {
 
   const [errors, setErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     dispatch(fetchCategories());
@@ -108,18 +109,28 @@ const EditEvent = () => {
     validateForm();
   }, [formData, validateForm]);
 
+  const formatLocation = (value) =>
+    value.toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    let val = files ? files[0] : value;
+
+    if (name === "location" && typeof val === "string") {
+      val = formatLocation(val);
+    }
 
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value,
+      [name]: val,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm() || isSubmitting) return;
+
+    setIsSubmitting(true);
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
@@ -139,10 +150,6 @@ const EditEvent = () => {
       console.error("update failed", err);
     }
   };
-
-  if (loading) {
-    return <p className="text-center text-white py-20">Loading...</p>;
-  }
 
   return (
     <section className="max-w-3xl mx-auto bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-10 mt-4 mb-4">
@@ -224,6 +231,15 @@ const EditEvent = () => {
               name="location"
               value={formData.location}
               onChange={handleChange}
+              onBlur={(e) => {
+                const val = e.target.value;
+                if (val) {
+                  setFormData((prev) => ({
+                    ...prev,
+                    location: formatLocation(val),
+                  }));
+                }
+              }}
               className="w-full bg-transparent focus:outline-none"
             />
           </div>
@@ -306,7 +322,32 @@ const EditEvent = () => {
                 : "bg-gray-500 cursor-not-allowed opacity-60"
             }`}
         >
-          <FaEdit /> Update Event
+          {isSubmitting ? (
+            <>
+              <svg
+                width="20"
+                height="20"
+                fill="hsl(228, 97%, 42%)"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z">
+                  <animateTransform
+                    attributeName="transform"
+                    type="rotate"
+                    dur="0.75s"
+                    values="0 12 12;360 12 12"
+                    repeatCount="indefinite"
+                  />
+                </path>
+              </svg>
+              Submitting...
+            </>
+          ) : (
+            <>
+              <FaEdit /> Update Event
+            </>
+          )}
         </button>
       </form>
     </section>
