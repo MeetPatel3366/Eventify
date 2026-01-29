@@ -1,4 +1,4 @@
-import cloudinary from "./cloudinary.js";
+import { cloudinary } from "./cloudinary.js";
 import fs from "fs";
 import path from "path";
 
