@@ -4,6 +4,7 @@ import User from "../models/UserModel.js";
 import Review from "../models/ReviewModel.js";
 import Razorpay from "razorpay";
 import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_TEST_KEY_ID,
@@ -81,6 +82,14 @@ const verifyBookingPayment = async (req, res) => {
       });
     }
 
+    if (booking.paymentStatus === "paid") {
+      return res.status(200).json({
+        success: true,
+        message: "Payment already verified",
+        booking,
+      });
+    }
+
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSign = crypto
@@ -108,6 +117,64 @@ const verifyBookingPayment = async (req, res) => {
     );
 
     await booking.save();
+
+    const user = await User.findById(booking.userId);
+    const event = await Event.findById(booking.eventId);
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILHOST,
+      port: parseInt(process.env.MAILPORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Eventify" <${process.env.MAIL_USERNAME}>`,
+      to: user.email,
+      subject: `Booking Confirmed for ${event.name}`,
+      html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px;">
+      <h2 style="color: #28a745;">Your Booking is Confirmed!</h2>
+      <p>Hi ${user.username},</p>
+      <p>Your tickets have been successfully booked. Here are your event details:</p>
+
+      <table style="border-collapse: collapse; width: 100%; margin-top: 15px;">
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Event Name</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd;">${event.name}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Date & Time</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd;">${new Date(event.datetime).toLocaleString()}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Location</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd;">${event.location}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Tickets Booked</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd;">${booking.quantity}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Price per Ticket</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd;">₹${event.price}</td>
+        </tr>
+        <tr>
+          <td style="padding: 8px; border: 1px solid #ddd;"><strong>Total Paid</strong></td>
+          <td style="padding: 8px; border: 1px solid #ddd; color: green;"><strong>₹${booking.totalAmount}</strong></td>
+        </tr>
+      </table>
+
+      <p style="margin-top: 20px;">Please bring this email to the event for reference.</p>
+      <p>See you there!<br/><b>Team Eventify</b></p>
+    </div>
+    `,
+    };
+
+    await transporter.sendMail(mailOptions);
 
     return res.status(200).json({
       success: true,
@@ -462,8 +529,8 @@ const getBookingAnalytics = async (req, res) => {
           _id: {
             $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
           },
-          totalBookings: { $sum: 1 }, // number of orders
-          ticketsSold: { $sum: "$quantity" }, // total tickets
+          totalBookings: { $sum: 1 },
+          ticketsSold: { $sum: "$quantity" },
         },
       },
       {
