@@ -52,7 +52,7 @@ const OrganizerHome = () => {
           </NavLink>
 
           <NavLink
-            to="/organizer/events"
+            to="/organizer/events-stats"
             className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 text-center shadow-xl hover:scale-[1.03] transition"
           >
             <FaUsers className="text-indigo-400 mx-auto mb-4" size={36} />

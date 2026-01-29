@@ -17,13 +17,6 @@ import BookingRoutes from "./routes/BookingRoutes.js";
 import ReviewRoutes from "./routes/ReviewRoutes.js";
 import CategoryRoutes from "./routes/CategoryRoutes.js";
 
-
-console.log("Cloudinary ENV Check:", {
-  name: process.env.CLOUDINARY_CLOUD_NAME,
-  key: process.env.CLOUDINARY_API_KEY,
-  secret: process.env.CLOUDINARY_API_SECRET ? "EXISTS" : "MISSING",
-});
-
 //PORT
 const PORT = process.env.PORT || 5000;
 

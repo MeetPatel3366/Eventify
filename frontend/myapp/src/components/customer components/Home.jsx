@@ -21,10 +21,10 @@ const Home = () => {
               Browse New Events
             </NavLink>
             <NavLink
-              to="/my-events"
+              to="/my-bookings"
               className="px-10 py-4 border border-white/30 hover:bg-white/10 rounded-2xl font-semibold transition"
             >
-              My Registrations
+              My Events Bookings
             </NavLink>
           </div>
         </div>
