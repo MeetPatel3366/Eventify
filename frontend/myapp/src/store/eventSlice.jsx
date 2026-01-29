@@ -21,7 +21,7 @@ export const fetchMyEventsWithStats = createAsyncThunk(
   async () => {
     const res = await eventApi.fetchMyWithStats();
     return res.data.events;
-  }
+  },
 );
 
 export const addEvent = createAsyncThunk("events/add", async (formData) => {
@@ -34,7 +34,7 @@ export const updateEvent = createAsyncThunk(
   async ({ id, formData }) => {
     const res = await eventApi.update(id, formData);
     return res.data.updatedEvent;
-  }
+  },
 );
 
 export const deleteEvent = createAsyncThunk("events/delete", async (id) => {
@@ -47,7 +47,7 @@ export const fetchprogressEvent = createAsyncThunk(
   async () => {
     const res = await eventApi.fetchProgress();
     return res.data.data;
-  }
+  },
 );
 
 const eventSlice = createSlice({
@@ -92,7 +92,7 @@ const eventSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchMyEventsWithStats.fulfilled, (state, action) => {
-        (state.loading = false), (state.myEventStats = action.payload);
+        ((state.loading = false), (state.myEventStats = action.payload));
       })
 
       .addCase(addEvent.pending, (state) => {
@@ -111,7 +111,7 @@ const eventSlice = createSlice({
         state.loading = false;
 
         const index = state.events.findIndex(
-          (e) => e._id == action.payload._id
+          (e) => e._id == action.payload._id,
         );
         if (index !== -1) {
           state.events[index] = action.payload;
@@ -122,7 +122,9 @@ const eventSlice = createSlice({
         state.loading = true;
       })
       .addCase(deleteEvent.fulfilled, (state, action) => {
+        state.loading = false;
         state.events = state.events.filter((e) => e._id !== action.payload);
+        state.myEvents = state.myEvents.filter((e) => e._id !== action.payload);
       })
 
       .addCase(fetchprogressEvent.pending, (state) => {
@@ -139,7 +141,7 @@ const eventSlice = createSlice({
           console.log("event api error:", action.error);
           state.loading = false;
           state.error = action.error?.message || "something went wrong";
-        }
+        },
       )
 
       .addMatcher(
@@ -147,7 +149,7 @@ const eventSlice = createSlice({
         (state) => {
           state.loading = true;
           state.error = null;
-        }
+        },
       );
   },
 });
