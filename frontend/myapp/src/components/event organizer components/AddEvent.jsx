@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addEvent } from "../../store/eventSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchCategories } from "../../store/categorySlice";
+import toast from "react-hot-toast";
 
 export default function AddEvent() {
   const [formData, setFormData] = useState({
@@ -43,18 +44,21 @@ export default function AddEvent() {
     switch (name) {
       case "name":
         if (!value.trim()) return "Event name is required";
-        if (!textRegex.test(value)) return "Event name should contain only letters";
+        if (!textRegex.test(value))
+          return "Event name should contain only letters";
         break;
       case "category":
         if (!value) return "Category is required";
         break;
       case "datetime":
         if (!value) return "Event date & time is required";
-        if (new Date(value) <= new Date()) return "Event date & time must be in the future";
+        if (new Date(value) <= new Date())
+          return "Event date & time must be in the future";
         break;
       case "location":
         if (!value.trim()) return "Location is required";
-        if (!textRegex.test(value)) return "Location should contain only letters";
+        if (!textRegex.test(value))
+          return "Location should contain only letters";
         break;
       case "description":
         if (!value.trim()) return "Description is required";
@@ -84,9 +88,15 @@ export default function AddEvent() {
   };
 
   useEffect(() => {
-    const hasError = ["name", "category", "datetime", "location", "description", "price", "totalSeats"].some(
-      (field) => validateField(field, formData[field])
-    );
+    const hasError = [
+      "name",
+      "category",
+      "datetime",
+      "location",
+      "description",
+      "price",
+      "totalSeats",
+    ].some((field) => validateField(field, formData[field]));
     setIsFormValid(!hasError);
   }, [formData]);
 
@@ -101,9 +111,14 @@ export default function AddEvent() {
 
     try {
       await dispatch(addEvent(data)).unwrap();
-      navigate("/organizer/events");
+
+      toast.success("Event submitted successfully! Awaiting admin approval");
+
+      setTimeout(() => {
+        navigate("/organizer/events");
+      }, 1500);
     } catch (error) {
-      console.log("add event failed:", error.message);
+      toast.error(error?.message || "Failed to add event");
     }
   };
 
@@ -117,58 +132,100 @@ export default function AddEvent() {
       </h1>
 
       <p className="text-gray-300 mb-10">
-        Fill in the details below. Your event will be submitted for admin approval.
+        Fill in the details below. Your event will be submitted for admin
+        approval.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block mb-2">Event Name</label>
           <div className="bg-white/20 border border-white/20 rounded-xl p-3">
-            <input type="text" name="name" onChange={handleChange} className="w-full bg-transparent focus:outline-none" />
+            <input
+              type="text"
+              name="name"
+              onChange={handleChange}
+              className="w-full bg-transparent focus:outline-none"
+            />
           </div>
-          {showError("name") && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
+          {showError("name") && (
+            <p className="text-red-400 text-sm mt-1">{errors.name}</p>
+          )}
         </div>
 
         <div>
           <label className="block mb-2">Category</label>
           <div className="bg-white/20 border border-white/20 rounded-xl p-3">
-            <select name="category" onChange={handleChange} className="w-full bg-transparent focus:outline-none text-white">
-              <option value="" className="text-black">Select Category</option>
+            <select
+              name="category"
+              onChange={handleChange}
+              className="w-full bg-transparent focus:outline-none text-white"
+            >
+              <option value="" className="text-black">
+                Select Category
+              </option>
               {loading ? (
                 <option disabled>Loading...</option>
               ) : (
-                categories.map((cat) => <option key={cat._id} value={cat._id} className="text-black">{cat.name}</option>)
+                categories.map((cat) => (
+                  <option key={cat._id} value={cat._id} className="text-black">
+                    {cat.name}
+                  </option>
+                ))
               )}
             </select>
           </div>
-          {showError("category") && <p className="text-red-400 text-sm mt-1">{errors.category}</p>}
+          {showError("category") && (
+            <p className="text-red-400 text-sm mt-1">{errors.category}</p>
+          )}
         </div>
 
         <div>
           <label className="block mb-2">Event Date & Time</label>
           <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
             <FaCalendarAlt className="text-gray-300" />
-            <input type="datetime-local" name="datetime" min={new Date().toISOString().slice(0, 16)} onChange={handleChange} className="w-full bg-transparent focus:outline-none" />
+            <input
+              type="datetime-local"
+              name="datetime"
+              min={new Date().toISOString().slice(0, 16)}
+              onChange={handleChange}
+              className="w-full bg-transparent focus:outline-none"
+            />
           </div>
-          {showError("datetime") && <p className="text-red-400 text-sm mt-1">{errors.datetime}</p>}
+          {showError("datetime") && (
+            <p className="text-red-400 text-sm mt-1">{errors.datetime}</p>
+          )}
         </div>
 
         <div>
           <label className="block mb-2">Location</label>
           <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
             <FaMapMarkerAlt className="text-gray-300" />
-            <input type="text" name="location" onChange={handleChange} className="w-full bg-transparent focus:outline-none" />
+            <input
+              type="text"
+              name="location"
+              onChange={handleChange}
+              className="w-full bg-transparent focus:outline-none"
+            />
           </div>
-          {showError("location") && <p className="text-red-400 text-sm mt-1">{errors.location}</p>}
+          {showError("location") && (
+            <p className="text-red-400 text-sm mt-1">{errors.location}</p>
+          )}
         </div>
 
         <div>
           <label className="block mb-2">Description</label>
           <div className="flex gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
             <FaAlignLeft className="text-gray-300 mt-1" />
-            <textarea name="description" rows="4" onChange={handleChange} className="w-full bg-transparent focus:outline-none" />
+            <textarea
+              name="description"
+              rows="4"
+              onChange={handleChange}
+              className="w-full bg-transparent focus:outline-none"
+            />
           </div>
-          {showError("description") && <p className="text-red-400 text-sm mt-1">{errors.description}</p>}
+          {showError("description") && (
+            <p className="text-red-400 text-sm mt-1">{errors.description}</p>
+          )}
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -176,25 +233,45 @@ export default function AddEvent() {
             <label className="block mb-2">Price</label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <TbCurrencyRupee />
-              <input type="number" name="price" onChange={handleChange} className="w-full bg-transparent focus:outline-none" />
+              <input
+                type="number"
+                name="price"
+                onChange={handleChange}
+                className="w-full bg-transparent focus:outline-none"
+              />
             </div>
-            {showError("price") && <p className="text-red-400 text-sm mt-1">{errors.price}</p>}
+            {showError("price") && (
+              <p className="text-red-400 text-sm mt-1">{errors.price}</p>
+            )}
           </div>
 
           <div>
             <label className="block mb-2">Total Capacity</label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <FaUsers />
-              <input type="number" name="totalSeats" onChange={handleChange} className="w-full bg-transparent focus:outline-none" />
+              <input
+                type="number"
+                name="totalSeats"
+                onChange={handleChange}
+                className="w-full bg-transparent focus:outline-none"
+              />
             </div>
-            {showError("totalSeats") && <p className="text-red-400 text-sm mt-1">{errors.totalSeats}</p>}
+            {showError("totalSeats") && (
+              <p className="text-red-400 text-sm mt-1">{errors.totalSeats}</p>
+            )}
           </div>
 
           <div>
             <label className="block mb-2">Event Image</label>
             <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
               <FaImage />
-              <input type="file" name="image" accept="image/*" onChange={handleChange} className="w-full text-sm" />
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleChange}
+                className="w-full text-sm"
+              />
             </div>
           </div>
         </div>
@@ -203,7 +280,9 @@ export default function AddEvent() {
           type="submit"
           disabled={!isFormValid}
           className={`w-full py-4 rounded-2xl transition font-semibold shadow-xl flex items-center justify-center gap-2 ${
-            isFormValid ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-500 cursor-not-allowed"
+            isFormValid
+              ? "bg-indigo-600 hover:bg-indigo-700"
+              : "bg-gray-500 cursor-not-allowed"
           }`}
         >
           <FaPlusCircle /> Submit Event for Approval
