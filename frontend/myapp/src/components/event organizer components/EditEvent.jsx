@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchEvent, updateEvent } from "../../store/eventSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchCategories } from "../../store/categorySlice";
+import toast from "react-hot-toast";
 
 const EditEvent = () => {
   const { id } = useParams();
@@ -127,8 +128,14 @@ const EditEvent = () => {
 
     try {
       await dispatch(updateEvent({ id, formData: data })).unwrap();
-      navigate("/organizer/events");
+
+      toast.success("Event Updated successfully!");
+
+      setTimeout(() => {
+        navigate("/organizer/events");
+      }, 1500);
     } catch (err) {
+      toast.error(err.message || "Update Event Failed");
       console.error("update failed", err);
     }
   };

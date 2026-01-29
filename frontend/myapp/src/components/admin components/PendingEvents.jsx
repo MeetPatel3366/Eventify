@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+
 
 import {
   FaMapMarkerAlt,
@@ -26,7 +28,7 @@ const PendingEvents = () => {
       {pendingEvents.length === 0 ? (
         <p className="text-gray-400 text-center">No pending events</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
           {pendingEvents.map((event) => (
             <div
               key={event._id}
@@ -102,7 +104,14 @@ const PendingEvents = () => {
 
                 <div className=" pt-5 border-t flex gap-3">
                   <button
-                    onClick={() => dispatch(approveEvent(event._id))}
+                    onClick={async () => {
+                      try {
+                        await dispatch(approveEvent(event._id)).unwrap();
+                        toast.success("Event approved successfully");
+                      } catch (err) {
+                        toast.error("Failed to approve event");
+                      }
+                    }}
                     className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 
                      text-white text-sm font-semibold transition"
                   >
@@ -117,6 +126,7 @@ const PendingEvents = () => {
                     Reject
                   </button>
                 </div>
+
                 {rejectingId === event._id && (
                   <div className="mt-4">
                     <textarea
@@ -131,15 +141,24 @@ const PendingEvents = () => {
 
                     <div className="flex gap-3 mt-3">
                       <button
-                        onClick={() => {
-                          dispatch(
-                            rejectEvent({
-                              id: event._id,
-                              feedback,
-                            })
-                          );
-                          setRejectingId(null);
-                          setFeedback("");
+                        onClick={async () => {
+                          try {
+                            await dispatch(
+                              rejectEvent({
+                                id: event._id,
+                                feedback,
+                              }),
+                            ).unwrap();
+
+                            toast.success("Event rejected and feedback sent");
+
+                            setRejectingId(null);
+                            setFeedback("");
+                          } catch (err) {
+                            toast.error(
+                              err?.message || "Failed to reject event",
+                            );
+                          }
                         }}
                         className="flex-1 py-2 rounded-xl bg-rose-600 
            text-white text-sm font-semibold"

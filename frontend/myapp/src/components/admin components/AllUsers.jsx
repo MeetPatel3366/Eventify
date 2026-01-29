@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { deleteUser, fetchAllUsers } from "../../store/adminSlice";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const AllUsers = () => {
   const dispatch = useDispatch();
@@ -8,9 +9,15 @@ const AllUsers = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      await dispatch(deleteUser(id)).unwrap();
-      dispatch(fetchAllUsers());
-      console.log("Deleting user with ID:", id);
+      try {
+        await dispatch(deleteUser(id)).unwrap();
+        dispatch(fetchAllUsers());
+        toast.success("User Deleted successfully!");
+        console.log("Deleting user with ID:", id);
+      } catch (error) {
+        toast.error("Delete User Failed");
+        console.error("delete user failed", error);
+      }
     }
   };
 

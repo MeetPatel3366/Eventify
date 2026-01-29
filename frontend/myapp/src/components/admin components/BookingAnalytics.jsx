@@ -19,7 +19,6 @@ export default function BookingAnalytics() {
   const { dailyBookings, dailyRevenue, topEvents, topOrganizers } = useSelector(
     (s) => s.booking,
   );
-  console.log("top events : ", topEvents);
 
   useEffect(() => {
     dispatch(fetchBookingAnalytics());
@@ -30,17 +29,18 @@ export default function BookingAnalytics() {
     const map = new Map();
     dailyBookings.forEach((item) => {
       const existing = map.get(item.date) || 0;
-      map.set(item.date, existing + item.count);
+      map.set(item.date, existing + item.ticketsSold);
     });
-    return Array.from(map, ([date, count]) => ({ date, count })).sort(
-      (a, b) => new Date(a.date) - new Date(b.date),
-    );
+    return Array.from(map, ([date, ticketsSold]) => ({
+      date,
+      ticketsSold,
+    })).sort((a, b) => new Date(a.date) - new Date(b.date));
   }, [dailyBookings]);
 
   const totalRevenue =
     dailyRevenue?.reduce((acc, curr) => acc + curr.revenue, 0) || 0;
-  const totalBookings =
-    dailyBookings?.reduce((acc, curr) => acc + curr.count, 0) || 0;
+  const totalTickets =
+    dailyBookings?.reduce((acc, curr) => acc + curr.ticketsSold, 0) || 0;
 
   return (
     <div className="p-8 bg-[#020617] min-h-screen text-slate-100 font-sans selection:bg-cyan-500/30">
@@ -63,7 +63,7 @@ export default function BookingAnalytics() {
           />
           <StatCard
             title="Tickets Sold"
-            value={totalBookings}
+            value={totalTickets}
             icon={<Calendar size={18} className="text-sky-400" />}
             color="sky"
           />
@@ -75,7 +75,7 @@ export default function BookingAnalytics() {
           />
           <StatCard
             title="Top Event"
-            value={topEvents[0]?.eventName || "N/A"}
+            value={topEvents?.[0]?.eventName || "N/A"}
             icon={<Award size={18} className="text-amber-400" />}
             color="amber"
           />
@@ -88,7 +88,7 @@ export default function BookingAnalytics() {
             <div className="p-2 bg-cyan-500/10 rounded-xl text-cyan-400">
               <TrendingUp size={22} />
             </div>
-            Booking Trends
+            Tickets Trend
           </h2>
           <div className="h-[320px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -99,39 +99,24 @@ export default function BookingAnalytics() {
                     <stop offset="95%" stopColor="#22d3ee" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid
-                  strokeDasharray="0"
-                  stroke="#1e293b"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="date"
-                  stroke="#475569"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                />
-                <YAxis
-                  allowDecimals={false}
-                  stroke="#475569"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                />
+                <CartesianGrid stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="date" stroke="#475569" />
+                <YAxis allowDecimals={false} stroke="#475569" />
                 <Tooltip
+                  cursor={{ fill: "transparent" }}
                   contentStyle={{
                     backgroundColor: "#0f172a",
                     border: "1px solid #334155",
                     borderRadius: "12px",
-                    fontSize: "12px",
+                    color: "#e2e8f0",
                   }}
+                  labelStyle={{ color: "#94a3b8" }}
                   itemStyle={{ color: "#22d3ee", fontWeight: "bold" }}
                 />
+
                 <Area
                   type="monotone"
-                  dataKey="count"
+                  dataKey="ticketsSold"
                   stroke="#22d3ee"
                   fillOpacity={1}
                   fill="url(#colorCount)"
@@ -152,35 +137,21 @@ export default function BookingAnalytics() {
           <div className="h-[320px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={dailyRevenue}>
-                <CartesianGrid
-                  strokeDasharray="0"
-                  stroke="#1e293b"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="_id"
-                  stroke="#475569"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                />
-                <YAxis
-                  stroke="#475569"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={10}
-                />
+                <CartesianGrid stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="_id" stroke="#475569" />
+                <YAxis stroke="#475569" />
                 <Tooltip
-                  cursor={{ fill: "#1e293b" }}
+                  cursor={{ fill: "transparent" }}
                   contentStyle={{
                     backgroundColor: "#0f172a",
                     border: "1px solid #334155",
                     borderRadius: "12px",
+                    color: "#e2e8f0",
                   }}
+                  labelStyle={{ color: "#94a3b8" }}
                   itemStyle={{ color: "#10b981", fontWeight: "bold" }}
                 />
+
                 <Bar
                   dataKey="revenue"
                   fill="#10b981"
@@ -205,16 +176,16 @@ export default function BookingAnalytics() {
                   <th className="pb-5">Event</th>
                   <th className="pb-5">Category</th>
                   <th className="pb-5">Price</th>
-                  <th className="pb-5 text-right">Sold</th>
+                  <th className="pb-5 text-right">Tickets</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/50">
-                {topEvents.map((e) => (
+                {topEvents?.map((e) => (
                   <tr
                     key={e._id}
                     className="hover:bg-slate-800/20 transition-all group"
                   >
-                    <td className="py-6 font-bold text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-1">
+                    <td className="py-6 font-bold text-slate-200 group-hover:text-cyan-400">
                       {e.eventName}
                     </td>
                     <td className="py-6">
@@ -222,10 +193,10 @@ export default function BookingAnalytics() {
                         {e.category}
                       </span>
                     </td>
-                    <td className="py-6 font-bold text-slate-200 group-hover:text-cyan-400 transition-colors line-clamp-1">
+                    <td className="py-6 font-bold text-slate-200 group-hover:text-cyan-400">
                       {e.price}
                     </td>
-                    <td className="py-6 text-right font-black text-xl text-cyan-500 font-mono tracking-tighter">
+                    <td className="py-6 text-right font-black text-xl text-cyan-500 font-mono">
                       {e.totalBookings}
                     </td>
                   </tr>
@@ -242,13 +213,13 @@ export default function BookingAnalytics() {
             </h2>
           </div>
           <div className="space-y-4">
-            {topOrganizers.map((o) => (
+            {topOrganizers?.map((o) => (
               <div
                 key={o._id}
-                className="flex items-center justify-between p-5 bg-slate-950/50 rounded-3xl border border-slate-800 transition-all hover:scale-[1.02] hover:border-indigo-500/30"
+                className="flex items-center justify-between p-5 bg-slate-950/50 rounded-3xl border border-slate-800"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 font-black text-sm border border-indigo-500/20 shadow-inner">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center text-indigo-400 font-black text-sm border border-indigo-500/20">
                     {o.organizerName.charAt(0).toUpperCase()}
                   </div>
                   <div>

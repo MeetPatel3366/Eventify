@@ -12,13 +12,13 @@ import {
   fetchRejectedOrganizers,
 } from "../../store/adminSlice";
 import AdminCard from "./AdminCard";
-import { BarChart3, ShieldCheck, LayoutDashboard } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 
 const AdminHome = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { stats } = useSelector((state) => state.admin);
-  console.log("stats : ",stats)
+  console.log("stats : ", stats);
 
   useEffect(() => {
     dispatch(fetchAdminStats());
@@ -145,7 +145,7 @@ const AdminHome = () => {
         <AdminCard
           title="Event Categories"
           description="Manage festival, concert, and workshop types"
-          count={stats?.totalCategories }
+          count={stats?.totalCategories}
           color="from-violet-600 to-violet-900"
           onClick={() => navigate("/admin/eventcategories")}
         />

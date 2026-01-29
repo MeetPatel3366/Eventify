@@ -8,9 +8,15 @@ const ApprovedOrganizers = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this organizer?")) {
-      await dispatch(deleteUser(id)).unwarp();
-      dispatch(fetchApprovedOrganizers());
-      console.log("Deleting organizer with ID:", id);
+      try {
+        await dispatch(deleteUser(id)).unwarp();
+        dispatch(fetchApprovedOrganizers());
+        toast.success("Organizer Deleted successfully!");
+        console.log("Deleting organizer with ID:", id);
+      } catch (error) {
+        toast.error("Delete Organizer Failed");
+        console.error("delete organizer failed", error);
+      }
     }
   };
 
