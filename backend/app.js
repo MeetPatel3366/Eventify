@@ -1,10 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
-import dotenv from "dotenv"
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./db/connect.js";
 
-dotenv.config()
 const app = express();
 
 //importing routes
@@ -15,6 +16,13 @@ import AdminRoutes from"./routes/AdminRoutes.js";
 import BookingRoutes from "./routes/BookingRoutes.js";
 import ReviewRoutes from "./routes/ReviewRoutes.js";
 import CategoryRoutes from "./routes/CategoryRoutes.js";
+
+
+console.log("Cloudinary ENV Check:", {
+  name: process.env.CLOUDINARY_CLOUD_NAME,
+  key: process.env.CLOUDINARY_API_KEY,
+  secret: process.env.CLOUDINARY_API_SECRET ? "EXISTS" : "MISSING",
+});
 
 //PORT
 const PORT = process.env.PORT || 5000;

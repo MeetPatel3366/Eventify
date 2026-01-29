@@ -1,6 +1,6 @@
 import Event from "../models/EventModel.js";
 import Booking from "../models/BookingModel.js";
-import cloudinary from "../utils/cloudinary.js";
+import {cloudinary} from "../utils/cloudinary.js";
 import handleFileUpload from "../utils/handleFileUpload.js";
 
 const addEvent = async (req, res) => {

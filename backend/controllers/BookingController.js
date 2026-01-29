@@ -459,15 +459,19 @@ const getBookingAnalytics = async (req, res) => {
     const dailyBookings = await Booking.aggregate([
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          count: { $sum: 1 },
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          totalBookings: { $sum: 1 }, // number of orders
+          ticketsSold: { $sum: "$quantity" }, // total tickets
         },
       },
       {
         $project: {
           _id: 0,
           date: "$_id",
-          count: 1,
+          totalBookings: 1,
+          ticketsSold: 1,
         },
       },
       { $sort: { date: 1 } },
