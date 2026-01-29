@@ -66,6 +66,8 @@ const MyBookings = () => {
     });
   };
 
+  const isReview = reviewModal.comment.trim().length > 0;
+
   const handleSubmitReview = async () => {
     const data = {
       eventId: reviewModal.eventId,
@@ -288,7 +290,13 @@ const MyBookings = () => {
 
               <button
                 onClick={handleSubmitReview}
-                className="w-full py-4 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-bold transition shadow-lg shadow-indigo-500/30 active:scale-95"
+                disabled={!isReview}
+                className={`w-full py-4 rounded-2xl font-bold transition shadow-lg active:scale-95
+                          ${
+                            isReview
+                              ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/30"
+                              : "bg-gray-600 text-gray-300 cursor-not-allowed opacity-60"
+                          }`}
               >
                 {reviewModal.isEdit ? "Update Review" : "Submit Review"}
               </button>
