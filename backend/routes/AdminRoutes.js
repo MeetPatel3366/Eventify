@@ -15,7 +15,10 @@ import {
   getBookingsByEvent,
 } from "../controllers/AdminController.js";
 import { isLoggedIn, isAdmin } from "../middleware/authMiddleware.js";
+import { apiLimiter } from "../middleware/rateLimitMiddleware.js";
 const router = express.Router();
+
+router.use(apiLimiter)
 
 router.get("/stats", isLoggedIn, isAdmin, getAdminStats);
 

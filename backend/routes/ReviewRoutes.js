@@ -8,7 +8,10 @@ import {
   deleteReview,
   getEventRatingSummary,
 } from "../controllers/ReviewController.js";
+import { apiLimiter } from "../middleware/rateLimitMiddleware.js";
 const router = express.Router();
+
+router.use(apiLimiter)
 
 router.post("/create", isLoggedIn, createReview);
 

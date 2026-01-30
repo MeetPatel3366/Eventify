@@ -20,6 +20,9 @@ import {
   isEventOrganizer,
   isAdmin,
 } from "../middleware/authMiddleware.js";
+import { apiLimiter } from "../middleware/rateLimitMiddleware.js";
+
+router.use(apiLimiter)
 
 router.get("/my", isLoggedIn, isEventOrganizer, getMyEvents);
 

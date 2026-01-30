@@ -12,7 +12,7 @@ const app = express();
 import EventRoutes from "./routes/EventRoutes.js";
 import UserRoutes from "./routes/UserRoutes.js";
 import ContactMessageRoutes from "./routes/ContactRoutes.js";
-import AdminRoutes from"./routes/AdminRoutes.js";
+import AdminRoutes from "./routes/AdminRoutes.js";
 import BookingRoutes from "./routes/BookingRoutes.js";
 import ReviewRoutes from "./routes/ReviewRoutes.js";
 import CategoryRoutes from "./routes/CategoryRoutes.js";

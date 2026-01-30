@@ -15,31 +15,43 @@ import {
   isEventOrganizer,
   isAdmin,
 } from "../middleware/authMiddleware.js";
+import {
+  apiLimiter,
+  checkinLimiter,
+} from "../middleware/rateLimitMiddleware.js";
 const router = express.Router();
 
-router.post("/", isLoggedIn, createBooking);
+router.post("/", apiLimiter, isLoggedIn, createBooking);
 
-router.post("/verify", isLoggedIn, verifyBookingPayment);
+router.post("/verify", apiLimiter, isLoggedIn, verifyBookingPayment);
 
-router.get("/my", isLoggedIn, myBookings);
+router.get("/my", apiLimiter, isLoggedIn, myBookings);
 
-router.get("/all", isLoggedIn, isAdmin, getAllBookings);
+router.get("/all", apiLimiter, isLoggedIn, isAdmin, getAllBookings);
 
-router.get("/analytics", isLoggedIn, isAdmin, getBookingAnalytics);
+router.get("/analytics", apiLimiter, isLoggedIn, isAdmin, getBookingAnalytics);
 
-router.post("/:bookingId/cancel", isLoggedIn, cancelBooking);
+router.post("/:bookingId/cancel", apiLimiter, isLoggedIn, cancelBooking);
 
-router.get("/:eventID", isLoggedIn, isEventOrganizer, getMyEventBookings);
+router.get(
+  "/:eventID",
+  apiLimiter,
+  isLoggedIn,
+  isEventOrganizer,
+  getMyEventBookings,
+);
 
 router.patch(
   "/:bookingId/check-in",
   isLoggedIn,
   isEventOrganizer,
+  checkinLimiter,
   markBookingCheckedIn,
 );
 
 router.get(
   "/event/:eventId/export",
+  apiLimiter,
   isLoggedIn,
   isEventOrganizer,
   exportBookingsCSV,

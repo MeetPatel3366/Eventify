@@ -7,6 +7,9 @@ import {
   deleteCategory,
   getAllCategories,
 } from "../controllers/CategoryController.js";
+import { apiLimiter } from "../middleware/rateLimitMiddleware.js";
+
+router.use(apiLimiter)
 
 router.get("/", isLoggedIn, getAllCategories);
 
