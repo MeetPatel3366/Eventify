@@ -17,7 +17,9 @@ const MyProfile = () => {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
 
-  const { user, loading } = useSelector((state) => state.auth);
+  const { user, profileLoading, updateLoading } = useSelector(
+    (state) => state.auth,
+  );
 
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -41,8 +43,8 @@ const MyProfile = () => {
   });
 
   useEffect(() => {
-    if (!user && !loading) dispatch(getMyProfile());
-  }, [dispatch, user, loading]);
+    if (!user && !profileLoading) dispatch(getMyProfile());
+  }, [dispatch, user, profileLoading]);
 
   useEffect(() => {
     if (user) {
@@ -139,14 +141,6 @@ const MyProfile = () => {
     }
   };
 
-  if (loading && !isEditing) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020617]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-4xl mx-auto p-6 mt-1 text-slate-100 min-h-screen">
       {errMsg && (
@@ -169,12 +163,7 @@ const MyProfile = () => {
       <div className="mb-10 flex flex-col md:flex-row items-center gap-8 bg-white/5 p-8 rounded-[2.5rem] border border-white/10 backdrop-blur-md relative">
         <button
           onClick={() => setIsEditing(!isEditing)}
-          disabled={hasErrors}
-          className={`absolute top-3 right-6 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold ${
-            hasErrors
-              ? "bg-slate-700 opacity-50 cursor-not-allowed"
-              : "bg-slate-800 hover:bg-slate-700"
-          }`}
+          className="absolute top-3 right-6 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700"
         >
           {isEditing ? (
             <>
@@ -337,10 +326,11 @@ const MyProfile = () => {
         <div className="fixed bottom-15 right-10 z-40">
           <button
             onClick={handleSave}
-            disabled={loading || hasErrors}
+            disabled={updateLoading || hasErrors}
             className="flex items-center gap-3 px-10 py-4 bg-blue-600 hover:bg-blue-700 rounded-2xl font-bold disabled:opacity-50"
           >
-            <FaSave /> Update Profile
+            <FaSave />
+            {updateLoading ? "Updating..." : "Update Profile"}
           </button>
         </div>
       )}

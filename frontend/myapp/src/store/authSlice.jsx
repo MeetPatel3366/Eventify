@@ -51,6 +51,8 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     loading: true,
+    profileLoading: false,
+    updateLoading: false,
     role: localStorage.getItem("role"),
     isAuthenticated: false,
     user: null,
@@ -89,18 +91,18 @@ const authSlice = createSlice({
       })
 
       .addCase(getMyProfile.pending, (state) => {
-        state.loading = true;
+        state.profileLoading = true;
       })
       .addCase(getMyProfile.fulfilled, (state, action) => {
-        state.loading = false;
+        state.profileLoading = false;
         state.user = action.payload;
       })
 
       .addCase(updateMyProfile.pending, (state) => {
-        state.loading = true;
+        state.updateLoading = true;
       })
       .addCase(updateMyProfile.fulfilled, (state, action) => {
-        state.loading = false;
+        state.updateLoading = false;
         state.user = action.payload;
       });
   },
