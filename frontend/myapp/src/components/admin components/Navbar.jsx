@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getMyProfile, logout } from "../../store/authSlice";
+import { getMyProfile, logoutUser } from "../../store/authSlice";
 import { FaUserCircle } from "react-icons/fa";
 import { useEffect } from "react";
 
@@ -17,8 +17,8 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = () => {
-    dispatch(logout());
-    navigate("/");
+    dispatch(logoutUser());
+    navigate("/login");
   };
 
   const linkClass = ({ isActive }) =>

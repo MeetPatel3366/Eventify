@@ -27,6 +27,7 @@ export const getMyProfile = createAsyncThunk(
       if (!res.data.success) {
         return rejectWithValue("Failed to fetch profile");
       }
+      console.log("response get profile : ", res);
 
       return res.data.profile;
     } catch (error) {
@@ -47,6 +48,11 @@ export const updateMyProfile = createAsyncThunk(
   },
 );
 
+export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
+  const res = await authApi.logout();
+  return res.data;
+});
+
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -62,11 +68,6 @@ const authSlice = createSlice({
       state.role = action.payload.role;
       state.isAuthenticated = true;
       localStorage.setItem("role", action.payload.role);
-    },
-    logout: (state) => {
-      state.isAuthenticated = false;
-      state.role = null;
-      localStorage.clear();
     },
     stopLoding: (state) => {
       state.loading = false;
@@ -104,9 +105,15 @@ const authSlice = createSlice({
       .addCase(updateMyProfile.fulfilled, (state, action) => {
         state.updateLoading = false;
         state.user = action.payload;
+      })
+
+      .addCase(logoutUser.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.role = null;
+        localStorage.clear();
       });
   },
 });
 
-export const { setAuth, logout, stopLoding } = authSlice.actions;
+export const { setAuth, stopLoding } = authSlice.actions;
 export default authSlice.reducer;

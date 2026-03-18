@@ -39,7 +39,7 @@ router.get("/rejected", isLoggedIn, isAdmin, getRejectedEvents);
 
 router.get("/approved", isLoggedIn, isAdmin, getEvents);
 
-router.get("/progress", isLoggedIn, getEventProgress);
+router.get("/progress", getEventProgress);
 
 router.post(
   "/",
@@ -49,7 +49,7 @@ router.post(
   addEvent,
 );
 
-router.get("/", isLoggedIn, getEvents);
+router.get("/", getEvents);
 
 router.get("/:id", isLoggedIn, getEvent);
 

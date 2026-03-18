@@ -1,7 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 
 const Home = () => {
+  const { user } = useSelector((state) => state.auth);
   return (
     <>
       <section className="max-w-7xl mx-auto px-6 py-28 grid lg:grid-cols-2 gap-16 items-center">
@@ -20,12 +22,12 @@ const Home = () => {
             >
               Browse New Events
             </NavLink>
-            <NavLink
+            {user && <NavLink
               to="/my-bookings"
               className="px-10 py-4 border border-white/30 hover:bg-white/10 rounded-2xl font-semibold transition"
             >
               My Events Bookings
-            </NavLink>
+            </NavLink>}
           </div>
         </div>
 

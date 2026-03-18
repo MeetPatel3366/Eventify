@@ -43,7 +43,7 @@ const VerifyLoginOtp = () => {
                     if (res.data.role === "eventorganizer") {
                         navigate("/organizer/home");
                     } else {
-                        navigate("/home");
+                        navigate("/");
                     }
                 }, 1500);
             }

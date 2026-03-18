@@ -7,9 +7,10 @@ const Events = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { events } = useSelector((state) => state.event);
+  const { user } = useSelector((state) => state.auth);
 
   const upcomingEvents = events.filter(
-    (event) => new Date(event.datetime) >= new Date()
+    (event) => new Date(event.datetime) >= new Date(),
   );
 
   useEffect(() => {
@@ -20,6 +21,30 @@ const Events = () => {
     if (selectedEvent.availableSeats > 0) {
       navigate(`/events/${selectedEvent._id}/book`);
     }
+  };
+
+  const renderActionButton = (event) => {
+    if (!user) {
+      return (
+        <button className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 shadow-md font-semibold transition">
+          After Login You Can Book
+        </button>
+      );
+    }
+
+    return (
+      <button
+        disabled={event.availableSeats === 0}
+        className={`w-full py-3 rounded-xl transition shadow-md font-semibold ${
+          event.availableSeats === 0
+            ? "bg-gray-600 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
+        onClick={() => handleBooking(event)}
+      >
+        {event.availableSeats === 0 ? "Sold Out" : "Book Now"}
+      </button>
+    );
   };
 
   return (
@@ -80,17 +105,7 @@ const Events = () => {
               {event.description}
             </p>
 
-            <button
-              disabled={event.availableSeats === 0}
-              className={`w-full py-3 rounded-xl transition shadow-md font-semibold ${
-                event.availableSeats === 0
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
-              onClick={() => handleBooking(event)}
-            >
-              {event.availableSeats === 0 ? "Sold Out" : "Book Now"}
-            </button>
+            {renderActionButton(event)}
           </div>
         ))}
       </div>

@@ -72,7 +72,7 @@ const Login = () => {
         if (res.data.isAdmin) {
           localStorage.setItem("role", res.data.role);
           dispatch(setAuth({ role: res.data.role }));
-
+          localStorage.setItem("hasSession", 1);
           setTimeout(() => {
             navigate("/admin/home");
           }, 1200);
@@ -230,6 +230,28 @@ const Login = () => {
                   Create one
                 </NavLink>
               </p>
+              {!isAdmin && !isOrganizer && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-center text-xs text-gray-500 mb-2">Or</p>
+                  <NavLink
+                    to="/organizer"
+                    className="block w-full text-center py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-sm font-medium text-indigo-700 transition-colors"
+                  >
+                    Login as Event Organizer
+                  </NavLink>
+                </div>
+              )}
+              {!isAdmin && isOrganizer && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <p className="text-center text-xs text-gray-500 mb-2">Or</p>
+                  <NavLink
+                    to="/login"
+                    className="block w-full text-center py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-sm font-medium text-indigo-700 transition-colors"
+                  >
+                    Login as Event Attendee 
+                  </NavLink>
+                </div>
+              )}
             </>
           )}
         </div>

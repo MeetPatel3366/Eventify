@@ -1,34 +1,33 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { logout } from "../../store/authSlice";
-import authApi from "../../api/authApi";
+import { useNavigate, useLocation } from "react-router-dom";
+import { logoutUser } from "../../store/authSlice"; 
 
 const Logout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();  
   const isAdmin = location.pathname.includes("/admin");
   const isOrganizer = location.pathname.includes("organizer");
 
   useEffect(() => {
     const doLogout = async () => {
       try {
-        await authApi.logout();
+        await dispatch(logoutUser());  
       } catch (err) {
         console.log(err);
       } finally {
-        dispatch(logout());
         if (isAdmin) {
           navigate("/admin", { replace: true });
         } else if (isOrganizer) {
           navigate("/organizer", { replace: true });
         } else {
-          navigate("/", { replace: true });
+          navigate("/login", { replace: true });
         }
       }
     };
     doLogout();
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, isAdmin, isOrganizer]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>

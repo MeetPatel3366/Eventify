@@ -16,7 +16,7 @@ const RoleBasedRoute = ({ children, allowedRoles }) => {
     if (!allowedRoles.includes(role)) {
         if (role === "admin") return <Navigate to="/admin/home" replace />;
         if (role === "eventorganizer") return <Navigate to="/organizer/home" replace />;
-        return <Navigate to="/home" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return children;

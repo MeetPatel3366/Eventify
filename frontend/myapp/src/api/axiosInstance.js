@@ -24,7 +24,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
       localStorage.removeItem("role");
 
-      window.location.href = "/";
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

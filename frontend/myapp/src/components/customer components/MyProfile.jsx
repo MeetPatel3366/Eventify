@@ -20,6 +20,7 @@ const MyProfile = () => {
   const { user, profileLoading, updateLoading } = useSelector(
     (state) => state.auth,
   );
+  console.log("profile user : ",user)
 
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);

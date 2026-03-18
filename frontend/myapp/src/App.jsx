@@ -49,11 +49,19 @@ function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path="/login-otp-verify" element={<VerifyLoginOtp />} />
+
+        <Route element={<CustomerMainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="events" element={<Events />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="event-progress" element={<EventProgress />} />
+        </Route>
 
         <Route
           element={
@@ -62,38 +70,6 @@ function App() {
             </CheckProfile>
           }
         >
-          <Route
-            path="/home"
-            element={
-              <RoleBasedRoute allowedRoles={["customer"]}>
-                <Home />
-              </RoleBasedRoute>
-            }
-          />
-          <Route
-            path="/events"
-            element={
-              <RoleBasedRoute allowedRoles={["customer"]}>
-                <Events />
-              </RoleBasedRoute>
-            }
-          />
-          <Route
-            path="/about"
-            element={
-              <RoleBasedRoute allowedRoles={["customer"]}>
-                <About />
-              </RoleBasedRoute>
-            }
-          />
-          <Route
-            path="/contact"
-            element={
-              <RoleBasedRoute allowedRoles={["customer"]}>
-                <Contact />
-              </RoleBasedRoute>
-            }
-          />
           <Route
             path="/events/:id/book"
             element={
@@ -107,14 +83,6 @@ function App() {
             element={
               <RoleBasedRoute allowedRoles={["customer"]}>
                 <MyBookings />
-              </RoleBasedRoute>
-            }
-          />
-          <Route
-            path="/event-progress"
-            element={
-              <RoleBasedRoute allowedRoles={["customer"]}>
-                <EventProgress />
               </RoleBasedRoute>
             }
           />

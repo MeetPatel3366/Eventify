@@ -15,11 +15,11 @@ router.use(apiLimiter)
 
 router.post("/create", isLoggedIn, createReview);
 
-router.get("/summary/:eventId", isLoggedIn, getEventRatingSummary);
+router.get("/summary/:eventId", getEventRatingSummary);
 
 router.get("/my/:eventId", isLoggedIn, getMyReview);
 
-router.get("/:eventId", isLoggedIn, getEventReviews);
+router.get("/:eventId", getEventReviews);
 
 router.put("/:eventId", isLoggedIn, updateReview);
 

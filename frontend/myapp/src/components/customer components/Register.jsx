@@ -175,6 +175,7 @@ const Register = () => {
 
     try {
       setLoading(true);
+      console.log("phone num:", phoneNumber);
       const res = await authApi.register(
         username,
         email,
@@ -360,12 +361,34 @@ const Register = () => {
           <p className="mt-4 text-center text-xs text-gray-600">
             Already have an account?{" "}
             <NavLink
-              to={isOrganizer ? "/organizer" : "/"}
+              to={isOrganizer ? "/organizer" : "/login"}
               className="font-medium text-indigo-600 hover:underline"
             >
               Login
             </NavLink>
           </p>
+          {!isOrganizer && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-center text-xs text-gray-500 mb-2">Or</p>
+              <NavLink
+                to="/organizer/register"
+                className="block w-full text-center py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-sm font-medium text-indigo-700 transition-colors"
+              >
+                Register as Event Organizer
+              </NavLink>
+            </div>
+          )}
+          {isOrganizer && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <p className="text-center text-xs text-gray-500 mb-2">Or</p>
+              <NavLink
+                to="/register"
+                className="block w-full text-center py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg text-sm font-medium text-indigo-700 transition-colors"
+              >
+                Register as Event Attendee
+              </NavLink>
+            </div>
+          )}
         </div>
       </div>
     </div>

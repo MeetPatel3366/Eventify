@@ -26,20 +26,23 @@ const VerifyOtp = () => {
 
     try {
       setLoading(true);
-      const res = await authApi.verifyOtp(email, otp)
+      const res = await authApi.verifyOtp(email, otp);
 
       if (res.data.success) {
         setSuccess("OTP verified successfully");
-        const path = isOrganizer ? "/organizer" : "/"
+        const path = isOrganizer ? "/organizer" : "/login";
 
         setTimeout(() => {
-          navigate(path)
-        }, 1500)
+          navigate(path);
+        }, 1500);
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Something went wrong"
-      );
+      setError(err.response?.data?.message || "Something went wrong");
+      const path = isOrganizer ? "/organizer" : "/login";
+
+      setTimeout(() => {
+        navigate(path);
+      }, 1500);
     } finally {
       setLoading(false);
     }
@@ -56,7 +59,6 @@ const VerifyOtp = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-900 px-4">
       <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-8">
-
         <h2 className="text-2xl font-bold text-center text-white mb-2">
           Verify OTP
         </h2>
