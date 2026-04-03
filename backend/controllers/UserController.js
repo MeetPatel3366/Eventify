@@ -79,6 +79,8 @@ const register = async (req, res) => {
       role,
       otp,
       otpExpiry,
+      fullName,
+      phoneNumber,
     });
 
     const transporter = nodemailer.createTransport({
@@ -401,6 +403,13 @@ const verifyLoginOtp = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    res.cookie("auth_session", "1", {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(200).json({
       success: true,
       message: "Login successful",
@@ -501,55 +510,102 @@ const getGoogleLoginCallback = async (req, res, next) => {
   const { sub: googleUserId, name, email } = claims;
 
   // Find user with this email
-  let user = await User.findOne({ email });
-  let linkedAccount = null;
+  // let user = await User.findOne({ email });
+  // let linkedAccount = null;
 
   // 1. If user exists, check if OAuth account is linked
-  if (user) {
-    linkedAccount = await OauthAccount.findOne({
-      userId: user._id,
-      provider: "google",
-    }).lean();
+  // if (user) {
+  //   linkedAccount = await OauthAccount.findOne({
+  //     userId: user._id,
+  //     provider: "google",
+  //   }).lean();
 
+  //   // 2. User already exists with the same email but google's oauth isn't linked , create a new OAuth account entry
+  //   if (!linkedAccount) {
+  //     await OauthAccount.create({
+  //       userId: user._id,
+  //       provider: "google",
+  //       providerAccountId: googleUserId,
+  //     });
+  //   }
+  // }
+
+  let linkedAccount = await OauthAccount.findOne({
+    provider: "google",
+    providerAccountId: googleUserId,
+  });
+
+  let user = null;
+
+  // 1. If user exists, check if OAuth account is linked
+  if (linkedAccount) {
+    user = await User.findById(linkedAccount.userId);
+  }
+  if (!user) {
     // 2. User already exists with the same email but google's oauth isn't linked , create a new OAuth account entry
-    if (!linkedAccount) {
-      await OauthAccount.create({
+    user = await User.findOne({ email });
+
+    if (user) {
+      const existingLink = await OauthAccount.findOne({
         userId: user._id,
         provider: "google",
-        providerAccountId: googleUserId,
-      });
-    }
-  }
-
-  //3. If user does not exist, create user + oauth account without transaction
-  if (!user) {
-    let newUser;
-
-    try {
-      newUser = await User.create({
-        username: `${name.replace(/\s+/g, "").toLowerCase()}_${Date.now()}`,
-        email,
-        role: intendedRole,
-        isOAuthUser: true,
-        isVerified: true,
       });
 
-      await OauthAccount.create({
-        userId: newUser._id,
-        provider: "google",
-        providerAccountId: googleUserId,
-      });
-
-      user = newUser;
-    } catch (err) {
-      console.error("User OauthAccount create error:", err);
-      if (newUser) {
-        await User.findByIdAndDelete(newUser._id);
+      try {
+        const existingLink = await OauthAccount.findOne({
+          userId: user._id,
+          provider: "google",
+        });
+        if (!existingLink) {
+          await OauthAccount.create({
+            userId: user._id,
+            provider: "google",
+            providerAccountId: googleUserId,
+          });
+        }
+      } catch (err) {
+        if (err.code !== 11000) throw err; // Ignore duplicates, throw others
       }
-      return next(new Error("Couldn't login with Google. Please try again!"));
+    }
+
+    //3. If user does not exist, create user + oauth account without transaction
+    // if (!user) {
+    else {
+      let newUser;
+
+      try {
+        newUser = await User.create({
+          username: `${name.replace(/\s+/g, "").toLowerCase()}_${Date.now()}`,
+          email,
+          role: intendedRole,
+          isOAuthUser: true,
+          isVerified: true,
+        });
+
+        await OauthAccount.create({
+          userId: newUser._id,
+          provider: "google",
+          providerAccountId: googleUserId,
+        });
+
+        user = newUser;
+      } catch (err) {
+        // If Request 1 already created the user, Request 2 finds them here
+        if (err.code === 11000) {
+          user = await User.findOne({ email });
+        } else {
+          if (newUser) await User.findByIdAndDelete(newUser._id);
+          return next(new Error("Registration failed. Please try again."));
+        }
+        console.error("User OauthAccount create error:", err);
+        return next(new Error("Couldn't login with Google. Please try again!"));
+      }
     }
   }
 
+  if (!user) return res.redirect(`${process.env.FRONTEND_URL}/login`);
+
+  console.log("user role : ", user);
   if (user.role == "eventorganizer") {
     const otp = crypto.randomInt(100000, 1000000);
     user.otp = otp;
@@ -605,10 +661,17 @@ const getGoogleLoginCallback = async (req, res, next) => {
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
+
+  res.cookie("auth_session", "1", {
+    httpOnly: false,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
   res.clearCookie("google_oauth_state");
   res.clearCookie("google_code_verifier");
 
-  return res.redirect(`${process.env.FRONTEND_URL}/home`);
+  return res.redirect(`${process.env.FRONTEND_URL}`);
 };
 
 const logout = async (req, res) => {
@@ -618,6 +681,13 @@ const logout = async (req, res) => {
       secure: false,
       sameSite: "lax",
     });
+
+    res.clearCookie("auth_session", {
+      httpOnly: false,
+      secure: false,
+      sameSite: "lax",
+    });
+
     console.log(req.cookies);
     return res.status(200).json({
       success: true,

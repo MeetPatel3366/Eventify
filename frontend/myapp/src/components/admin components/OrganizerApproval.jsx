@@ -1,11 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
-import { approveOrganizer, rejectOrganizer } from "../../store/adminSlice";
+import { approveOrganizer, fetchPendingOrganizers, rejectOrganizer } from "../../store/adminSlice";
+import { useEffect } from "react";
 
 const OrganizerApproval = () => {
-  const { pendingOrganizers } = useSelector((state) => state.admin);
+  const { pendingOrganizers,loading } = useSelector((state) => state.admin);
   const dispatch = useDispatch();
 
+  useEffect(()=>{
+    dispatch(fetchPendingOrganizers())
+  },[])
+
+  if (loading) {
+    return <p className="text-gray-400 text-center">Loading requests...</p>;
+  }
   return (
     <>
       <h1 className="text-3xl font-bold mb-8 text-center">
@@ -16,7 +24,7 @@ const OrganizerApproval = () => {
         <p className="text-gray-400 text-center">No pending requests</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {pendingOrganizers.map((org) => (
+          {pendingOrganizers?.map((org) => (
             <div
               key={org._id}
               className="bg-gray-900 border border-gray-800 rounded-2xl shadow-lg p-6
@@ -63,7 +71,7 @@ const OrganizerApproval = () => {
             </div>
           ))}
         </div>
-      )}
+      )} 
     </>
   );
 };

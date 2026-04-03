@@ -257,7 +257,9 @@ const myBookings = async (req, res) => {
     const userId = req.user.id;
 
     const [bookings, userReviews] = await Promise.all([
-      Booking.find({ userId }).populate("eventId").sort({ createdAt: -1 }),
+      Booking.find({ userId, status: { $ne: "pending" } })
+        .populate("eventId")
+        .sort({ createdAt: -1 }),
       Review.find({ userId }).lean(),
     ]);
 

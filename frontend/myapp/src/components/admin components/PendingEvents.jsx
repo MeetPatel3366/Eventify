@@ -11,14 +11,23 @@ import {
   FaEnvelope,
   FaRupeeSign,
 } from "react-icons/fa";
-import { approveEvent, rejectEvent } from "../../store/adminSlice";
+import { approveEvent, fetchPendingEvents, rejectEvent } from "../../store/adminSlice";
+import { useEffect } from "react";
 
 const PendingEvents = () => {
   const dispatch = useDispatch();
-  const { pendingEvents } = useSelector((state) => state.admin);
+  const { pendingEvents,loading } = useSelector((state) => state.admin);
   const [rejectingId, setRejectingId] = useState(null);
   const [feedback, setFeedback] = useState("");
 
+  useEffect(()=>{
+    dispatch(fetchPendingEvents());
+  },[dispatch])
+
+  if (loading) {
+    return <p className="text-gray-400 text-center">Loading requests...</p>;
+  }
+  
   return (
     <>
       <h1 className="text-4xl font-extrabold text-white mb-10 text-center tracking-wide">
