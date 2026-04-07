@@ -10,12 +10,15 @@ import {
   FaUndo,
   FaUserShield,
   FaSearch,
+  FaPalette,
+  FaTimes,
 } from "react-icons/fa";
+import { MdPinDrop } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 
 const AdminEventInsights = () => {
   const dispatch = useDispatch();
-  const { eventsWithStats } = useSelector((state) => state.admin);
+  const { eventsWithStats, loading } = useSelector((state) => state.admin);
   const { summary } = useSelector((state) => state.review);
 
   const [filters, setFilters] = useState({
@@ -30,6 +33,8 @@ const AdminEventInsights = () => {
     revenue: "",
     revenueValue: "",
   });
+
+  const [selectedTheme, setSelectedTheme] = useState(null);
 
   useEffect(() => {
     dispatch(fetchEventsWithStats());
@@ -61,9 +66,9 @@ const AdminEventInsights = () => {
     });
   };
 
-  const filteredEvents = eventsWithStats
+  const filteredEvents = (eventsWithStats || [])
     .filter((event) =>
-      event.name.toLowerCase().includes(filters.name.toLowerCase())
+      event.name?.toLowerCase().includes(filters.name.toLowerCase())
     )
     .filter((event) => {
       const eventDate = new Date(event.datetime);
@@ -71,6 +76,7 @@ const AdminEventInsights = () => {
 
       if (filters.date === "today")
         return eventDate.toDateString() === today.toDateString();
+
       if (filters.date === "week") {
         const start = new Date();
         start.setDate(today.getDate() - today.getDay());
@@ -78,18 +84,21 @@ const AdminEventInsights = () => {
         end.setDate(start.getDate() + 6);
         return eventDate >= start && eventDate <= end;
       }
+
       if (filters.date === "month") {
         return (
           eventDate.getMonth() === today.getMonth() &&
           eventDate.getFullYear() === today.getFullYear()
         );
       }
+
       if (filters.date === "custom") {
         if (!filters.customStart || !filters.customEnd) return true;
         const start = new Date(filters.customStart);
         const end = new Date(filters.customEnd);
         return eventDate >= start && eventDate <= end;
       }
+
       return true;
     })
     .filter((event) =>
@@ -101,26 +110,32 @@ const AdminEventInsights = () => {
     .filter((event) => {
       const now = new Date();
       const eventDate = new Date(event.datetime);
+
       if (filters.status === "active")
         return eventDate.toDateString() === now.toDateString();
       if (filters.status === "upcoming") return eventDate > now;
       if (filters.status === "completed") return eventDate < now;
+
       return true;
     })
     .filter((event) => {
       const occupancy = (event.bookedSeats / event.totalSeats) * 100;
+
       if (filters.occupancy === "low") return occupancy < 30;
       if (filters.occupancy === "medium")
         return occupancy >= 30 && occupancy <= 70;
       if (filters.occupancy === "high") return occupancy > 70;
+
       return true;
     })
     .filter((event) => {
       const revenue = event.totalRevenue;
+
       if (filters.revenue === "greater" && filters.revenueValue)
         return revenue > Number(filters.revenueValue);
       if (filters.revenue === "less" && filters.revenueValue)
         return revenue < Number(filters.revenueValue);
+
       return true;
     })
     .sort((a, b) => {
@@ -133,6 +148,45 @@ const AdminEventInsights = () => {
 
   return (
     <div className="min-h-[90vh] bg-[#020617] text-slate-100 p-8 font-sans box-border">
+      {selectedTheme && (
+        <div
+          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedTheme(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedTheme(null)}
+              className="absolute top-3 right-3 z-10 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full transition-all"
+            >
+              <FaTimes size={14} />
+            </button>
+
+            {selectedTheme.images &&
+              selectedTheme.images.length > 0 &&
+              selectedTheme.images[0]?.secure_url ? (
+              <img
+                src={selectedTheme.images[0].secure_url}
+                alt={selectedTheme.name}
+                className="w-full h-[420px] object-cover"
+              />
+            ) : (
+              <div className="w-full h-[420px] flex items-center justify-center bg-slate-800 text-slate-400 text-sm font-semibold">
+                No Theme Image Available
+              </div>
+            )}
+
+            <div className="p-4 border-t border-slate-800">
+              <h3 className="text-lg font-bold text-white capitalize">
+                {selectedTheme.name}
+              </h3>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-12">
         <div className="flex-shrink-0">
           <h1 className="text-4xl font-extrabold tracking-tight">
@@ -252,10 +306,17 @@ const AdminEventInsights = () => {
         </div>
       </header>
 
-      {filteredEvents.length === 0 ? (
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-24 bg-slate-900/20 rounded-[2rem] border border-dashed border-slate-800">
+          <div className="w-12 h-12 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin mb-4"></div>
+          <p className="text-slate-500 text-sm font-medium tracking-widest uppercase">
+            Loading events...
+          </p>
+        </div>
+      ) : filteredEvents.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 bg-slate-900/20 rounded-[2rem] border border-dashed border-slate-800">
           <p className="text-slate-500 text-sm font-medium tracking-widest uppercase">
-            No Results Found
+            No Events Found
           </p>
         </div>
       ) : (
@@ -310,7 +371,43 @@ const AdminEventInsights = () => {
                           {event.location}
                         </span>
                       </div>
+                      {event.pincode && (
+                        <div className="flex items-center gap-2 bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/50">
+                          <MdPinDrop
+                            className="text-purple-500/50"
+                            size={12}
+                          />
+                          <span className="text-[10px] font-bold text-slate-300">
+                            {event.pincode}
+                          </span>
+                        </div>
+                      )}
                     </div>
+
+                    {event.themes && event.themes.length > 0 && (
+                      <div className="flex items-start gap-2 bg-purple-500/10 p-2 rounded-xl border border-purple-500/20 mb-4">
+                        <FaPalette className="text-purple-400 mt-0.5" size={10} />
+                        <span className="text-[10px] font-bold text-purple-300 whitespace-nowrap">
+                          {event.themes.length} Theme(s):
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {event.themes.map((t, idx) => (
+                            <span
+                              key={idx}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log(t);
+                                setSelectedTheme(t);
+                              }}
+                              className="text-[9px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded-full cursor-pointer hover:bg-purple-500/40 hover:text-white transition-all"
+                            >
+                              {t.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="space-y-4">
                       <div>
@@ -328,9 +425,8 @@ const AdminEventInsights = () => {
                           <div
                             className="h-full bg-gradient-to-r from-cyan-600 to-blue-500 transition-all duration-1000"
                             style={{
-                              width: `${
-                                (event.bookedSeats / event.totalSeats) * 100
-                              }%`,
+                              width: `${(event.bookedSeats / event.totalSeats) * 100
+                                }%`,
                             }}
                           />
                         </div>

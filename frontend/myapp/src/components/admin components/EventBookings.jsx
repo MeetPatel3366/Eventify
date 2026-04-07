@@ -7,6 +7,7 @@ import {
   FaUndo,
   FaSearch,
   FaStar,
+  FaPalette,
 } from "react-icons/fa";
 import { fetchEventBookings } from "../../store/adminSlice";
 
@@ -41,13 +42,14 @@ const EventBookings = () => {
 
   const downloadCSV = () => {
     if (!filteredBookings.length) return;
-    const headers = ["No,User,Seats,Amount,Status,Date"];
+    const headers = ["No,User,Seats,Amount,Theme,Status,Date"];
     const rows = filteredBookings.map((b, index) =>
       [
         index + 1,
         `"${b.userId?.username || "N/A"}"`,
         b.quantity,
         b.totalAmount,
+        b.selectedTheme || "—",
         b.status,
         new Date(b.createdAt).toLocaleString(),
       ].join(",")
@@ -91,37 +93,48 @@ const EventBookings = () => {
                 {isEventPast && (
                   <button
                     onClick={() => navigate(`/admin/events/reviews/${eventId}`)}
-                    className="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500 text-yellow-500 hover:text-slate-950 border border-yellow-500/20 px-3 py-1.5 rounded-lg text-[10px] font-black  transition-all"
+                    className="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500 text-yellow-500 hover:text-slate-950 border border-yellow-500/20 px-3 py-1.5 rounded-lg text-[10px] font-black transition-all"
                   >
                     <FaStar size={12} /> View Reviews
                   </button>
                 )}
               </div>
+
               <p className="text-slate-400 text-sm">{selectedEvent.location}</p>
+
+              {selectedEvent.selectedTheme && (
+                <div className="mt-3">
+                  <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    <FaPalette /> {selectedEvent.selectedTheme}
+                  </span>
+                </div>
+              )}
 
               <div className="flex flex-wrap gap-6 mt-4 text-xs">
                 <div>
-                  <p className="text-slate-500  text-[9px] font-bold tracking-tighter">
+                  <p className="text-slate-500 text-[9px] font-bold tracking-tighter">
                     Organizer
                   </p>
                   <p className="font-bold text-slate-200">
                     {selectedEvent.organizerId?.username}
                   </p>
                 </div>
+
                 <div>
-                  <p className="text-slate-500  text-[9px] font-bold tracking-tighter">
+                  <p className="text-slate-500 text-[9px] font-bold tracking-tighter">
                     Event Date
                   </p>
                   <p className="text-slate-200">
                     {new Date(selectedEvent.datetime).toLocaleString()}
                   </p>
                 </div>
+
                 <div>
-                  <p className="text-slate-500  text-[9px] font-bold tracking-tighter">
+                  <p className="text-slate-500 text-[9px] font-bold tracking-tighter">
                     Current Status
                   </p>
                   <p
-                    className={`font-bold  ${
+                    className={`font-bold ${
                       selectedEvent.status === "active"
                         ? "text-emerald-400"
                         : "text-amber-400"
@@ -153,13 +166,13 @@ const EventBookings = () => {
                 <option value="">All Status</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="pending">Pending</option>
+                <option value="refund_pending">Refund Pending</option>
                 <option value="cancelled">Cancelled</option>
               </select>
 
               <div className="flex items-center gap-2 border-l border-slate-800 pl-3">
                 <button
                   onClick={handleReset}
-                  title="Reset Filters"
                   className="bg-slate-800 hover:bg-rose-500/20 hover:text-rose-500 text-slate-400 p-2.5 rounded-lg transition-all"
                 >
                   <FaUndo size={12} />
@@ -168,7 +181,6 @@ const EventBookings = () => {
                 <button
                   onClick={downloadCSV}
                   disabled={!filteredBookings.length}
-                  title="Download CSV"
                   className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 p-2.5 rounded-lg transition-all"
                 >
                   <FaDownload size={12} />
@@ -185,22 +197,24 @@ const EventBookings = () => {
             LOADING BOOKINGS...
           </div>
         ) : filteredBookings.length === 0 ? (
-          <div className="p-20 text-center text-slate-600 font-bold  tracking-widest">
+          <div className="p-20 text-center text-slate-600 font-bold tracking-widest">
             No matching records found
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead>
-                <tr className="bg-slate-950 text-slate-500  text-[10px] font-black tracking-widest border-b border-slate-800">
+                <tr className="bg-slate-950 text-slate-500 text-[10px] font-black tracking-widest border-b border-slate-800">
                   <th className="p-5">#</th>
                   <th className="p-5">User Account</th>
                   <th className="p-5 text-center">Seats</th>
                   <th className="p-5 text-center">Revenue</th>
+                  <th className="p-5 text-center">Theme</th>
                   <th className="p-5 text-center">Booking Status</th>
                   <th className="p-5">Transaction Date</th>
                 </tr>
               </thead>
+
               <tbody className="divide-y divide-slate-800/50">
                 {filteredBookings.map((b, index) => (
                   <tr
@@ -210,6 +224,7 @@ const EventBookings = () => {
                     <td className="p-5 text-slate-600 font-mono">
                       {index + 1}
                     </td>
+
                     <td className="p-5">
                       <p className="text-slate-200 font-bold group-hover:text-cyan-400 transition-colors">
                         {b.userId?.username || "Unknown User"}
@@ -218,25 +233,41 @@ const EventBookings = () => {
                         {b.userId?._id}
                       </p>
                     </td>
+
                     <td className="p-5 text-center font-mono font-bold text-slate-400">
                       {b.quantity}
                     </td>
+
                     <td className="p-5 text-center text-emerald-400 font-black font-mono">
                       ₹{b.totalAmount.toLocaleString()}
                     </td>
+
+                    <td className="p-5 text-center">
+                      {b.selectedTheme ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                          <FaPalette size={8} /> {b.selectedTheme}
+                        </span>
+                      ) : (
+                        <span className="text-slate-600 text-xs">—</span>
+                      )}
+                    </td>
+
                     <td className="p-5 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-[9px] font-black  tracking-widest border ${
+                        className={`px-3 py-1 rounded-full text-[9px] font-black tracking-widest border ${
                           b.status === "confirmed"
                             ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                             : b.status === "pending"
                             ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                            : b.status === "refund_pending"
+                            ? "bg-orange-500/10 text-orange-500 border-orange-500/20"
                             : "bg-rose-500/10 text-rose-500 border-rose-500/20"
                         }`}
                       >
-                        {b.status}
+                        {b.status === "refund_pending" ? "REFUND PENDING" : b.status}
                       </span>
                     </td>
+
                     <td className="p-5 text-slate-500 font-mono text-[11px]">
                       {new Date(b.createdAt).toLocaleString()}
                     </td>

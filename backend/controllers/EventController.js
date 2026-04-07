@@ -1,6 +1,6 @@
 import Event from "../models/EventModel.js";
 import Booking from "../models/BookingModel.js";
-import {cloudinary} from "../utils/cloudinary.js";
+import { cloudinary } from "../utils/cloudinary.js";
 import handleFileUpload from "../utils/handleFileUpload.js";
 
 const addEvent = async (req, res) => {
@@ -13,16 +13,45 @@ const addEvent = async (req, res) => {
       description,
       totalSeats,
       price,
+      pincode,
     } = req.body;
 
     let imageData = null;
-    if (req.file) {
+    if (req.files && req.files.image && req.files.image[0]) {
       imageData = await handleFileUpload(
-        req.file,
+        req.files.image[0],
         "eventify/events",
         null,
         true,
       );
+    }
+
+    let themesData = [];
+    if (req.body.themes) {
+      const parsedThemes = JSON.parse(req.body.themes);
+      const themeFiles = req.files?.themeImages || [];
+      let fileIndex = 0;
+
+      for (const theme of parsedThemes) {
+        const imageCount = parseInt(theme.imageCount) || 0;
+        const themeImages = [];
+
+        for (let i = 0; i < imageCount && fileIndex < themeFiles.length; i++) {
+          const uploaded = await handleFileUpload(
+            themeFiles[fileIndex],
+            "eventify/themes",
+            null,
+            true,
+          );
+          if (uploaded) themeImages.push(uploaded);
+          fileIndex++;
+        }
+
+        themesData.push({
+          name: theme.name,
+          images: themeImages,
+        });
+      }
     }
 
     const newEvent = await Event.create({
@@ -32,16 +61,16 @@ const addEvent = async (req, res) => {
       location,
       description,
       price,
+      pincode: pincode || "",
       organizerId: req.user.id,
       status: "pending",
       totalSeats,
       availableSeats: totalSeats,
       image: imageData,
+      themes: themesData,
     });
 
     console.log("newEvent: ", newEvent);
-    console.log("newEvent._doc", newEvent._doc);
-    console.log("image: ", req.file);
 
     return res.status(201).json({
       success: true,
@@ -76,8 +105,6 @@ const getEvents = async (req, res) => {
       image: event.image?.secure_url || null,
     }));
 
-    console.log("events: ", updatedEvents);
-
     return res.status(200).json({
       success: true,
       message: "approved events fetched successfully",
@@ -110,6 +137,7 @@ const updateEvent = async (req, res) => {
     event.location = req.body.location || event.location;
     event.description = req.body.description || event.description;
     event.price = req.body.price || event.price;
+    event.pincode = req.body.pincode !== undefined ? req.body.pincode : event.pincode;
     event.status = "pending";
     event.totalSeats = req.body.totalSeats || event.totalSeats;
     event.availableSeats =
@@ -117,14 +145,66 @@ const updateEvent = async (req, res) => {
         ? req.body.totalSeats - (event.totalSeats - event.availableSeats)
         : event.availableSeats;
 
-    if (req.file) {
+    // Handle main image (upload.fields)
+    if (req.files && req.files.image && req.files.image[0]) {
       const imageData = await handleFileUpload(
-        req.file,
+        req.files.image[0],
         "eventify/events",
         event.image?.public_id,
         true,
       );
       event.image = imageData;
+    }
+
+    // Handle themes update
+    if (req.body.themes) {
+      const parsedThemes = JSON.parse(req.body.themes);
+      const themeFiles = req.files?.themeImages || [];
+      let fileIndex = 0;
+
+      // Delete old theme images from Cloudinary
+      if (event.themes && event.themes.length > 0) {
+        for (const oldTheme of event.themes) {
+          for (const img of oldTheme.images) {
+            if (img.public_id) {
+              try {
+                await cloudinary.uploader.destroy(img.public_id);
+              } catch (e) {
+                console.error("Failed to delete old theme image:", e);
+              }
+            }
+          }
+        }
+      }
+
+      const themesData = [];
+      for (const theme of parsedThemes) {
+        const imageCount = parseInt(theme.imageCount) || 0;
+        const themeImages = [];
+
+        // Check for existing images that are kept
+        if (theme.existingImages) {
+          themeImages.push(...theme.existingImages);
+        }
+
+        for (let i = 0; i < imageCount && fileIndex < themeFiles.length; i++) {
+          const uploaded = await handleFileUpload(
+            themeFiles[fileIndex],
+            "eventify/themes",
+            null,
+            true,
+          );
+          if (uploaded) themeImages.push(uploaded);
+          fileIndex++;
+        }
+
+        themesData.push({
+          name: theme.name,
+          images: themeImages,
+        });
+      }
+
+      event.themes = themesData;
     }
 
     const updatedEvent = await event.save();
@@ -191,6 +271,21 @@ const deleteEvent = async (req, res) => {
 
     if (event.image?.public_id) {
       await cloudinary.uploader.destroy(event.image.public_id);
+    }
+
+    // Delete theme images from Cloudinary
+    if (event.themes && event.themes.length > 0) {
+      for (const theme of event.themes) {
+        for (const img of theme.images) {
+          if (img.public_id) {
+            try {
+              await cloudinary.uploader.destroy(img.public_id);
+            } catch (e) {
+              console.error("Failed to delete theme image:", e);
+            }
+          }
+        }
+      }
     }
 
     console.log("delete event : ", event);

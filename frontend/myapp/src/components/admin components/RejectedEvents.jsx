@@ -6,16 +6,19 @@ import {
   FaUserTie,
   FaEnvelope,
   FaRupeeSign,
+  FaPalette,
 } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { MdPinDrop } from "react-icons/md";
+import { useSelector, useDispatch } from "react-redux";
 import { fetchRejectedEvents } from "../../store/adminSlice";
 
 const RejectedEvents = () => {
+  const dispatch = useDispatch();
   const { rejectedEvents, loading } = useSelector((state) => state.admin);
 
   useEffect(() => {
     dispatch(fetchRejectedEvents());
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return <p className="text-gray-400 text-center">Loading requests...</p>;
@@ -27,7 +30,12 @@ const RejectedEvents = () => {
         Rejected Events
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {rejectedEvents?.length === 0 ? (
+        <p className="text-gray-400 text-center py-10 font-medium tracking-widest uppercase">
+          No rejected events
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {rejectedEvents.map((event) => (
           <div
             key={event._id}
@@ -108,11 +116,37 @@ const RejectedEvents = () => {
                   <FaRupeeSign className="shrink-0" />
                   <span>{event.price}</span>
                 </div>
+
+                {event.pincode && (
+                  <div className="flex items-center gap-2">
+                    <MdPinDrop className="text-purple-500 shrink-0" />
+                    <span>{event.pincode}</span>
+                  </div>
+                )}
               </div>
+
+              {event.themes && event.themes.length > 0 && (
+                <div className="mt-3 bg-purple-50 border border-purple-200 rounded-xl p-3">
+                  <p className="text-xs font-bold text-purple-700 flex items-center gap-1 mb-1">
+                    <FaPalette /> {event.themes.length} Theme(s)
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {event.themes.map((theme, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium"
+                      >
+                        {theme.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </>
   );
 };

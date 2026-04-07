@@ -25,6 +25,22 @@ export const cancelBooking = createAsyncThunk(
   },
 );
 
+export const approveRefund = createAsyncThunk(
+  "booking/approveRefund",
+  async (bookingId) => {
+    const res = await bookingsApi.approveRefund(bookingId);
+    return res.data;
+  },
+);
+
+export const fetchRefundRequests = createAsyncThunk(
+  "booking/fetchRefundRequests",
+  async () => {
+    const res = await bookingsApi.refundRequests();
+    return res.data.refundRequests;
+  },
+);
+
 export const fetchMyBookings = createAsyncThunk(
   "booking/fetchMyBookings",
   async () => {
@@ -83,6 +99,7 @@ const bookingSlice = createSlice({
     bookings: [],
     myEventBookings: [],
     allBookings: [],
+    refundRequests: [],
     event: null,
     dailyBookings: [],
     dailyRevenue: [],
@@ -206,6 +223,39 @@ const bookingSlice = createSlice({
         state.dailyRevenue = action.payload.dailyRevenue;
         state.topEvents = action.payload.topEvents;
         state.topOrganizers = action.payload.topOrganizers;
+      })
+
+      .addCase(approveRefund.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(approveRefund.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        // Remove from refund requests
+        const approvedId = action.payload.booking._id;
+        state.refundRequests = state.refundRequests.filter(
+          (r) => r._id !== approvedId,
+        );
+        // Update in myEventBookings if present
+        const idx = state.myEventBookings.findIndex((b) => b._id === approvedId);
+        if (idx !== -1) {
+          state.myEventBookings[idx] = {
+            ...state.myEventBookings[idx],
+            status: "cancelled",
+            paymentStatus: "refunded",
+            isCancelled: true,
+          };
+        }
+      })
+
+      .addCase(fetchRefundRequests.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchRefundRequests.fulfilled, (state, action) => {
+        state.loading = false;
+        state.refundRequests = action.payload;
       })
 
       .addMatcher(

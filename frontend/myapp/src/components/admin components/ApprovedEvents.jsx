@@ -5,7 +5,9 @@ import {
   FaUserTie,
   FaEnvelope,
   FaRupeeSign,
+  FaPalette,
 } from "react-icons/fa";
+import { MdPinDrop } from "react-icons/md";
 import { useSelector } from "react-redux";
 
 const ApprovedEvents = () => {
@@ -89,7 +91,32 @@ const ApprovedEvents = () => {
                   <FaRupeeSign className="shrink-0" />
                   <span>{event.price}</span>
                 </div>
+
+                {event.pincode && (
+                  <div className="flex items-center gap-2">
+                    <MdPinDrop className="text-purple-500 shrink-0" />
+                    <span>{event.pincode}</span>
+                  </div>
+                )}
               </div>
+
+              {event.themes && event.themes.length > 0 && (
+                <div className="mt-3 bg-purple-50 border border-purple-200 rounded-xl p-3">
+                  <p className="text-xs font-bold text-purple-700 flex items-center gap-1 mb-1">
+                    <FaPalette /> {event.themes.length} Theme(s)
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    {event.themes.map((theme, idx) => (
+                      <span
+                        key={idx}
+                        className="text-[10px] bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium"
+                      >
+                        {theme.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

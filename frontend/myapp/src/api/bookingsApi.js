@@ -7,6 +7,11 @@ const bookingsApi = {
 
   cancelBooking: (bookingId) => api.post(`/bookings/${bookingId}/cancel`),
 
+  approveRefund: (bookingId) =>
+    api.post(`/bookings/${bookingId}/approve-refund`),
+
+  refundRequests: () => api.get("/bookings/refund-requests"),
+
   myBookings: () => api.get("/bookings/my"),
 
   myEventBookings: (eventID) => api.get(`/bookings/${eventID}`),

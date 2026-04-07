@@ -19,7 +19,7 @@ const CheckProfile = ({ children }) => {
     if (!user) return;
 
     const needsCompletion =
-      user.isOAuthUser && (!user.fullName || !user.phoneNumber);
+      user.isOAuthUser && (!user.fullName || !user.phoneNumber || !user.address);
 
     if (!needsCompletion) return;
 

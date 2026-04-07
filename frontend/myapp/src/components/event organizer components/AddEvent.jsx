@@ -6,8 +6,11 @@ import {
   FaAlignLeft,
   FaPlusCircle,
   FaUsers,
+  FaTrash,
+  FaPalette,
 } from "react-icons/fa";
 import { TbCurrencyRupee } from "react-icons/tb";
+import { MdPinDrop } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { addEvent } from "../../store/eventSlice";
 import { useNavigate } from "react-router-dom";
@@ -23,9 +26,11 @@ export default function AddEvent() {
     description: "",
     price: "",
     totalSeats: "",
+    pincode: "",
     image: null,
   });
 
+  const [themes, setThemes] = useState([]);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
@@ -72,6 +77,10 @@ export default function AddEvent() {
         if (!value) return "Total capacity is required";
         if (Number(value) <= 0) return "Total capacity must be greater than 0";
         break;
+      case "pincode":
+        if (value && !/^\d{6}$/.test(value))
+          return "Pincode must be exactly 6 digits";
+        break;
       default:
         return "";
     }
@@ -89,10 +98,59 @@ export default function AddEvent() {
       val = formatLocation(val);
     }
 
+    if (name === "pincode") {
+      val = value.replace(/\D/g, "").slice(0, 6);
+    }
+
     setFormData((prev) => ({ ...prev, [name]: val }));
     setTouched((prev) => ({ ...prev, [name]: true }));
 
     setErrors((prev) => ({ ...prev, [name]: validateField(name, val) }));
+  };
+
+  // Theme handlers
+  const addTheme = () => {
+    setThemes((prev) => [...prev, { name: "", images: [], previews: [] }]);
+  };
+
+  const removeTheme = (index) => {
+    setThemes((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleThemeNameChange = (index, value) => {
+    setThemes((prev) =>
+      prev.map((t, i) => (i === index ? { ...t, name: value } : t))
+    );
+  };
+
+  const handleThemeImagesChange = (index, files) => {
+    const fileArray = Array.from(files);
+    const previews = fileArray.map((f) => URL.createObjectURL(f));
+    setThemes((prev) =>
+      prev.map((t, i) =>
+        i === index
+          ? {
+              ...t,
+              images: [...t.images, ...fileArray],
+              previews: [...t.previews, ...previews],
+            }
+          : t
+      )
+    );
+  };
+
+  const removeThemeImage = (themeIndex, imgIndex) => {
+    setThemes((prev) =>
+      prev.map((t, i) =>
+        i === themeIndex
+          ? {
+              ...t,
+              images: t.images.filter((_, j) => j !== imgIndex),
+              previews: t.previews.filter((_, j) => j !== imgIndex),
+            }
+          : t
+      )
+    );
   };
 
   useEffect(() => {
@@ -105,8 +163,12 @@ export default function AddEvent() {
       "price",
       "totalSeats",
     ].some((field) => validateField(field, formData[field]));
-    setIsFormValid(!hasError);
-  }, [formData]);
+
+    // Check themes have names if they exist
+    const themesValid = themes.every((t) => t.name.trim() !== "");
+
+    setIsFormValid(!hasError && (themes.length === 0 || themesValid));
+  }, [formData, themes]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -116,8 +178,29 @@ export default function AddEvent() {
 
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null) data.append(key, value);
+      if (value !== null && key !== "image") data.append(key, value);
     });
+
+    // Append main image
+    if (formData.image) {
+      data.append("image", formData.image);
+    }
+
+    // Append themes metadata and images
+    if (themes.length > 0) {
+      const themesMetadata = themes.map((t) => ({
+        name: t.name,
+        imageCount: t.images.length,
+      }));
+      data.append("themes", JSON.stringify(themesMetadata));
+
+      // Append all theme images in order
+      themes.forEach((theme) => {
+        theme.images.forEach((img) => {
+          data.append("themeImages", img);
+        });
+      });
+    }
 
     try {
       await dispatch(addEvent(data)).unwrap();
@@ -206,29 +289,50 @@ export default function AddEvent() {
           )}
         </div>
 
-        <div>
-          <label className="block mb-2">Location</label>
-          <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
-            <FaMapMarkerAlt className="text-gray-300" />
-            <input
-              type="text"
-              name="location"
-              onChange={handleChange}
-              onBlur={(e) => {
-                const val = e.target.value;
-                if (val) {
-                  setFormData((prev) => ({
-                    ...prev,
-                    location: formatLocation(val),
-                  }));
-                }
-              }}
-              className="w-full bg-transparent focus:outline-none"
-            />
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block mb-2">Location</label>
+            <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
+              <FaMapMarkerAlt className="text-gray-300" />
+              <input
+                type="text"
+                name="location"
+                onChange={handleChange}
+                onBlur={(e) => {
+                  const val = e.target.value;
+                  if (val) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      location: formatLocation(val),
+                    }));
+                  }
+                }}
+                className="w-full bg-transparent focus:outline-none"
+              />
+            </div>
+            {showError("location") && (
+              <p className="text-red-400 text-sm mt-1">{errors.location}</p>
+            )}
           </div>
-          {showError("location") && (
-            <p className="text-red-400 text-sm mt-1">{errors.location}</p>
-          )}
+
+          <div>
+            <label className="block mb-2">Pincode</label>
+            <div className="flex items-center gap-3 bg-white/20 border border-white/20 rounded-xl p-3">
+              <MdPinDrop className="text-gray-300" />
+              <input
+                type="text"
+                name="pincode"
+                value={formData.pincode}
+                placeholder="e.g. 380001"
+                onChange={handleChange}
+                maxLength={6}
+                className="w-full bg-transparent focus:outline-none"
+              />
+            </div>
+            {showError("pincode") && (
+              <p className="text-red-400 text-sm mt-1">{errors.pincode}</p>
+            )}
+          </div>
         </div>
 
         <div>
@@ -293,6 +397,101 @@ export default function AddEvent() {
               />
             </div>
           </div>
+        </div>
+
+        {/* --- Event Themes Section --- */}
+        <div className="border border-white/20 rounded-2xl p-6 bg-white/5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <FaPalette className="text-purple-400" />
+              Event Themes
+            </h2>
+            <button
+              type="button"
+              onClick={addTheme}
+              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-xl text-sm font-semibold transition"
+            >
+              <FaPlusCircle /> Add Theme
+            </button>
+          </div>
+
+          {themes.length === 0 && (
+            <p className="text-gray-500 text-sm italic">
+              No themes added yet. Add themes like "Birthday Royal", "Elegant
+              White", etc.
+            </p>
+          )}
+
+          {themes.map((theme, themeIdx) => (
+            <div
+              key={themeIdx}
+              className="bg-white/10 rounded-xl p-4 mb-4 border border-white/10"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <input
+                  type="text"
+                  placeholder="Theme Name (e.g. Royal Blue Birthday)"
+                  value={theme.name}
+                  onChange={(e) =>
+                    handleThemeNameChange(themeIdx, e.target.value)
+                  }
+                  className="flex-1 bg-white/20 border border-white/20 rounded-xl p-3 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeTheme(themeIdx)}
+                  className="p-3 bg-red-600 hover:bg-red-700 rounded-xl transition"
+                >
+                  <FaTrash />
+                </button>
+              </div>
+
+              {!theme.name.trim() && (
+                <p className="text-red-400 text-xs mb-2">
+                  Theme name is required
+                </p>
+              )}
+
+              <div className="flex items-center gap-3 mb-3">
+                <label className="flex items-center gap-2 px-4 py-2 bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/30 rounded-xl cursor-pointer text-sm font-medium transition">
+                  <FaImage /> Add Photos
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) =>
+                      handleThemeImagesChange(themeIdx, e.target.files)
+                    }
+                    className="hidden"
+                  />
+                </label>
+                <span className="text-gray-400 text-xs">
+                  {theme.images.length} photo(s) selected
+                </span>
+              </div>
+
+              {theme.previews.length > 0 && (
+                <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
+                  {theme.previews.map((preview, imgIdx) => (
+                    <div key={imgIdx} className="relative group">
+                      <img
+                        src={preview}
+                        alt={`Theme ${themeIdx + 1} Photo ${imgIdx + 1}`}
+                        className="w-full h-20 object-cover rounded-lg border border-white/10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeThemeImage(themeIdx, imgIdx)}
+                        className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
 
         <button

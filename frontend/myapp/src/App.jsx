@@ -27,7 +27,6 @@ import AdminHome from "./components/admin components/Home";
 import AllUsers from "./components/admin components/AllUsers";
 import PendingEvents from "./components/admin components/PendingEvents";
 import ApprovedEvents from "./components/admin components/ApprovedEvents";
-import RejectedEvents from "./components/admin components/rejectedEvents";
 import OrganizerApproval from "./components/admin components/OrganizerApproval";
 import ApprovedOrganizers from "./components/admin components/ApprovedOrganizers";
 import ContactMessages from "./components/admin components/ContactMessages";
@@ -43,6 +42,7 @@ import EventReviews from "./components/admin components/EventReviews";
 import EventCategory from "./components/admin components/EventCategory";
 import MyProfile from "./components/customer components/MyProfile";
 import CheckProfile from "./components/CheckProfile";
+import RejectedEvents from "./components/admin components/RejectedEvents";
 
 function App() {
   return (

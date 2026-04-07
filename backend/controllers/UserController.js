@@ -747,6 +747,7 @@ const updateMyProfile = async (req, res) => {
       "organizationName",
       "organizationWebsite",
       "organizationDescription",
+      "address",
     ];
 
     const updates = {};

@@ -10,6 +10,7 @@ import {
   FaSave,
   FaTimes,
   FaCamera,
+  FaMapMarkerAlt,
 } from "react-icons/fa";
 import { getMyProfile, updateMyProfile } from "../../store/authSlice";
 
@@ -20,7 +21,7 @@ const MyProfile = () => {
   const { user, profileLoading, updateLoading } = useSelector(
     (state) => state.auth,
   );
-  console.log("profile user : ",user)
+  console.log("profile user : ", user)
 
   const [isEditing, setIsEditing] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -32,6 +33,7 @@ const MyProfile = () => {
     fullName: "",
     phoneNumber: "",
     bio: "",
+    address: "",
     organizationName: "",
     organizationWebsite: "",
     organizationDescription: "",
@@ -53,6 +55,7 @@ const MyProfile = () => {
         fullName: user.fullName || "",
         phoneNumber: user.phoneNumber || "",
         bio: user.bio || "",
+        address: user.address || "",
         organizationName: user.organizationName || "",
         organizationWebsite: user.organizationWebsite || "",
         organizationDescription: user.organizationDescription || "",
@@ -65,7 +68,7 @@ const MyProfile = () => {
       setPreviewImage(null);
       setSelectedFile(null);
 
-      if (!user.fullName || !user.phoneNumber) {
+      if (!user.fullName || !user.phoneNumber || !user.address) {
         setErrMsg(true);
       }
     }
@@ -146,16 +149,15 @@ const MyProfile = () => {
     <div className="max-w-4xl mx-auto p-6 mt-1 text-slate-100 min-h-screen">
       {errMsg && (
         <p className="text-xs font-semibold text-rose-400 mb-3">
-          Full name and phone number are required to complete event bookings.
+          Full name, phone number, and address are required to complete event bookings.
         </p>
       )}
       {statusMessage.text && (
         <div
-          className={`fixed top-24 right-6 p-4 rounded-2xl border backdrop-blur-md z-50 shadow-2xl ${
-            statusMessage.type === "success"
+          className={`fixed top-24 right-6 p-4 rounded-2xl border backdrop-blur-md z-50 shadow-2xl ${statusMessage.type === "success"
               ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-400"
               : "bg-rose-500/20 border-rose-500/50 text-rose-400"
-          }`}
+            }`}
         >
           {statusMessage.text}
         </div>
@@ -259,6 +261,21 @@ const MyProfile = () => {
               value={user?.phoneNumber || "Not Linked"}
             />
           )}
+
+          {isEditing ? (
+            <EditableField
+              label="Address"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+            />
+          ) : (
+            <InfoItem
+              icon={<FaMapMarkerAlt />}
+              label="Address"
+              value={user?.address || "Not Provided"}
+            />
+          )}
         </div>
 
         {user?.role === "eventorganizer" && (
@@ -358,9 +375,8 @@ const EditableField = ({ label, name, value, onChange, error }) => (
       name={name}
       value={value}
       onChange={onChange}
-      className={`w-full bg-slate-900/50 border p-3 rounded-2xl ${
-        error ? "border-rose-500" : "border-slate-700 focus:border-blue-500"
-      }`}
+      className={`w-full bg-slate-900/50 border p-3 rounded-2xl ${error ? "border-rose-500" : "border-slate-700 focus:border-blue-500"
+        }`}
     />
     {error && <p className="text-[11px] text-rose-400 mt-1 ml-1">{error}</p>}
   </div>

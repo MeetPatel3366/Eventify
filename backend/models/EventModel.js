@@ -57,6 +57,24 @@ const EventSchema = mongoose.Schema({
     type: String,
     default: "",
   },
+  pincode: {
+    type: String,
+    trim: true,
+  },
+  themes: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      images: [
+        {
+          public_id: { type: String },
+          secure_url: { type: String },
+        },
+      ],
+    },
+  ],
 });
 
 export default mongoose.model("Event", EventSchema);

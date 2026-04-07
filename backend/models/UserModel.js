@@ -75,6 +75,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       maxlength: [500, "Organization description cannot exceed 500 characters"],
     },
+    address: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true },
 );

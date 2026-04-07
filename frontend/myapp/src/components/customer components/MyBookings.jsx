@@ -9,6 +9,7 @@ import {
   FaTimes,
   FaSearch,
   FaTrash,
+  FaPalette,
 } from "react-icons/fa";
 import { cancelBooking, fetchMyBookings } from "../../store/bookingSlice";
 import {
@@ -36,6 +37,14 @@ const MyBookings = () => {
     isOpen: false,
     eventId: null,
   });
+
+  const [cancelModal, setCancelModal] = useState({
+    isOpen: false,
+    bookingId: null,
+    eventName: "",
+  });
+
+  const [selectedTheme, setSelectedTheme] = useState(null);
 
   useEffect(() => {
     dispatch(fetchMyBookings());
@@ -108,8 +117,8 @@ const MyBookings = () => {
   const handleCancel = async (bookingId) => {
     try {
       await dispatch(cancelBooking(bookingId));
-      alert("Booking cancelled successfully. Refund initiated!");
       dispatch(fetchMyBookings());
+      setCancelModal({ isOpen: false, bookingId: null, eventName: "" });
     } catch (error) {
       alert("Cancellation failed.");
     }
@@ -117,6 +126,51 @@ const MyBookings = () => {
 
   return (
     <div className="p-4 md:p-8 min-h-screen">
+      {selectedTheme && (
+        <div
+          className="fixed inset-0 bg-black/70 z-[250] flex items-center justify-center p-4"
+          onClick={() => setSelectedTheme(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedTheme(null)}
+              className="absolute top-3 right-3 z-10 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full transition-all"
+            >
+              <FaTimes size={14} />
+            </button>
+
+            {selectedTheme.images &&
+              selectedTheme.images.length > 0 &&
+              selectedTheme.images[0]?.secure_url ? (
+              <img
+                src={selectedTheme.images[0].secure_url}
+                alt={selectedTheme.name}
+                className="w-full h-[420px] object-cover"
+              />
+            ) : selectedTheme.image ? (
+              <img
+                src={selectedTheme.image}
+                alt={selectedTheme.name}
+                className="w-full h-[420px] object-cover"
+              />
+            ) : (
+              <div className="w-full h-[420px] flex items-center justify-center bg-slate-800 text-slate-400 text-sm font-semibold">
+                No Theme Image Available
+              </div>
+            )}
+
+            <div className="p-4 border-t border-slate-800">
+              <h3 className="text-lg font-bold text-white capitalize">
+                {selectedTheme.name || selectedTheme}
+              </h3>
+            </div>
+          </div>
+        </div>
+      )}
+
       <h1 className="text-3xl font-bold mb-4 text-center text-white">
         My Bookings
       </h1>
@@ -176,6 +230,30 @@ const MyBookings = () => {
                   </div>
                 </div>
 
+                {booking.selectedTheme && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log(booking.selectedTheme);
+
+                      if (typeof booking.selectedTheme === 'object') {
+                        setSelectedTheme(booking.selectedTheme);
+                      } else {
+                        const themeObject = event?.themes?.find(
+                          (t) => t.name === booking.selectedTheme
+                        );
+                        setSelectedTheme(themeObject || booking.selectedTheme);
+                      }
+                    }}
+                    className="flex items-center gap-2 text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-purple-500/20 transition-all"
+                  >
+                    <FaPalette size={10} />
+                    <span className="font-semibold">
+                      Theme: {typeof booking.selectedTheme === 'object' ? booking.selectedTheme.name : booking.selectedTheme}
+                    </span>
+                  </div>
+                )}
+
                 <div className="pt-3 mt-auto border-t border-white/10 space-y-3">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-indigo-300 font-bold flex items-center">
@@ -183,19 +261,48 @@ const MyBookings = () => {
                       {booking.totalAmount}
                     </span>
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${
-                        booking.status === "confirmed"
+                      className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold ${booking.status === "confirmed"
                           ? "bg-green-500/20 text-green-400"
-                          : "bg-yellow-500/20 text-yellow-400"
-                      }`}
+                          : booking.status === "refund_pending"
+                            ? "bg-orange-500/20 text-orange-400"
+                            : booking.status === "cancelled" && booking.paymentStatus === "refunded"
+                              ? "bg-blue-500/20 text-blue-400"
+                              : "bg-yellow-500/20 text-yellow-400"
+                        }`}
                     >
-                      {booking.status}
+                      {booking.status === "refund_pending"
+                        ? "Pending Refund Approval"
+                        : booking.status === "cancelled" && booking.paymentStatus === "refunded"
+                          ? "Refunded"
+                          : booking.status}
                     </span>
                   </div>
 
+                  {booking.status === "refund_pending" && (
+                    <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-2 text-center">
+                      <p className="text-orange-400 text-[10px] font-bold">
+                        ⏳ Your refund request is pending organizer approval
+                      </p>
+                    </div>
+                  )}
+
+                  {booking.status === "cancelled" && booking.paymentStatus === "refunded" && (
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-2 text-center">
+                      <p className="text-blue-400 text-[10px] font-bold">
+                        ✅ Refund approved! Amount will be credited within 5 days
+                      </p>
+                    </div>
+                  )}
+
                   {canCancelBooking(event?.datetime, booking.status) && (
                     <button
-                      onClick={() => handleCancel(booking._id)}
+                      onClick={() =>
+                        setCancelModal({
+                          isOpen: true,
+                          bookingId: booking._id,
+                          eventName: event?.name,
+                        })
+                      }
                       className="w-full bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold py-2 rounded-lg transition"
                     >
                       Cancel Booking
@@ -268,11 +375,10 @@ const MyBookings = () => {
                     onClick={() =>
                       setReviewModal({ ...reviewModal, rating: star })
                     }
-                    className={`text-4xl transition-all duration-200 ${
-                      star <= reviewModal.rating
+                    className={`text-4xl transition-all duration-200 ${star <= reviewModal.rating
                         ? "text-yellow-400 scale-110 drop-shadow-[0_0_8px_rgba(250,204,21,0.4)]"
                         : "text-gray-700 hover:text-gray-500"
-                    }`}
+                      }`}
                   >
                     <FaStar />
                   </button>
@@ -292,11 +398,10 @@ const MyBookings = () => {
                 onClick={handleSubmitReview}
                 disabled={!isReview}
                 className={`w-full py-4 rounded-2xl font-bold transition shadow-lg active:scale-95
-                          ${
-                            isReview
-                              ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/30"
-                              : "bg-gray-600 text-gray-300 cursor-not-allowed opacity-60"
-                          }`}
+                          ${isReview
+                    ? "bg-indigo-500 hover:bg-indigo-600 text-white shadow-indigo-500/30"
+                    : "bg-gray-600 text-gray-300 cursor-not-allowed opacity-60"
+                  }`}
               >
                 {reviewModal.isEdit ? "Update Review" : "Submit Review"}
               </button>
@@ -330,6 +435,45 @@ const MyBookings = () => {
                 className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition"
               >
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {cancelModal.isOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+          <div className="bg-zinc-900 border border-white/10 w-full max-w-sm rounded-3xl p-8 shadow-2xl text-center">
+            <div className="w-16 h-16 bg-orange-500/10 text-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
+              <FaTimes size={24} />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">
+              Cancel Booking?
+            </h3>
+            <p className="text-gray-400 text-sm mb-2">
+              Are you sure you want to cancel your booking for
+            </p>
+            <p className="text-indigo-400 font-bold text-sm mb-4">
+              {cancelModal.eventName}
+            </p>
+            <p className="text-gray-500 text-xs mb-8">
+              Your refund request will be sent to the event organizer for approval. Once approved, the refund will be credited within 5 days.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() =>
+                  setCancelModal({ isOpen: false, bookingId: null, eventName: "" })
+                }
+                className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-semibold transition border border-white/10"
+              >
+                Keep Booking
+              </button>
+              <button
+                onClick={() => handleCancel(cancelModal.bookingId)}
+                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition"
+              >
+                Cancel & Request Refund
               </button>
             </div>
           </div>

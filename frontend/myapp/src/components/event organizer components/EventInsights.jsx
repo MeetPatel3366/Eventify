@@ -7,7 +7,10 @@ import {
   FaStar,
   FaUndo,
   FaUsers,
+  FaPalette,
+  FaTimes,
 } from "react-icons/fa";
+import { MdPinDrop } from "react-icons/md";
 import { fetchMyEventsWithStats } from "../../store/eventSlice";
 import { getEventRatingSummary } from "../../store/reviewSlice";
 import { NavLink } from "react-router-dom";
@@ -29,6 +32,8 @@ const EventInsights = () => {
     revenue: "",
     revenueValue: "",
   });
+
+  const [selectedTheme, setSelectedTheme] = useState(null);
 
   useEffect(() => {
     dispatch(fetchMyEventsWithStats());
@@ -139,6 +144,45 @@ const EventInsights = () => {
 
   return (
     <>
+      {selectedTheme && (
+        <div
+          className="fixed inset-0 bg-black/70 z-[250] flex items-center justify-center p-4"
+          onClick={() => setSelectedTheme(null)}
+        >
+          <div
+            className="relative w-full max-w-2xl bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedTheme(null)}
+              className="absolute top-3 right-3 z-10 bg-black/50 hover:bg-red-500 text-white p-2 rounded-full transition-all"
+            >
+              <FaTimes size={14} />
+            </button>
+
+            {selectedTheme.images &&
+            selectedTheme.images.length > 0 &&
+            selectedTheme.images[0]?.secure_url ? (
+              <img
+                src={selectedTheme.images[0].secure_url}
+                className="w-full h-[420px] object-cover"
+                alt={selectedTheme.name}
+              />
+            ) : (
+              <div className="w-full h-[420px] flex items-center justify-center bg-slate-800 text-slate-400 text-sm font-semibold">
+                No Theme Image Available
+              </div>
+            )}
+
+            <div className="p-4 border-t border-slate-800">
+              <h3 className="text-lg font-bold text-white capitalize">
+                {selectedTheme.name}
+              </h3>
+            </div>
+          </div>
+        </div>
+      )}
+
       <section className="max-w-7xl mx-auto mb-6 mt-4 flex flex-col lg:flex-row justify-between gap-6">
         <div>
           <h1 className="text-5xl font-extrabold mb-3">Event Insights</h1>
@@ -322,7 +366,34 @@ const EventInsights = () => {
                         <FaMapMarkerAlt />
                         <span className="truncate">{event.location}</span>
                       </div>
+                      {event.pincode && (
+                        <div className="flex items-center gap-2">
+                          <MdPinDrop className="text-purple-400" />
+                          Pincode: {event.pincode}
+                        </div>
+                      )}
                     </div>
+
+                    {event.themes && event.themes.length > 0 && (
+                      <div className="flex items-center gap-2 flex-wrap mt-1 mb-1">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-400">
+                          <FaPalette /> {event.themes.length} Theme(s):
+                        </span>
+                        {event.themes.map((t, idx) => (
+                          <span
+                            key={idx}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setSelectedTheme(t);
+                            }}
+                            className="text-[10px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full cursor-pointer hover:bg-purple-500/40"
+                          >
+                            {t.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
 
                     <div className="mt-3 h-6 flex items-center gap-3">
                       {eventDate < now && summary[event._id] ? (

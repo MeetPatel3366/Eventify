@@ -47,7 +47,7 @@ const getAdminStats = async (req, res) => {
       datetime: { $lt: now },
     });
 
-    const allBookings = await Booking.countDocuments({ status: "confirmed" });
+    const allBookings = await Booking.countDocuments({ status: { $in: ["confirmed", "refund_pending"] } });
 
     const totalCategories = await Category.countDocuments();
 
@@ -362,7 +362,7 @@ const getAllEventsWithStats = async (req, res) => {
       events.map(async (event) => {
         const bookings = await Booking.find({
           eventId: event._id,
-          status: "confirmed",
+          status: { $in: ["confirmed", "refund_pending"] },
         });
 
         const totalRevenue = bookings.reduce(

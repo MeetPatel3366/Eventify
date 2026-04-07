@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllBookings } from "../../store/bookingSlice";
-import { FaClipboardList, FaDownload, FaUndo } from "react-icons/fa";
+import { FaClipboardList, FaDownload, FaUndo, FaPalette } from "react-icons/fa";
 
 const AllBookings = () => {
   const dispatch = useDispatch();
@@ -93,6 +93,7 @@ const AllBookings = () => {
             <option value="">Status</option>
             <option value="confirmed">Confirmed</option>
             <option value="pending">Pending</option>
+            <option value="refund_pending">Refund Pending</option>
             <option value="cancelled">Cancelled</option>
           </select>
 
@@ -173,6 +174,9 @@ const AllBookings = () => {
                   <th className="p-4 md:p-6 text-left whitespace-nowrap">
                     Booked On
                   </th>
+                  <th className="p-4 md:p-6 text-center whitespace-nowrap">
+                    Theme
+                  </th>
                 </tr>
               </thead>
 
@@ -202,15 +206,16 @@ const AllBookings = () => {
                     </td>
                     <td className="p-4 md:p-6 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block whitespace-nowrap ${
-                          b.status === "confirmed"
+                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest inline-block whitespace-nowrap ${b.status === "confirmed"
                             ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                             : b.status === "pending"
-                            ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
-                            : "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                        }`}
+                              ? "bg-amber-500/10 text-amber-500 border border-amber-500/20"
+                              : b.status === "refund_pending"
+                                ? "bg-orange-500/10 text-orange-500 border border-orange-500/20"
+                                : "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                          }`}
                       >
-                        {b.status}
+                        {b.status === "refund_pending" ? "Refund Pending" : b.status}
                       </span>
                     </td>
                     <td className="p-4 md:p-6 text-slate-500 font-mono text-xs whitespace-nowrap">
@@ -218,6 +223,15 @@ const AllBookings = () => {
                         dateStyle: "medium",
                         timeStyle: "short",
                       })}
+                    </td>
+                    <td className="p-4 md:p-6 text-center">
+                      {b.selectedTheme ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                          <FaPalette size={8} /> {b.selectedTheme}
+                        </span>
+                      ) : (
+                        <span className="text-slate-600 text-xs">—</span>
+                      )}
                     </td>
                   </tr>
                 ))}

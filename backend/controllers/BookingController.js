@@ -13,9 +13,19 @@ const razorpay = new Razorpay({
 
 const createBooking = async (req, res) => {
   try {
-    const { eventId, quantity } = req.body;
+    const { eventId, quantity, selectedTheme } = req.body;
     const userId = req.user.id;
     console.log(eventId, quantity, userId);
+
+    // Check if user has address filled
+    const user = await User.findById(userId);
+    if (!user.address || !user.address.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Please add your address in your profile before booking",
+        needsAddress: true,
+      });
+    }
 
     const event = await Event.findOne({
       _id: eventId,
@@ -30,6 +40,15 @@ const createBooking = async (req, res) => {
       });
     }
 
+    // If event has themes, selectedTheme is required
+    if (event.themes && event.themes.length > 0 && !selectedTheme) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a theme before booking",
+        needsTheme: true,
+      });
+    }
+
     const booking = await Booking.create({
       userId,
       eventId,
@@ -37,6 +56,7 @@ const createBooking = async (req, res) => {
       totalAmount: event.price * quantity,
       paymentStatus: "pending",
       status: "pending",
+      selectedTheme: selectedTheme || null,
     });
 
     const options = {
@@ -217,6 +237,13 @@ const cancelBooking = async (req, res) => {
       });
     }
 
+    if (booking.status === "refund_pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Refund request already submitted",
+      });
+    }
+
     if (booking.paymentStatus !== "paid") {
       return res.status(400).json({
         success: false,
@@ -224,6 +251,54 @@ const cancelBooking = async (req, res) => {
       });
     }
 
+    // Set status to refund_pending instead of immediately refunding
+    booking.status = "refund_pending";
+    booking.paymentStatus = "refund_pending";
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Cancellation request submitted. Pending organizer approval.",
+      booking,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const approveRefund = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const organizerId = req.user.id;
+
+    const booking = await Booking.findById(bookingId).populate("eventId");
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // Verify organizer owns this event
+    if (booking.eventId.organizerId.toString() !== organizerId) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized to approve refund for this booking",
+      });
+    }
+
+    if (booking.status !== "refund_pending") {
+      return res.status(400).json({
+        success: false,
+        message: "This booking is not pending refund approval",
+      });
+    }
+
+    // Process Razorpay refund
     const refund = await razorpay.payments.refund(booking.razorpayPaymentId, {
       amount: booking.totalAmount * 100,
       speed: "normal",
@@ -232,17 +307,92 @@ const cancelBooking = async (req, res) => {
     booking.status = "cancelled";
     booking.paymentStatus = "refunded";
     booking.isCancelled = true;
+    booking.razorpayRefundId = refund.id;
+    booking.refundApprovedAt = new Date();
     await booking.save();
 
-    const event = await Event.findById(booking.eventId);
+    const event = await Event.findById(booking.eventId._id);
     event.availableSeats += booking.quantity;
     await event.save();
 
+    const user = await User.findById(booking.userId);
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAILHOST,
+      port: parseInt(process.env.MAILPORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USERNAME,
+        pass: process.env.MAIL_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Eventify" <${process.env.MAIL_USERNAME}>`,
+      to: user.email,
+      subject: `Refund Approved for ${event.name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <h2 style="color: #28a745;">Your Refund Has Been Approved!</h2>
+          <p>Hi ${user.username},</p>
+          <p>Your refund request for <strong>${event.name}</strong> has been approved by the organizer.</p>
+          <table style="border-collapse: collapse; width: 100%; margin-top: 15px;">
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Event Name</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${event.name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Tickets Cancelled</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${booking.quantity}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Refund Amount</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd; color: green;"><strong>₹${booking.totalAmount}</strong></td>
+            </tr>
+          </table>
+          <p style="margin-top: 20px; color: #666;">The refund will be credited to your original payment method within <strong>5-7 business days</strong>.</p>
+          <p>Thank you for your patience!<br/><b>Team Eventify</b></p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
     return res.status(200).json({
       success: true,
-      message: "Booking cancelled & refunded successfully",
+      message: "Refund approved and processed successfully",
       booking,
       refund,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getRefundRequests = async (req, res) => {
+  try {
+    const organizerId = req.user.id;
+
+    // Get all events owned by this organizer
+    const events = await Event.find({ organizerId, status: "approved" }).select("_id name");
+    const eventIds = events.map((e) => e._id);
+
+    // Get all bookings with refund_pending status for these events
+    const refundRequests = await Booking.find({
+      eventId: { $in: eventIds },
+      status: "refund_pending",
+    })
+      .populate("userId", "username email fullName phoneNumber")
+      .populate("eventId", "name datetime location price")
+      .sort({ updatedAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      message: "Refund requests fetched successfully",
+      refundRequests,
     });
   } catch (error) {
     return res.status(500).json({
@@ -317,7 +467,7 @@ const getMyEventBookings = async (req, res) => {
 
     const bookings = await Booking.find({
       eventId: eventID,
-      status: "confirmed",
+      status: { $in: ["confirmed", "refund_pending", "cancelled"] },
     })
       .populate("userId", "username email fullName phoneNumber")
       .sort({ createdAt: -1 });
@@ -329,6 +479,7 @@ const getMyEventBookings = async (req, res) => {
         datetime: event.datetime,
         location: event.location,
         price: event.price,
+        pincode: event.pincode,
       },
       bookings,
     });
@@ -471,8 +622,8 @@ const getAllBookings = async (req, res) => {
 
       eventIds = eventIds
         ? eventIds.filter((id) =>
-            organizerEventIds.some((oid) => oid.equals(id)),
-          )
+          organizerEventIds.some((oid) => oid.equals(id)),
+        )
         : organizerEventIds;
     }
 
@@ -502,7 +653,7 @@ const getAllBookings = async (req, res) => {
       .populate("userId", "username email")
       .populate({
         path: "eventId",
-        select: "name price location datetime",
+        select: "name price location datetime pincode themes",
         populate: {
           path: "organizerId",
           select: "username email",
@@ -525,7 +676,14 @@ const getAllBookings = async (req, res) => {
 
 const getBookingAnalytics = async (req, res) => {
   try {
+    const matchCondition = {
+      $match: {
+        status: { $in: ["confirmed", "refund_pending"] }
+      }
+    };
+
     const dailyBookings = await Booking.aggregate([
+      matchCondition,
       {
         $group: {
           _id: {
@@ -547,6 +705,7 @@ const getBookingAnalytics = async (req, res) => {
     ]);
 
     const dailyRevenue = await Booking.aggregate([
+      matchCondition,
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -557,6 +716,7 @@ const getBookingAnalytics = async (req, res) => {
     ]);
 
     const topEvents = await Booking.aggregate([
+      matchCondition,
       {
         $group: {
           _id: "$eventId",
@@ -595,6 +755,7 @@ const getBookingAnalytics = async (req, res) => {
     ]);
 
     const topOrganizers = await Booking.aggregate([
+      matchCondition,
       {
         $lookup: {
           from: "events",
@@ -648,6 +809,8 @@ export {
   createBooking,
   verifyBookingPayment,
   cancelBooking,
+  approveRefund,
+  getRefundRequests,
   myBookings,
   getMyEventBookings,
   markBookingCheckedIn,

@@ -9,6 +9,8 @@ import {
   getBookingAnalytics,
   verifyBookingPayment,
   cancelBooking,
+  approveRefund,
+  getRefundRequests,
 } from "../controllers/BookingController.js";
 import {
   isLoggedIn,
@@ -32,6 +34,22 @@ router.get("/all", apiLimiter, isLoggedIn, isAdmin, getAllBookings);
 router.get("/analytics", apiLimiter, isLoggedIn, isAdmin, getBookingAnalytics);
 
 router.post("/:bookingId/cancel", apiLimiter, isLoggedIn, cancelBooking);
+
+router.get(
+  "/refund-requests",
+  apiLimiter,
+  isLoggedIn,
+  isEventOrganizer,
+  getRefundRequests,
+);
+
+router.post(
+  "/:bookingId/approve-refund",
+  apiLimiter,
+  isLoggedIn,
+  isEventOrganizer,
+  approveRefund,
+);
 
 router.get(
   "/:eventID",

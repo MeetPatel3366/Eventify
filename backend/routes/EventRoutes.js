@@ -43,7 +43,10 @@ router.get("/progress", getEventProgress);
 
 router.post(
   "/",
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "themeImages", maxCount: 30 },
+  ]),
   isLoggedIn,
   isEventOrganizer,
   addEvent,
@@ -55,7 +58,10 @@ router.get("/:id", isLoggedIn, getEvent);
 
 router.put(
   "/:id",
-  upload.single("image"),
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "themeImages", maxCount: 30 },
+  ]),
   isLoggedIn,
   isEventOrganizer,
   updateEvent,

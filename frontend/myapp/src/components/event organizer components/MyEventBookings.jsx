@@ -8,12 +8,15 @@ import {
   FaTag,
   FaUserCheck,
   FaCheckCircle,
+  FaPalette,
+  FaUndoAlt,
 } from "react-icons/fa";
+import { MdPinDrop } from "react-icons/md";
 import {
   checkInBooking,
   fetchexportBookingsCSV,
   fetchMyEventBookings,
-  resetBookingState,
+  approveRefund,
 } from "../../store/bookingSlice";
 
 const MyEventBookings = () => {
@@ -24,9 +27,7 @@ const MyEventBookings = () => {
   const { myEventBookings, event, loading, error } = useSelector(
     (state) => state.booking,
   );
-
-  console.log("event: ", event);
-
+  console.log(event)
   const [filters, setFilters] = useState({
     guest: "",
     checkIn: "all",
@@ -36,6 +37,13 @@ const MyEventBookings = () => {
     isOpen: false,
     bookingId: null,
     username: "",
+  });
+
+  const [refundModal, setRefundModal] = useState({
+    isOpen: false,
+    bookingId: null,
+    username: "",
+    amount: 0,
   });
 
   const eventDate = new Date(event?.datetime);
@@ -50,24 +58,53 @@ const MyEventBookings = () => {
     dispatch(fetchMyEventBookings(eventId));
   }, [dispatch, eventId]);
 
-  const filteredBookings = myEventBookings.filter((b) => {
-    const guestMatch =
-      b.userId?.fullName?.toLowerCase().includes(filters.guest.toLowerCase()) ||
-      b.userId?.email?.toLowerCase().includes(filters.guest.toLowerCase());
+  const filteredBookings = myEventBookings
+    .filter((b) => {
+      const guestMatch =
+        b.userId?.fullName?.toLowerCase().includes(filters.guest.toLowerCase()) ||
+        b.userId?.email?.toLowerCase().includes(filters.guest.toLowerCase());
 
-    const checkInMatch =
-      filters.checkIn === "all"
-        ? true
-        : filters.checkIn === "checked"
-          ? b.checkedIn === true
-          : b.checkedIn === false;
-    return guestMatch && checkInMatch;
-  });
+      const checkInMatch =
+        filters.checkIn === "all"
+          ? true
+          : filters.checkIn === "checked"
+            ? b.checkedIn === true
+            : filters.checkIn === "refund_pending"
+              ? b.status === "refund_pending"
+              : b.checkedIn === false;
 
-  const totalSeatsSold = myEventBookings.reduce(
+      return guestMatch && checkInMatch;
+    })
+    .sort((a, b) => {
+      // Show refund_pending bookings first
+      if (a.status === "refund_pending" && b.status !== "refund_pending") return -1;
+      if (a.status !== "refund_pending" && b.status === "refund_pending") return 1;
+      return 0;
+    });
+
+  const confirmedBookings = myEventBookings.filter(
+    (b) => b.status === "confirmed" || b.status === "refund_pending",
+  );
+
+  const totalSeatsSold = confirmedBookings.reduce(
     (acc, b) => acc + (b.quantity || 0),
     0,
   );
+
+  const refundPendingCount = myEventBookings.filter(
+    (b) => b.status === "refund_pending",
+  ).length;
+
+  const totalRevenue = confirmedBookings.reduce(
+    (acc, b) => acc + (b.totalAmount || 0),
+    0,
+  );
+
+  const handleApproveRefund = async (bookingId) => {
+    await dispatch(approveRefund(bookingId));
+    dispatch(fetchMyEventBookings(eventId));
+    setRefundModal({ isOpen: false, bookingId: null, username: "", amount: 0 });
+  };
 
   if (error) {
     return (
@@ -111,15 +148,26 @@ const MyEventBookings = () => {
               <span className="text-indigo-400 font-semibold">
                 {event.name}
               </span>
+
               <span className="flex items-center gap-1.5">
-                <FaClock className="text-xs" />{" "}
+                <FaClock className="text-xs" />
                 {new Date(event.datetime).toLocaleDateString("en-IN")}
               </span>
+
               <span className="flex items-center gap-1.5">
-                <FaMapMarkerAlt className="text-xs" /> {event.location}
+                <FaMapMarkerAlt className="text-xs" />
+                {event.location}
               </span>
+
+              {event.pincode && (
+                <span className="flex items-center gap-1.5">
+                  <MdPinDrop className="text-xs text-purple-400" />
+                  {event.pincode}
+                </span>
+              )}
+
               <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                <FaTag className="text-xs" />{" "}
+                <FaTag className="text-xs" />
                 {event.price === 0 ? "Free" : `₹${event.price}`}
               </span>
             </div>
@@ -154,6 +202,7 @@ const MyEventBookings = () => {
               className="bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white focus:ring-2 focus:ring-indigo-500 outline-none w-full sm:w-40"
             >
               <option value="all">All Guests</option>
+              <option value="refund_pending">Refund Requests</option>
               <option value="checked">Checked In</option>
               <option value="not_checked">Not Checked In</option>
             </select>
@@ -164,6 +213,22 @@ const MyEventBookings = () => {
               Total Seats
             </p>
             <p className="text-2xl font-black text-white">{totalSeatsSold}</p>
+          </div>
+
+          {refundPendingCount > 0 && (
+            <div className="bg-orange-500/10 border border-orange-500/20 px-5 py-2.5 rounded-xl flex flex-col justify-center min-w-[120px]">
+              <p className="text-[10px] uppercase text-orange-400 font-bold leading-tight">
+                Refund Requests
+              </p>
+              <p className="text-2xl font-black text-orange-400">{refundPendingCount}</p>
+            </div>
+          )}
+
+          <div className="bg-emerald-500/10 border border-emerald-500/20 px-5 py-2.5 rounded-xl flex flex-col justify-center min-w-[120px]">
+            <p className="text-[10px] uppercase text-emerald-400 font-bold leading-tight">
+              Revenue
+            </p>
+            <p className="text-2xl font-black text-emerald-400">₹{totalRevenue}</p>
           </div>
         </div>
       </div>
@@ -178,6 +243,7 @@ const MyEventBookings = () => {
                 <th className="px-6 py-4">Guest Phone Number</th>
                 <th className="px-6 py-4">Seats</th>
                 <th className="px-6 py-4">Amount</th>
+                <th className="px-6 py-4">Theme</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Check-In</th>
@@ -188,7 +254,7 @@ const MyEventBookings = () => {
               {filteredBookings.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="7"
+                    colSpan="9"
                     className="px-6 py-20 text-center text-slate-500 italic"
                   >
                     No matching bookings found
@@ -197,7 +263,9 @@ const MyEventBookings = () => {
               ) : (
                 filteredBookings.map((b, i) => (
                   <tr key={b._id} className="hover:bg-white/[0.03]">
-                    <td className="px-6 py-4 text-slate-500 text-center">{i + 1}</td>
+                    <td className="px-6 py-4 text-slate-500 text-center">
+                      {i + 1}
+                    </td>
 
                     <td className="px-6 py-4 text-center">
                       <p className="font-bold text-slate-100">
@@ -208,25 +276,44 @@ const MyEventBookings = () => {
                       </p>
                     </td>
 
-                    <td className="px-6 py-4 text-center">{b.userId?.phoneNumber}</td>
+                    <td className="px-6 py-4 text-center">
+                      {b.userId?.phoneNumber}
+                    </td>
 
                     <td className="px-6 py-4 text-center">
-                      <span className="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-center">
+                      <span className="px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-400">
                         {b.quantity}
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 font-bold text-center">₹{b.totalAmount}</td>
+                    <td className="px-6 py-4 font-bold text-center">
+                      ₹{b.totalAmount}
+                    </td>
+
+                    <td className="px-6 py-4 text-center">
+                      {b.selectedTheme ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                          <FaPalette size={8} /> {b.selectedTheme}
+                        </span>
+                      ) : (
+                        <span className="text-slate-600 text-xs">—</span>
+                      )}
+                    </td>
 
                     <td className="px-6 py-4 text-center">
                       <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
-                          b.status === "confirmed"
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${b.status === "confirmed"
                             ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-amber-500/10 text-amber-400"
-                        }`}
+                            : b.status === "refund_pending"
+                              ? "bg-orange-500/10 text-orange-400"
+                              : b.status === "cancelled"
+                                ? "bg-red-500/10 text-red-400"
+                                : "bg-amber-500/10 text-amber-400"
+                          }`}
                       >
-                        {b.status}
+                        {b.status === "refund_pending"
+                          ? "Refund Pending"
+                          : b.status}
                       </span>
                     </td>
 
@@ -235,8 +322,24 @@ const MyEventBookings = () => {
                     </td>
 
                     <td className="px-6 py-4 text-center">
-                      {b.checkedIn ? (
-                        <span className="flex items-center gap-1 text-emerald-400 text-xs">
+                      {b.status === "refund_pending" ? (
+                        <button
+                          onClick={() =>
+                            setRefundModal({
+                              isOpen: true,
+                              bookingId: b._id,
+                              username: b.userId?.fullName || b.userId?.username,
+                              amount: b.totalAmount,
+                            })
+                          }
+                          className="flex items-center justify-center gap-1 bg-orange-600 hover:bg-orange-500 text-white px-3 py-1 rounded-lg text-xs"
+                        >
+                          <FaUndoAlt /> Approve Refund
+                        </button>
+                      ) : b.status === "cancelled" ? (
+                        <span className="text-xs text-red-400">Refunded</span>
+                      ) : b.checkedIn ? (
+                        <span className="flex items-center justify-center gap-1 text-emerald-400 text-xs">
                           <FaCheckCircle /> Arrived
                         </span>
                       ) : isEventToday ? (
@@ -248,12 +351,12 @@ const MyEventBookings = () => {
                               username: b.userId?.username,
                             })
                           }
-                          className="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg text-xs"
+                          className="flex items-center justify-center gap-1 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1 rounded-lg text-xs"
                         >
                           <FaUserCheck /> Check-In
                         </button>
                       ) : (
-                        <span className="text-xs text-slate-500 text-center">
+                        <span className="text-xs text-slate-500">
                           Unavailable
                         </span>
                       )}
@@ -299,6 +402,50 @@ const MyEventBookings = () => {
                 className="flex-1 bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg text-white"
               >
                 Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {refundModal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="bg-slate-800 p-6 rounded-xl w-full max-w-sm border border-slate-700">
+            <div className="w-14 h-14 bg-orange-500/10 text-orange-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-orange-500/20">
+              <FaUndoAlt size={22} />
+            </div>
+            <h3 className="text-lg font-bold text-center mb-2">
+              Approve Refund?
+            </h3>
+
+            <p className="text-center text-slate-400 mb-2 text-sm">
+              Approve refund of{" "}
+              <span className="text-emerald-400 font-bold">₹{refundModal.amount}</span>{" "}
+              for{" "}
+              <span className="text-indigo-400 font-bold">
+                {refundModal.username}
+              </span>?
+            </p>
+
+            <p className="text-center text-slate-500 text-xs mb-6">
+              This will process the refund via Razorpay and restore the booked seats. The customer will receive the refund within 5-7 business days.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() =>
+                  setRefundModal({ isOpen: false, bookingId: null, username: "", amount: 0 })
+                }
+                className="flex-1 bg-slate-700 hover:bg-slate-600 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => handleApproveRefund(refundModal.bookingId)}
+                className="flex-1 bg-orange-600 hover:bg-orange-500 py-2 rounded-lg text-white"
+              >
+                Approve Refund
               </button>
             </div>
           </div>
